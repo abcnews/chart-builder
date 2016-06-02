@@ -31,9 +31,9 @@
 $json = json_decode(file_get_contents('/home/nd/.abc-credentials'));
 
 $env = array(
-	"GOOGLE_OAUTH_CLIENT_ID" => $json->dailgraphics->GOOGLE_OAUTH_CLIENT_ID,
-	"GOOGLE_OAUTH_CONSUMER_SECRET" => $json->dailgraphics->GOOGLE_OAUTH_CONSUMER_SECRET,
-	"AUTHOMATIC_SALT" => $json->dailgraphics->AUTHOMATIC_SALT,
+	"GOOGLE_OAUTH_CLIENT_ID" => $json->dailygraphics->GOOGLE_OAUTH_CLIENT_ID,
+	"GOOGLE_OAUTH_CONSUMER_SECRET" => $json->dailygraphics->GOOGLE_OAUTH_CONSUMER_SECRET,
+	"AUTHOMATIC_SALT" => $json->dailygraphics->AUTHOMATIC_SALT,
 	"FTP_PASS" => $json->contentftp->password,
 	"FTP_USER" => $json->contentftp->username
 );
