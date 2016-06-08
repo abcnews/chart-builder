@@ -103,7 +103,7 @@
 <div class="container">
 	<div class="page-header">
 		<div class="btn-group btn-link btn-group-sm pull-right">
-			<a class="btn" href="https://github.com/abcnews/dailygraphics/blob/master/Documentation.md">Documentation</a>
+			<a class="btn" href="https://github.com/abcnews/dailygraphics/blob/master/README.md">Documentation</a>
 			<a class="btn" href="https://github.com/abcnews/dailygraphics/issues">Report a bug</a>
 			<?php if ($isAdvanced) { ?>
 					<a class="btn" href="?mode=basic">Basic mode</a>

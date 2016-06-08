@@ -1,6 +1,6 @@
 # Chart Builder
 
-A web interface for the ABC News dailygraphics fork, for use by non-technical editors.
+A web interface for the [ABC News dailygraphics fork](https://github.com/abcnews/dailygraphics), for use by non-technical editors.
 
 ## Dependancies
 
