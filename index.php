@@ -66,13 +66,13 @@
 			"image" => "pie-chart",
 			"description" => "Pie chart",
 		),
+	);
+	$advancedGraphics = array(
 		array(
 			"id" => "table",
 			"image" => "table",
 			"description" => "Responsive HTML table",
 		),
-	);
-	$advancedGraphics = array(
 		array(
 			"id" => "block_histogram",
 			"image" => "block-histogram",
