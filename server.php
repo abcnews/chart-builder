@@ -61,10 +61,7 @@ function runAndLogCommand($command){
 
 
 $slug = $_POST['slug'];
-$type = "graphic";
-if (isset($_POST['type'])) {
-	$type = $_POST['type'];
-}
+$type = (isset($_POST['type']) ? $_POST['type'] : 'graphic');
 
 if ($slug) {
 	chdir("dailygraphics");
@@ -90,7 +87,7 @@ if ($slug) {
 
 		case "remove":
 			runAndLogCommand("rm -rf ../graphics/{$slug}");
-			// TODO: also remove from PROD?
+			// TODO: also remove from contentftp?
 			break;
 	}
 }
