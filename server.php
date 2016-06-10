@@ -53,6 +53,7 @@ function bootstrapAlert($type, $msg){
 $slug = $_POST['slug'];
 $type = (isset($_POST['type']) ? $_POST['type'] : 'graphic');
 $redirect = (isset($_POST['redirect']) ? "http://www.abc.net.au/dat/news/interactives/graphics/" . $slug . "/" : ".");
+$status = 'danger';
 
 if ($slug) {
 	chdir("dailygraphics");
@@ -85,19 +86,19 @@ if ($slug) {
 
 		case "remove":
 			runAndLogCommand("rm -rf ../graphics/{$slug}");
-			$status = 'success';
-			bootstrapAlert('warning', 'The graphic is not removed from production. Only from the Chart Builder interface.');
+			$status = 'warning';
+			bootstrapAlert($status, 'The graphic is not removed from production. Only from the Chart Builder interface.');
 			// TODO: also remove from contentftp?
 			break;
 	}
 }
 
-if (isset($status) && $status != 'success') {
-	bootstrapAlert('danger', 'Something has gone wrong.');
+if ($status == 'danger') {
+	bootstrapAlert($status, 'Something has gone wrong. Please let a developer know.');
 }
 
 // header("Location: " . $redirect);
-echo "<div><a class='btn btn-default btn-lg' href='{$redirect}'>Continue</a></div>";
+echo "<div><a class='btn btn-${status} btn-lg' href='{$redirect}'>Continue</a></div>";
 ?>
 </div>
 
