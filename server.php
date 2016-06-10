@@ -20,6 +20,13 @@
 			a {
 				font-family: Arial, Helvetica, sans-serif;
 				font-size: 2em;
+				color: red;
+			}
+			a.dunno {
+				color: blue;
+			}
+			a.success {
+				color: green;
 			}
 		</style>
 	</head>
@@ -75,7 +82,7 @@ if ($slug) {
 				// auto deploy when first created
 				$y = runAndLogCommand("fab deploy:{$slug}");
 				if (strpos($y, "Done.") !== false) {
-					header("Location: " . $redirect);
+					$status = 'success';
 				}
 			}
 			break;
@@ -83,25 +90,27 @@ if ($slug) {
 		case "deploy":
 			$x = runAndLogCommand("fab deploy:{$slug}");
 			if (strpos($x, "Done.") !== false) {
-				header("Location: " . $redirect);
+				$status = 'success';
 			}
 			break;
 
 		case "deploy_template":
 			$x = runAndLogCommand("fab deploy_template:{$slug},template={$type}");
 			if (strpos($x, "Done.") !== false) {
-				header("Location: " . $redirect);
+				$status = 'success';
 			}
 			break;
 
 		case "remove":
 			runAndLogCommand("rm -rf ../graphics/{$slug}");
+			$status = 'dunno';
 			// TODO: also remove from contentftp?
 			break;
 	}
 }
 
-echo "<div><a href='{$redirect}'>Continue</a></div>";
+// header("Location: " . $redirect);
+echo "<div><a class='{$status}' href='{$redirect}'>Continue</a></div>";
 ?>
 </div>
 
