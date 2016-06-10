@@ -4,7 +4,6 @@
 		<meta charset="utf-8">
 		<title>Chart Builder</title>
 		<style media="screen">
-			span.command,
 			pre {
 				color: #fff;
 				background: #000;
@@ -15,7 +14,6 @@
 			span.command {
 				font-weight: bold;
 				color: yellow;
-				display: inline-block;
 			}
 			a {
 				font-family: Arial, Helvetica, sans-serif;
@@ -52,8 +50,8 @@ function clean($string) {
 }
 
 function runAndLogCommand($command){
-	echo "<span class='command'>{$command}</span>";
 	echo "<pre>";
+	echo "$ <span class='command'>{$command}</span>\n";
 	$x = system($command);
 	echo "</pre>";
 	return $x;
