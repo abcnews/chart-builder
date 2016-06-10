@@ -27,20 +27,23 @@
 
 <?php
 
-// Get our contentftp username & password and google docs auth.
-$json = json_decode(file_get_contents('/home/nd/.abc-credentials'));
+if (!getenv('GOOGLE_OAUTH_CLIENT_ID')) {
+	// Get our contentftp username & password and google docs auth.
+	$json = json_decode(file_get_contents('/home/nd/.abc-credentials'));
 
-$env = array(
-	"GOOGLE_OAUTH_CLIENT_ID" => $json->dailygraphics->GOOGLE_OAUTH_CLIENT_ID,
-	"GOOGLE_OAUTH_CONSUMER_SECRET" => $json->dailygraphics->GOOGLE_OAUTH_CONSUMER_SECRET,
-	"AUTHOMATIC_SALT" => $json->dailygraphics->AUTHOMATIC_SALT,
-	"FTP_PASS" => $json->contentftp->password,
-	"FTP_USER" => $json->contentftp->username
-);
+	$env = array(
+		"GOOGLE_OAUTH_CLIENT_ID" => $json->dailygraphics->GOOGLE_OAUTH_CLIENT_ID,
+		"GOOGLE_OAUTH_CONSUMER_SECRET" => $json->dailygraphics->GOOGLE_OAUTH_CONSUMER_SECRET,
+		"AUTHOMATIC_SALT" => $json->dailygraphics->AUTHOMATIC_SALT,
+		"FTP_PASS" => $json->contentftp->password,
+		"FTP_USER" => $json->contentftp->username
+	);
 
-foreach ($env as $key=>$val) {
-	putenv("{$key}={$val}");
-}
+	foreach ($env as $key=>$val) {
+		putenv("{$key}={$val}");
+	}
+};
+
 
 function clean($string) {
 	$string = strtolower($string); // Convert to lowercase.
