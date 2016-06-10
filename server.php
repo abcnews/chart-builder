@@ -5,23 +5,6 @@
 		<title>Chart Builder</title>
 		<link rel="stylesheet" href="bootstrap/3.3.6/css/bootstrap.min.css">
 		<link rel="stylesheet" href="bootstrap/3.3.6/css/bootstrap-theme.min.css">
-		<style media="screen">
-			pre {
-				color: #fff;
-				background: #000;
-				font-family: Menlo, monospace;
-				padding: 10px;
-				font-size: 12px;
-			}
-			span.command {
-				font-weight: bold;
-				color: yellow;
-			}
-			a {
-				font-family: Arial, Helvetica, sans-serif;
-				font-size: 2em;
-			}
-		</style>
 		<link rel="shortcut icon" href="favicon.ico" />
 	</head>
 	<body>
@@ -55,7 +38,7 @@ function clean($string) {
 
 function runAndLogCommand($command){
 	echo "<pre>";
-	echo "$ <span class='command'>{$command}</span>\n";
+	echo "$ <strong>{$command}</strong>\n";
 	$x = system($command);
 	echo "</pre>";
 	return $x;
@@ -114,7 +97,7 @@ if (isset($status) && $status != 'success') {
 }
 
 // header("Location: " . $redirect);
-echo "<div><a href='{$redirect}'>Continue</a></div>";
+echo "<div><a class='btn btn-default btn-lg' href='{$redirect}'>Continue</a></div>";
 ?>
 </div>
 
