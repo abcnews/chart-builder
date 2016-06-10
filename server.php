@@ -48,6 +48,15 @@ function clean($string) {
 	return preg_replace('/[^a-z0-9\-]/', '', $string); // Removes special chars.
 }
 
+function runAndLogCommand($command){
+	echo "<span class='command'>{$command}</span>";
+	echo "<pre>";
+	$x = system($command);
+	echo "</pre>";
+	return $x;
+}
+
+
 $slug = $_POST['slug'];
 $type = "graphic";
 if (isset($_POST['type'])) {
@@ -59,45 +68,25 @@ if ($slug) {
 	switch ($_GET['action']) {
 		case "create":
 			$slug = clean($slug);
-			$command = "fab add_{$type}:{$slug}";
-			echo "<span class='command'>{$command}</span>";
-			echo "<pre>";
-			$x = system($command);
-			echo "</pre>";
+			$x = runAndLogCommand("fab add_{$type}:{$slug}");
 			if (strpos($x, "Visit newsdev3:8888/oauth") !== false) {
 				header("Location: http://newsdev3.aus.aunty.abc.net.au:8888/authenticate");
 				exit;
 			}
 			// auto deploy when first created
-			$command = "fab deploy:{$slug}";
-			echo "<span class='command'>{$command}</span>";
-			echo "<pre>";
-			system($command);
-			echo "</pre>";
+			runAndLogCommand("fab deploy:{$slug}");
 			break;
 
 		case "deploy":
-			$command = "fab deploy:{$slug}";
-			echo "<span class='command'>{$command}</span>";
-			echo "<pre>";
-			system($command);
-			echo "</pre>";
+			runAndLogCommand("fab deploy:{$slug}");
 			break;
 
 		case "deploy_template":
-			$command = "fab deploy_template:{$slug},template={$type}";
-			echo "<span class='command'>{$command}</span>";
-			echo "<pre>";
-			system($command);
-			echo "</pre>";
+			runAndLogCommand("fab deploy_template:{$slug},template={$type}");
 			break;
 
 		case "remove":
-			$command = "rm -rf ../graphics/{$slug}";
-			echo "<span class='command'>{$command}</span>";
-			echo "<pre>";
-			system($command);
-			echo "</pre>";
+			runAndLogCommand("rm -rf ../graphics/{$slug}");
 			// TODO: also remove from PROD?
 			break;
 	}
