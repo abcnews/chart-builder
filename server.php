@@ -3,6 +3,8 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Chart Builder</title>
+		<link rel="stylesheet" href="bootstrap/3.3.6/css/bootstrap.min.css">
+		<link rel="stylesheet" href="bootstrap/3.3.6/css/bootstrap-theme.min.css">
 		<style media="screen">
 			pre {
 				color: #fff;
@@ -22,6 +24,7 @@
 		</style>
 	</head>
 	<body>
+		<div class="container">
 
 <?php
 
@@ -100,6 +103,7 @@ if ($slug) {
 
 echo "<div><a href='{$redirect}'>Continue</a></div>";
 ?>
+</div>
 
 </body>
 </html>
