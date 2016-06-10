@@ -20,15 +20,9 @@
 			a {
 				font-family: Arial, Helvetica, sans-serif;
 				font-size: 2em;
-				color: red;
-			}
-			a.dunno {
-				color: blue;
-			}
-			a.success {
-				color: green;
 			}
 		</style>
+		<link rel="shortcut icon" href="favicon.ico" />
 	</head>
 	<body>
 		<div class="container">
@@ -67,6 +61,11 @@ function runAndLogCommand($command){
 	return $x;
 }
 
+function bootstrapAlert($type, $msg){
+	echo "<div class='alert alert-{$type}' role='alert'>";
+	echo "<strong>{$type}</strong> {$msg}";
+	echo "</div>";
+}
 
 $slug = $_POST['slug'];
 $type = (isset($_POST['type']) ? $_POST['type'] : 'graphic');
@@ -103,14 +102,19 @@ if ($slug) {
 
 		case "remove":
 			runAndLogCommand("rm -rf ../graphics/{$slug}");
-			$status = 'dunno';
+			$status = 'success';
+			bootstrapAlert('warning', 'The graphic is not removed from production. Only from the Chart Builder interface.');
 			// TODO: also remove from contentftp?
 			break;
 	}
 }
 
+if (isset($status) && $status != 'success') {
+	bootstrapAlert('danger', 'Something has gone wrong.');
+}
+
 // header("Location: " . $redirect);
-echo "<div><a class='{$status}' href='{$redirect}'>Continue</a></div>";
+echo "<div><a href='{$redirect}'>Continue</a></div>";
 ?>
 </div>
 
