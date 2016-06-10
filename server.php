@@ -60,6 +60,7 @@ function runAndLogCommand($command){
 
 $slug = $_POST['slug'];
 $type = (isset($_POST['type']) ? $_POST['type'] : 'graphic');
+$redirect = (isset($_POST['redirect']) ? "http://www.abc.net.au/dat/news/interactives/graphics/" . $slug . "/" : ".");
 
 if ($slug) {
 	chdir("dailygraphics");
@@ -67,20 +68,27 @@ if ($slug) {
 		case "create":
 			$slug = clean($slug);
 			$x = runAndLogCommand("fab add_{$type}:{$slug}");
-			if (strpos($x, "Visit newsdev3:8888/oauth") !== false) {
-				header("Location: http://newsdev3.aus.aunty.abc.net.au:8888/authenticate");
-				exit;
+			if (strpos($x, "Done.") !== false) {
+				// auto deploy when first created
+				$y = runAndLogCommand("fab deploy:{$slug}");
+				if (strpos($y, "Done.") !== false) {
+					header("Location: " . $redirect);
+				}
 			}
-			// auto deploy when first created
-			runAndLogCommand("fab deploy:{$slug}");
 			break;
 
 		case "deploy":
-			runAndLogCommand("fab deploy:{$slug}");
+			$x = runAndLogCommand("fab deploy:{$slug}");
+			if (strpos($x, "Done.") !== false) {
+				header("Location: " . $redirect);
+			}
 			break;
 
 		case "deploy_template":
-			runAndLogCommand("fab deploy_template:{$slug},template={$type}");
+			$x = runAndLogCommand("fab deploy_template:{$slug},template={$type}");
+			if (strpos($x, "Done.") !== false) {
+				header("Location: " . $redirect);
+			}
 			break;
 
 		case "remove":
@@ -90,12 +98,6 @@ if ($slug) {
 	}
 }
 
-$redirect = ".";
-if (isset($_POST['redirect'])) {
-	$redirect = "http://www.abc.net.au/dat/news/interactives/graphics/" . $slug . "/";
-}
-
-//header("Location: " . $redirect);
 echo "<div><a href='{$redirect}'>Continue</a></div>";
 ?>
 
