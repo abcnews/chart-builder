@@ -11,7 +11,7 @@
 
 <?php
 
-$graphics = json_decode(file_get_contents('graphics.json'));
+$graphics = json_decode(file_get_contents('graphic-templates.json'));
 $isAdvancedMode = (strpos($_SERVER['REQUEST_URI'],'?mode=advanced') !== false);
 
 ?>
