@@ -1,103 +1,18 @@
 <!DOCTYPE html>
 <html>
-<head>
-<title>Chart Builder - ABC</title>
-<!-- Latest compiled and minified CSS -->
-<!-- <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"> -->
-<!-- Optional theme -->
-<!-- <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css"> -->
-
-<!-- Loading Bootstrap assets locally because of unpredictable ABC network behaviour -->
-<link rel="stylesheet" href="bootstrap/3.3.6/css/bootstrap.min.css">
-<link rel="stylesheet" href="bootstrap/3.3.6/css/bootstrap-theme.min.css">
-
-<link rel="shortcut icon" href="favicon.ico" />
-
-<!-- Latest compiled and minified JavaScript -->
-</head>
+	<head>
+		<meta charset="utf-8">
+		<title>Chart Builder - ABC</title>
+		<!-- Loading Bootstrap assets locally because of unpredictable ABC network behaviour -->
+		<link rel="stylesheet" href="bootstrap/3.3.6/css/bootstrap.min.css">
+		<link rel="stylesheet" href="bootstrap/3.3.6/css/bootstrap-theme.min.css">
+		<link rel="shortcut icon" href="favicon.ico" />
+	</head>
 
 <?php
-	$graphics = array(
-		array(
-			"id" => "line_chart",
-			"image" => "line-chart",
-			"description" => "Line chart",
-		),
-		array(
-			"id" => "slopegraph",
-			"image" => "slopegraph",
-			"description" => "Slopegraph",
-		),
-		array(
-			"id" => "bar_chart",
-			"image" => "bar-chart",
-			"description" => "Bar chart",
-		),
-		array(
-			"id" => "grouped_bar_chart",
-			"image" => "grouped-bar-chart",
-			"description" => "Grouped bar chart",
-		),
-		array(
-			"id" => "stacked_bar_chart",
-			"image" => "stacked-bar-chart",
-			"description" => "Stacked bar chart",
-		),
-		array(
-			"id" => "column_chart",
-			"image" => "column-chart",
-			"description" => "Column chart",
-		),
-		array(
-			"id" => "stacked_column_chart",
-			"image" => "stacked-column-chart",
-			"description" => "Stacked column chart",
-		),
-		array(
-			"id" => "dot_chart",
-			"image" => "dot-chart",
-			"description" => "Dot chart",
-		),
-		array(
-			"id" => "pie_chart",
-			"image" => "pie-chart",
-			"description" => "Pie chart",
-		),
-	);
-	$advancedGraphics = array(
-		array(
-			"id" => "scatterplot",
-			"image" => "scatterplot",
-			"description" => "Scatterplot",
-		),
-		array(
-			"id" => "table",
-			"image" => "table",
-			"description" => "Responsive HTML table",
-		),
-		array(
-			"id" => "block_histogram",
-			"image" => "block-histogram",
-			"description" => "Block histogram",
-		),
-		array(
-			"id" => "locator_map",
-			"image" => "locator-map",
-			"description" => "Locator map",
-		),
-		array(
-			"id" => "state_grid_map",
-			"image" => "state-grid-map",
-			"description" => "USA state grid map",
-		),
-		array(
-			"id" => "graphic",
-			"image" => "graphic",
-			"description" => "Very basic new graphic",
-		),
-	);
 
-	$isAdvanced = (strpos($_SERVER['REQUEST_URI'],'?mode=advanced') !== false);
+$graphics = json_decode(file_get_contents('graphics.json'));
+$isAdvancedMode = (strpos($_SERVER['REQUEST_URI'],'?mode=advanced') !== false);
 
 ?>
 
@@ -107,7 +22,7 @@
 		<div class="btn-group btn-link btn-group-sm pull-right">
 			<a class="btn" href="https://github.com/abcnews/dailygraphics/blob/master/README.md">Documentation</a>
 			<a class="btn" href="https://github.com/abcnews/dailygraphics/issues">Report a bug</a>
-			<?php if ($isAdvanced) { ?>
+			<?php if ($isAdvancedMode) { ?>
 					<a class="btn" href="?mode=basic">Basic mode</a>
 			<?php } else { ?>
 					<a class="btn" href="?mode=advanced">Advanced mode</a>
@@ -116,10 +31,9 @@
 		<h1>Chart Builder</h1>
 	</div>
 
-
 <div class="row">
 
-<?php if ($isAdvanced) { ?>
+<?php if ($isAdvancedMode) { ?>
 	<div class="col-md-9">
 <?php } else { ?>
 	<div class="col-md-7">
@@ -176,35 +90,29 @@ if ($handle = opendir('graphics')) {
 		echo "<input type='hidden' name='slug' value='{$entry['name']}' />";
 		echo "<button class='btn btn-xs btn-success' type='submit' title='Update graphic to use latest content from its Google Sheet.'>Refresh content</button> ";
 		echo "</form>";
-		if ($isAdvanced) {
-			/*
-			echo "<form style='display:inline' action='server.php?action=deploy_assets' method='post'>";
-			echo "<input type='hidden' name='slug' value='{$entry['name']}' />";
-			echo "<button class='btn btn-xs btn-success' type='submit'>Deploy Assets</button> ";
-			echo "</form>";
-			*/
+		if ($isAdvancedMode) {
 			echo "</td><td align='right'>";
 			echo "<form action='server.php?action=deploy_template' method='post'>";
-			echo "<input type='hidden' name='slug' value='{$entry['name']}' />";
+			echo "<input type='hidden' name='slug' value='{$entry->name}' />";
 			echo "<input type='hidden' name='type' value='' />";
 			echo "<div class='btn-group'>";
 			echo "<button type='button' class='btn btn-xs btn-success dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='Update graphic to use the latest templates from the chosen graphic type.'>";
 			echo "Rebuild from template <span class='caret'></span>";
 			echo "</button>";
 			echo "<ul class='dropdown-menu'>";
-			foreach ($graphics as $graphic) {
-				echo "<li><a href='#' data-type='{$graphic['id']}'>{$graphic['description']}</a></li>";
+			foreach ($graphics->base as $graphic) {
+				echo "<li><a href='#' data-type='{$graphic->id}'>{$graphic->description}</a></li>";
 			}
 			echo "<li role='separator' class='divider'></li>";
-			foreach ($advancedGraphics as $graphic) {
-				echo "<li><a href='#' data-type='{$graphic['id']}'>{$graphic['description']}</a></li>";
+			foreach ($graphics->advanced as $graphic) {
+				echo "<li><a href='#' data-type='{$graphic->id}'>{$graphic->description}</a></li>";
 			}
 			echo "</ul>";
 			echo "</div>";
 			echo "</form>";
 			echo "</td><td align='right'>";
 			echo "<form action='server.php?action=remove' method='post'>";
-			echo "<input type='hidden' name='slug' value='{$entry['name']}' />";
+			echo "<input type='hidden' name='slug' value='{$entry->name}' />";
 			echo "<button class='btn btn-xs btn-danger' type='submit' title='Remove graphic from Chart Builder interface. Chart is still live but can no longer be managed.'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span> Remove</button>";
 			echo "</form>";
 		}
@@ -218,7 +126,7 @@ if ($handle = opendir('graphics')) {
 </div>
 </div>
 
-<?php if ($isAdvanced) { ?>
+<?php if ($isAdvancedMode) { ?>
 	<div class="col-md-3">
 <?php } else { ?>
 	<div class="col-md-5">
@@ -230,7 +138,7 @@ if ($handle = opendir('graphics')) {
 </div>
 <div class="panel-body">
 
-<?php if ($isAdvanced) { ?>
+<?php if ($isAdvancedMode) { ?>
 
 <form action="server.php?action=create" method="post">
 	<input type='hidden' name='type' value='' />
@@ -239,15 +147,17 @@ if ($handle = opendir('graphics')) {
 		<div class="input-group-btn">
 			<button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Create <span class="caret"></span></button>
 			<ul class='dropdown-menu dropdown-menu-right'>
-			<?php
-				foreach ($graphics as $graphic) {
-					echo "<li><a href='#' data-type='{$graphic['id']}'>{$graphic['description']}</a></li>";
-				}
-				echo "<li role='separator' class='divider'></li>";
-				foreach ($advancedGraphics as $graphic) {
-					echo "<li><a href='#' data-type='{$graphic['id']}'>{$graphic['description']}</a></li>";
-				}
-			?>
+				<?php
+					foreach ($graphics->base as $graphic) {
+						echo "<li><a href='#' data-type='{$graphic->id}'>{$graphic->description}</a></li>";
+					}
+				?>
+				<li role='separator' class='divider'></li>
+				<?php
+					foreach ($graphics->advanced as $graphic) {
+						echo "<li><a href='#' data-type='{$graphic->id}'>{$graphic->description}</a></li>";
+					}
+				?>
 			</ul>
 		</div>
 	</div><!-- /input-group -->
@@ -259,12 +169,12 @@ if ($handle = opendir('graphics')) {
 <table class="table"><tbody>
 
 <?php
-	foreach ($graphics as $graphic) {
+	foreach ($graphics->base as $graphic) {
 		echo "<tr><td>";
-		echo "<label><input type='radio' name='type' value='{$graphic['id']}' id='input-{$graphic['id']}' /> {$graphic['description']}</label>";
+		echo "<label><input type='radio' name='type' value='{$graphic->id}' id='input-{$graphic->id}' /> {$graphic->description}</label>";
 		echo "</td><td align='right'>";
-		echo "<label for='input-{$graphic['id']}'>";
-		echo "<img class='img-thumbnail' src='https://raw.githubusercontent.com/abcnews/dailygraphics/master/graphic_templates/_thumbs/{$graphic['image']}.png' alt='' width='100' height='100'>";
+		echo "<label for='input-{$graphic->id}'>";
+		echo "<img class='img-thumbnail' src='https://raw.githubusercontent.com/abcnews/dailygraphics/master/graphic_templates/_thumbs/{$graphic->image}.png' alt='' width='100' height='100'>";
 		echo "</label>";
 		echo "</td></tr>";
 	}
