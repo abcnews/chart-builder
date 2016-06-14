@@ -69,6 +69,11 @@
 	);
 	$advancedGraphics = array(
 		array(
+			"id" => "scatterplot",
+			"image" => "scatterplot",
+			"description" => "Scatterplot",
+		),
+		array(
 			"id" => "table",
 			"image" => "table",
 			"description" => "Responsive HTML table",
