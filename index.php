@@ -1,23 +1,12 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="utf-8">
-		<title>Chart Builder - ABC</title>
-		<!-- Loading Bootstrap assets locally because of unpredictable ABC network behaviour -->
-		<link rel="stylesheet" href="bootstrap/3.3.6/css/bootstrap.min.css">
-		<link rel="stylesheet" href="bootstrap/3.3.6/css/bootstrap-theme.min.css">
-		<link rel="shortcut icon" href="favicon.ico" />
-	</head>
-
 <?php
+
+require '_page-top.inc';
 
 $graphics = json_decode(file_get_contents('graphic-templates.json'));
 $isAdvancedMode = (strpos($_SERVER['REQUEST_URI'],'?mode=advanced') !== false);
 
 ?>
 
-<body>
-<div class="container">
 	<div class="page-header">
 		<div class="btn-group btn-link btn-group-sm pull-right">
 			<a class="btn" href="https://github.com/abcnews/dailygraphics/blob/master/README.md">Documentation</a>
