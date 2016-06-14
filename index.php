@@ -55,8 +55,8 @@ if ($handle = opendir('graphics')) {
 			if ($f) {
 				$dat = fstat($f);
 				fclose($f);
-				$mtime = $dat['atime'];
-				$mtimeStr = date(DATE_ATOM, $dat['atime']);
+				$mtime = $dat['mtime'];
+				$mtimeStr = date(DATE_ATOM, $mtime);
 			} else {
 				$mtime = 0;
 				$mtimeStr = "Not deployed";
@@ -73,10 +73,10 @@ if ($handle = opendir('graphics')) {
 	usort($files, "cmp");
 	foreach ($files as $entry) {
 		echo "<tr><td>";
-		echo "<a href='http://www.abc.net.au/dat/news/interactives/graphics/{$entry['name']}/' title='{$entry['mtimeStr']}'>{$entry['name']}</a>";
+		echo "<a href='http://www.abc.net.au/dat/news/interactives/graphics/{$entry->name}/' title='{$entry->mtimeStr}'>{$entry->name}</a>";
 		echo "</td><td align='right'>";
 		echo "<form action='server.php?action=deploy' method='post'>";
-		echo "<input type='hidden' name='slug' value='{$entry['name']}' />";
+		echo "<input type='hidden' name='slug' value='{$entry->name}' />";
 		echo "<button class='btn btn-xs btn-success' type='submit' title='Update graphic to use latest content from its Google Sheet.'>Refresh content</button> ";
 		echo "</form>";
 		if ($isAdvancedMode) {
