@@ -11,9 +11,6 @@
 <link rel="stylesheet" href="bootstrap/3.3.6/css/bootstrap.min.css">
 <link rel="stylesheet" href="bootstrap/3.3.6/css/bootstrap-theme.min.css">
 
-<script src="http://www.abc.net.au/res/libraries/jquery/jquery-1.11.3.min.js"></script>
-<script src="bootstrap/3.3.6/js/bootstrap.min.js"></script>
-
 <link rel="shortcut icon" href="favicon.ico" />
 
 <!-- Latest compiled and minified JavaScript -->
@@ -293,35 +290,9 @@ if ($handle = opendir('graphics')) {
 </div>
 </div>
 
-<script>
-function search(input) {
-	$("#results tr").each(function () {
-		var $tr = $(this);
-		var text = $tr.find("a").text();
-		if (text.indexOf(input) === -1) {
-			$tr.hide();
-		} else {
-			$tr.show();
-		}
-	});
-}
+<script src="http://www.abc.net.au/res/libraries/jquery/jquery-2.1.4.js"></script>
+<script src="bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script src="scripts.js" charset="utf-8"></script>
 
-$(document).ready(function () {
-
-	$("#search").on("input", function () {
-		search($(this).val());
-	});
-
-	$('.dropdown-menu a').click(function (event) {
-		event.preventDefault();
-		$(this).closest('form')
-			.find('input[name=type]')
-				.val($(this).data('type'))
-				.end()
-			.submit();
-	});
-
-});
-</script>
 </body>
 </html>
