@@ -87,7 +87,7 @@ if ($handle = opendir('graphics')) {
 		echo "<div><code>{$entry['name']}</code></div>";
 		echo "<small class='text-muted'>{$entry['mtimeStr']}</small>";
 		echo "</td><td><div class='panel panel-info'>";
-		echo "<div class='panel-heading'><a href='graphics/{$entry['name']}/build/'>Staging&nbsp;<span class='glyphicon glyphicon-link' aria-hidden='true'></span></a></div>";
+		echo "<div class='panel-heading'><a href='graphics/{$entry['name']}/build/'>Staging</a></div>";
 		echo "<div class='list-group'>";
 		echo "<div class='list-group-item'>";
 		echo "<form action='server.php?action=update_from_content' method='post'>";
@@ -124,7 +124,7 @@ if ($handle = opendir('graphics')) {
 			echo "</div>";
 		}
 		echo "</div></div></td><td><div class='panel panel-success'>";
-		echo "<div class='panel-heading'><a href='http://www.abc.net.au/dat/news/interactives/graphics/{$entry['name']}/'>Production&nbsp;<span class='glyphicon glyphicon-link' aria-hidden='true'></span></a></div>";
+		echo "<div class='panel-heading'><a href='http://www.abc.net.au/dat/news/interactives/graphics/{$entry['name']}/'>Production</a></div>";
 		if ($entry['undeployed']) {
 			echo "<div class='list-group'>";
 			echo "<div class='list-group-item'>";
