@@ -87,7 +87,7 @@ if ($handle = opendir('graphics')) {
 		echo "<div><code>{$entry['name']}</code></div>";
 		echo "<small class='text-muted'>{$entry['mtimeStr']}</small>";
 		echo "</td><td>";
-		echo "<table>";
+		echo "<table class='table'>";
 		echo "<tr><th>";
 		echo "<a href='graphics/{$entry['name']}/build/' title='{$entry['mtimeStr']}'>Staging</a>";
 		echo "</th><th>";

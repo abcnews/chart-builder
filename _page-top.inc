@@ -7,23 +7,6 @@
 		<link rel="stylesheet" href="bootstrap/3.3.6/css/bootstrap.min.css">
 		<link rel="stylesheet" href="bootstrap/3.3.6/css/bootstrap-theme.min.css">
 		<style media="screen">
-			table table tr th {
-				padding-right: 5px;
-				text-align: right;
-				font-weight: normal;
-			}
-			table table th,
-			table table td {
-				padding-top: 5px;
-			}
-			table table tr:first-child th,
-			table table tr:first-child td {
-				border-bottom: 1px solid #ddd;
-				padding-top: 0;
-				padding-bottom: 5px;
-			}
-
-
 			.graphic-types input {
 				margin: 0;
 				padding: 0;
@@ -56,8 +39,6 @@
 				vertical-align: middle;
 				font-weight: normal;
 			}
-
-
 		</style>
 		<link rel="shortcut icon" href="favicon.ico" />
 	</head>
