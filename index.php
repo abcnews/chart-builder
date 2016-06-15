@@ -182,21 +182,21 @@ if ($handle = opendir('graphics')) {
 <?php } else { ?>
 
 <form action="server.php?action=create" method="post">
-<table class="table graphic-types"><tbody>
+<ul class="list-group graphic-types">
 
 <?php
 	$checked = " checked='checked'";
 	foreach ($graphics->base as $graphic) {
-		echo "<tr><td>";
+		echo "<li class='list-group-item'>";
 		echo "<input{$checked} type='radio' name='type' value='{$graphic->id}' id='input-{$graphic->id}' />";
 		echo "<label for='input-{$graphic->id}' class='thumbnail' style='background-image:url(https://raw.githubusercontent.com/abcnews/dailygraphics/master/graphic_templates/_thumbs/{$graphic->image}.png);'></label>";
 		echo "<label for='input-{$graphic->id}'>{$graphic->description}</label>";
-		echo "</td></tr>";
+		echo "</li>";
 		$checked = '';
 	}
 ?>
 
-</tbody></table>
+</ul>
 
 <div class="input-group">
 	<input type="text" class="form-control" name="slug" placeholder="Graphic name">

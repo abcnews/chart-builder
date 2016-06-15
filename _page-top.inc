@@ -24,23 +24,23 @@
 			}
 
 
-			table.graphic-types input {
+			.graphic-types input {
 				margin: 0;
 				padding: 0;
 				-webkit-appearance: none;
 				-moz-appearance: none;
 				appearance: none;
 			}
-			table.graphic-types input:active + .thumbnail {
+			.graphic-types input:active + .thumbnail {
 				border: 3px solid #ddd;
 			}
-			table.graphic-types input:checked + .thumbnail {
+			.graphic-types input:checked + .thumbnail {
 				border: 3px solid #999;
 			}
-			table.graphic-types input:checked ~ label {
+			.graphic-types input:checked ~ label {
 				font-weight: bold;
 			}
-			table.graphic-types .thumbnail {
+			.graphic-types .thumbnail {
 				margin: 0 5px 0 0;
 				cursor: pointer;
 				background-size: contain;
@@ -49,10 +49,10 @@
 				width: 100px;
 				height: 100px;
 			}
-			table.graphic-types .thumbnail:hover{
+			.graphic-types .thumbnail:hover{
 				border: 3px solid #ddd;
 			}
-			table.graphic-types label {
+			.graphic-types label {
 				vertical-align: middle;
 				font-weight: normal;
 			}
