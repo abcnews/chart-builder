@@ -148,15 +148,17 @@ if ($handle = opendir('graphics')) {
 	<div class="col-md-5">
 <?php } ?>
 
+
+<form action="server.php?action=create" method="post">
+
 <div class="panel panel-success">
 <div class="panel-heading">
 	<h3 class="panel-title">Create new graphic</h3>
 </div>
-<div class="panel-body">
 
 <?php if ($isAdvancedMode) { ?>
 
-<form action="server.php?action=create" method="post">
+	<div class="panel-body">
 	<input type='hidden' name='type' value='' />
 	<div class="input-group">
 		<input type="text" class="form-control" name="slug" placeholder="Graphic name">
@@ -177,11 +179,10 @@ if ($handle = opendir('graphics')) {
 			</ul>
 		</div>
 	</div><!-- /input-group -->
-</form>
+	</div>
 
 <?php } else { ?>
 
-<form action="server.php?action=create" method="post">
 <ul class="list-group graphic-types">
 
 <?php
@@ -198,19 +199,21 @@ if ($handle = opendir('graphics')) {
 
 </ul>
 
-<div class="input-group">
-	<input type="text" class="form-control" name="slug" placeholder="Graphic name">
-	<span class="input-group-btn">
-		<button class="btn btn-success" type="submit">Create</button>
-	</span>
-</div><!-- /input-group -->
-
-</form>
+<div class="panel-body">
+	<div class="input-group">
+		<input type="text" class="form-control" name="slug" placeholder="Graphic name">
+		<span class="input-group-btn">
+			<button class="btn btn-success" type="submit">Create</button>
+		</span>
+	</div><!-- /input-group -->
+</div>
 
 <?php } ?>
 
 </div>
-</div>
+
+</form>
+
 
 </div>
 </div>
