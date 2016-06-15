@@ -84,7 +84,8 @@ if ($handle = opendir('graphics')) {
 	usort($files, "cmp");
 	foreach ($files as $entry) {
 		echo "<tr><td width='100%'>";
-		echo "<code>{$entry['name']}</code>";
+		echo "<div><code>{$entry['name']}</code></div>";
+		echo "<small class='text-muted'>{$entry['mtimeStr']}</small>";
 		echo "</td><td>";
 		echo "<table>";
 		echo "<tr><th>";
