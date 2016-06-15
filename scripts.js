@@ -1,7 +1,7 @@
 function search(input) {
 	$("#results > tr").each(function () {
 		var $tr = $(this);
-		var text = $tr.find("> th").text();
+		var text = $tr.find("code").text();
 		if (text.indexOf(input) === -1) {
 			$tr.hide();
 		} else {

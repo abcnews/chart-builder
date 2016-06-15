@@ -82,9 +82,9 @@ if ($handle = opendir('graphics')) {
 	closedir($handle);
 	usort($files, "cmp");
 	foreach ($files as $entry) {
-		echo "<tr><th width='100%'>";
-		echo "{$entry['name']}";
-		echo "</th><td>";
+		echo "<tr><td width='100%'>";
+		echo "<code>{$entry['name']}</code>";
+		echo "</td><td>";
 		echo "<table>";
 		echo "<tr><th>";
 		echo "<a href='graphics/{$entry['name']}/build/' title='{$entry['mtimeStr']}'>Staging</a>";
