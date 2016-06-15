@@ -55,22 +55,29 @@ if ($slug) {
 			$x = runAndLogCommand("fab add_{$type}:{$slug}");
 			if (strpos($x, "Done.") !== false) {
 				// auto deploy when first created
-				$y = runAndLogCommand("fab deploy:{$slug}");
+				$y = runAndLogCommand("fab deploy_to_production:{$slug}");
 				if (strpos($y, "Done.") !== false) {
 					$status = 'success';
 				}
 			}
 			break;
 
-		case "deploy":
-			$x = runAndLogCommand("fab deploy:{$slug}");
+		case "update_from_content":
+			$x = runAndLogCommand("fab update_from_content:{$slug}");
 			if (strpos($x, "Done.") !== false) {
 				$status = 'success';
 			}
 			break;
 
-		case "deploy_template":
-			$x = runAndLogCommand("fab deploy_template:{$slug},template={$type}");
+		case "update_from_template":
+			$x = runAndLogCommand("fab update_from_template:{$slug},template={$type}");
+			if (strpos($x, "Done.") !== false) {
+				$status = 'success';
+			}
+			break;
+
+		case "deploy_to_production":
+			$x = runAndLogCommand("fab deploy_to_production:{$slug}");
 			if (strpos($x, "Done.") !== false) {
 				$status = 'success';
 			}

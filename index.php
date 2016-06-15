@@ -42,6 +42,7 @@ $isAdvancedMode = (strpos($_SERVER['REQUEST_URI'],'?mode=advanced') !== false);
 
 <table class="table table-hover">
 <tbody id="results">
+
 <?php
 function cmp ($a, $b) {
 	return $b['mtime'] - $a['mtime'];
@@ -72,17 +73,22 @@ if ($handle = opendir('graphics')) {
 	closedir($handle);
 	usort($files, "cmp");
 	foreach ($files as $entry) {
-		echo "<tr><td>";
-		echo "<a href='http://www.abc.net.au/dat/news/interactives/graphics/{$entry->name}/' title='{$entry->mtimeStr}'>{$entry->name}</a>";
-		echo "</td><td align='right'>";
-		echo "<form action='server.php?action=deploy' method='post'>";
-		echo "<input type='hidden' name='slug' value='{$entry->name}' />";
+		echo "<tr><th width='100%'>";
+		echo "{$entry['name']}";
+		echo "</th><td>";
+		echo "<table>";
+		echo "<tr><th>";
+		echo "<a href='graphics/{$entry['name']}/build/' title='{$entry['mtimeStr']}'>Staging</a>";
+		echo "</th><td>";
+		echo "<form action='server.php?action=update_from_content' method='post'>";
+		echo "<input type='hidden' name='slug' value='{$entry['name']}' />";
 		echo "<button class='btn btn-xs btn-success' type='submit' title='Update graphic to use latest content from its Google Sheet.'>Refresh content</button> ";
 		echo "</form>";
+		echo "</td>";
 		if ($isAdvancedMode) {
-			echo "</td><td align='right'>";
-			echo "<form action='server.php?action=deploy_template' method='post'>";
-			echo "<input type='hidden' name='slug' value='{$entry->name}' />";
+			echo "<td>";
+			echo "<form action='server.php?action=update_from_template' method='post'>";
+			echo "<input type='hidden' name='slug' value='{$entry['name']}' />";
 			echo "<input type='hidden' name='type' value='' />";
 			echo "<div class='btn-group'>";
 			echo "<button type='button' class='btn btn-xs btn-success dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='Update graphic to use the latest templates from the chosen graphic type.'>";
@@ -99,12 +105,22 @@ if ($handle = opendir('graphics')) {
 			echo "</ul>";
 			echo "</div>";
 			echo "</form>";
-			echo "</td><td align='right'>";
+			echo "</td><td>";
 			echo "<form action='server.php?action=remove' method='post'>";
-			echo "<input type='hidden' name='slug' value='{$entry->name}' />";
+			echo "<input type='hidden' name='slug' value='{$entry['name']}' />";
 			echo "<button class='btn btn-xs btn-danger' type='submit' title='Remove graphic from Chart Builder interface. Chart is still live but can no longer be managed.'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span> Remove</button>";
 			echo "</form>";
+			echo "</td>";
 		}
+		echo "</tr><tr><th>";
+		echo "<a href='http://www.abc.net.au/dat/news/interactives/graphics/{$entry['name']}/'>Production</a>";
+		echo "</th><td>";
+		echo "<form action='server.php?action=deploy_to_production' method='post'>";
+		echo "<input type='hidden' name='slug' value='{$entry['name']}' />";
+		echo "<button class='btn btn-xs btn-success' type='submit' title=''>Update</button> ";
+		echo "</form>";
+		echo "</td></tr>";
+		echo "</table>";
 		echo "</td></tr>";
 	}
 }
