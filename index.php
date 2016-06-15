@@ -86,8 +86,9 @@ if ($handle = opendir('graphics')) {
 		echo "<tr><td width='100%'>";
 		echo "<div><code>{$entry['name']}</code></div>";
 		echo "<small class='text-muted'>{$entry['mtimeStr']}</small>";
-		echo "</td><td><div class='bg-warning'>";
-		echo "<p><strong><a href='graphics/{$entry['name']}/build/' title='{$entry['mtimeStr']}'>Staging</a></strong></p>";
+		echo "</td><td><div class='panel panel-info'>";
+		echo "<div class='panel-heading'><a href='graphics/{$entry['name']}/build/'><span class='glyphicon glyphicon-link' aria-hidden='true'></span> Staging</a></div>";
+		echo "<div class='panel-body'>";
 		echo "<form action='server.php?action=update_from_content' method='post'>";
 		echo "<input type='hidden' name='slug' value='{$entry['name']}' />";
 		echo "<button class='btn btn-xs btn-primary' type='submit' title='Update graphic to use latest content from its Google Sheet.'>Refresh content</button> ";
@@ -116,13 +117,15 @@ if ($handle = opendir('graphics')) {
 			echo "<button class='btn btn-xs btn-danger' type='submit' title='Remove graphic from Chart Builder interface. Chart is still live but can no longer be managed.'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span> Remove</button>";
 			echo "</form>";
 		}
-		echo "</div></td><td><div class='bg-success'>";
-		echo "<p><strong><a href='http://www.abc.net.au/dat/news/interactives/graphics/{$entry['name']}/'>Production</a></strong></p>";
+		echo "</div></div></td><td><div class='panel panel-success'>";
+		echo "<div class='panel-heading'><a href='http://www.abc.net.au/dat/news/interactives/graphics/{$entry['name']}/'><span class='glyphicon glyphicon-link' aria-hidden='true'></span> Production</a></div>";
 		if ($entry['undeployed']) {
+			echo "<div class='panel-body'>";
 			echo "<form action='server.php?action=deploy_to_production' method='post'>";
 			echo "<input type='hidden' name='slug' value='{$entry['name']}' />";
 			echo "<button class='btn btn-xs btn-success' type='submit' title=''>Update</button> ";
 			echo "</form>";
+			echo "</div>";
 		}
 		echo "</div></td></tr>";
 	}
