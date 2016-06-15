@@ -188,7 +188,7 @@ if ($handle = opendir('graphics')) {
 	foreach ($graphics->base as $graphic) {
 		echo "<tr><td>";
 		echo "<input type='radio' name='type' value='{$graphic->id}' id='input-{$graphic->id}' />";
-		echo "<label for='input-{$graphic->id}' class='img' style='background-image:https://raw.githubusercontent.com/abcnews/dailygraphics/master/graphic_templates/_thumbs/{$graphic->image}.png;'></label>";
+		echo "<label for='input-{$graphic->id}' class='img' style='background-image:url(https://raw.githubusercontent.com/abcnews/dailygraphics/master/graphic_templates/_thumbs/{$graphic->image}.png);'></label>";
 		echo "<label for='input-{$graphic->id}'>{$graphic->description}</label>";
 		echo "</td></tr>";
 	}
