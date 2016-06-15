@@ -52,6 +52,14 @@ if ($handle = opendir('graphics')) {
 	$files = array();
 	while (false !== ($entry = readdir($handle))) {
 		if ($entry != "." && $entry != "..") {
+			$flag = fopen('graphics/' . $entry . '/.undeployed-changes.flag', "r");
+			if ($flag) {
+				fclose($flag);
+				$undeployed = true;
+			} else {
+				$undeployed = false;
+			}
+
 			$f = fopen('graphics/' . $entry . '/build', "r");
 			if ($f) {
 				$dat = fstat($f);
@@ -65,7 +73,8 @@ if ($handle = opendir('graphics')) {
 			$files[] = array(
 				"name" => $entry,
 				"mtime" => $mtime,
-				"mtimeStr" => $mtimeStr
+				"mtimeStr" => $mtimeStr,
+				"undeployed" => $undeployed
 			);
 		}
 	}
@@ -115,10 +124,12 @@ if ($handle = opendir('graphics')) {
 		echo "</tr><tr><th>";
 		echo "<a href='http://www.abc.net.au/dat/news/interactives/graphics/{$entry['name']}/'>Production</a>";
 		echo "</th><td>";
-		echo "<form action='server.php?action=deploy_to_production' method='post'>";
-		echo "<input type='hidden' name='slug' value='{$entry['name']}' />";
-		echo "<button class='btn btn-xs btn-success' type='submit' title=''>Update</button> ";
-		echo "</form>";
+		if ($entry['undeployed']) {
+			echo "<form action='server.php?action=deploy_to_production' method='post'>";
+			echo "<input type='hidden' name='slug' value='{$entry['name']}' />";
+			echo "<button class='btn btn-xs btn-success' type='submit' title=''>Update</button> ";
+			echo "</form>";
+		}
 		echo "</td></tr>";
 		echo "</table>";
 		echo "</td></tr>";
