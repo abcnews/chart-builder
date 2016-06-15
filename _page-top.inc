@@ -27,7 +27,9 @@
 			table.graphic-types input {
 				margin: 0;
 				padding: 0;
-				appearance: none;
+				-webkit-appearance:none;
+				-moz-appearance:none;
+				appearance:none;
 			}
 			table.graphic-types input:active +.thumbnail {
 				border: 3px solid #ddd;
