@@ -37,6 +37,9 @@
 			table.graphic-types input:checked +.thumbnail {
 				border: 3px solid #999;
 			}
+			table.graphic-types input:checked +label {
+				font-weight: bold;
+			}
 			table.graphic-types .thumbnail {
 				margin: 0 5px 0 0;
 				cursor: pointer;
@@ -51,6 +54,7 @@
 			}
 			table.graphic-types label {
 				vertical-align: top;
+				font-weight: normal;
 			}
 
 
