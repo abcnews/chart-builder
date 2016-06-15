@@ -185,12 +185,14 @@ if ($handle = opendir('graphics')) {
 <table class="table graphic-types"><tbody>
 
 <?php
+	$checked = " checked='checked'";
 	foreach ($graphics->base as $graphic) {
 		echo "<tr><td>";
-		echo "<input type='radio' name='type' value='{$graphic->id}' id='input-{$graphic->id}' />";
+		echo "<input{$checked} type='radio' name='type' value='{$graphic->id}' id='input-{$graphic->id}' />";
 		echo "<label for='input-{$graphic->id}' class='thumbnail' style='background-image:url(https://raw.githubusercontent.com/abcnews/dailygraphics/master/graphic_templates/_thumbs/{$graphic->image}.png);'></label>";
 		echo "<label for='input-{$graphic->id}'>{$graphic->description}</label>";
 		echo "</td></tr>";
+		$checked = '';
 	}
 ?>
 
