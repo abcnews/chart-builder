@@ -91,7 +91,7 @@ if ($handle = opendir('graphics')) {
 		echo "</th><td>";
 		echo "<form action='server.php?action=update_from_content' method='post'>";
 		echo "<input type='hidden' name='slug' value='{$entry['name']}' />";
-		echo "<button class='btn btn-xs btn-success' type='submit' title='Update graphic to use latest content from its Google Sheet.'>Refresh content</button> ";
+		echo "<button class='btn btn-xs btn-primary' type='submit' title='Update graphic to use latest content from its Google Sheet.'>Refresh content</button> ";
 		echo "</form>";
 		echo "</td>";
 		if ($isAdvancedMode) {
@@ -100,7 +100,7 @@ if ($handle = opendir('graphics')) {
 			echo "<input type='hidden' name='slug' value='{$entry['name']}' />";
 			echo "<input type='hidden' name='type' value='' />";
 			echo "<div class='btn-group'>";
-			echo "<button type='button' class='btn btn-xs btn-success dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='Update graphic to use the latest templates from the chosen graphic type.'>";
+			echo "<button type='button' class='btn btn-xs btn-primary dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='Update graphic to use the latest templates from the chosen graphic type.'>";
 			echo "Rebuild from template <span class='caret'></span>";
 			echo "</button>";
 			echo "<ul class='dropdown-menu'>";
