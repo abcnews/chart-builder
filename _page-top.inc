@@ -25,14 +25,15 @@
 
 
 			table.graphic-types input {
-				position: absolute;
-				z-index: 999;
+				margin: 0;
+				padding: 0;
+				appearance: none;
 			}
 			table.graphic-types input:active +.thumbnail {
-				opacity: 0.9;
+				border: 3px solid #ddd;
 			}
 			table.graphic-types input:checked +.thumbnail {
-				filter: none;
+				border: 3px solid #999;
 			}
 			table.graphic-types .thumbnail {
 				margin: 0 5px 0 0;
@@ -42,11 +43,9 @@
 				display: inline-block;
 				width: 100px;
 				height: 100px;
-				transition: all 100ms ease-in;
-				filter: grayscale(.7) opacity(.7);
 			}
 			table.graphic-types .thumbnail:hover{
-				filter: grayscale(.5) opacity(.9);
+				border: 3px solid #ddd;
 			}
 			table.graphic-types label {
 				vertical-align: top;
