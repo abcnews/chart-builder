@@ -60,7 +60,7 @@ if ($handle = opendir('graphics')) {
 				$undeployed = false;
 			}
 
-			$f = fopen('graphics/' . $entry . '/build', "r");
+			$f = fopen('graphics/' . $entry . '/build/child.html', "r");
 			if ($f) {
 				$dat = fstat($f);
 				fclose($f);
