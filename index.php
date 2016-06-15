@@ -90,14 +90,14 @@ if ($handle = opendir('graphics')) {
 		echo "<table>";
 		echo "<tr><th>";
 		echo "<a href='graphics/{$entry['name']}/build/' title='{$entry['mtimeStr']}'>Staging</a>";
-		echo "</th><td>";
+		echo "</th><th>";
+		echo "<a href='http://www.abc.net.au/dat/news/interactives/graphics/{$entry['name']}/'>Production</a>";
+		echo "</th></tr><tr><td>";
 		echo "<form action='server.php?action=update_from_content' method='post'>";
 		echo "<input type='hidden' name='slug' value='{$entry['name']}' />";
 		echo "<button class='btn btn-xs btn-primary' type='submit' title='Update graphic to use latest content from its Google Sheet.'>Refresh content</button> ";
 		echo "</form>";
-		echo "</td>";
 		if ($isAdvancedMode) {
-			echo "<td>";
 			echo "<form action='server.php?action=update_from_template' method='post'>";
 			echo "<input type='hidden' name='slug' value='{$entry['name']}' />";
 			echo "<input type='hidden' name='type' value='' />";
@@ -116,16 +116,12 @@ if ($handle = opendir('graphics')) {
 			echo "</ul>";
 			echo "</div>";
 			echo "</form>";
-			echo "</td><td>";
 			echo "<form action='server.php?action=remove' method='post'>";
 			echo "<input type='hidden' name='slug' value='{$entry['name']}' />";
 			echo "<button class='btn btn-xs btn-danger' type='submit' title='Remove graphic from Chart Builder interface. Chart is still live but can no longer be managed.'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span> Remove</button>";
 			echo "</form>";
-			echo "</td>";
 		}
-		echo "</tr><tr><th>";
-		echo "<a href='http://www.abc.net.au/dat/news/interactives/graphics/{$entry['name']}/'>Production</a>";
-		echo "</th><td>";
+		echo "</td><td>";
 		if ($entry['undeployed']) {
 			echo "<form action='server.php?action=deploy_to_production' method='post'>";
 			echo "<input type='hidden' name='slug' value='{$entry['name']}' />";
