@@ -23,38 +23,31 @@
 				padding-bottom: 5px;
 			}
 
-			table.graphic-types input {
-				position:absolute;
-				z-index:999;
-			}
-			table.graphic-types input:active +.img {
-				opacity: .9;
-			}
-			table.graphic-types input:checked +.img {
-			    -webkit-filter: none;
-			       -moz-filter: none;
-			            filter: none;
-			}
-			table.graphic-types .img {
-			    cursor:pointer;
-			    background-size: contain;
-			    background-repeat: no-repeat;
-			    display: inline-block;
-			    width: 100px;
-			    height: 100px;
-			    -webkit-transition: all 100ms ease-in;
-			       -moz-transition: all 100ms ease-in;
-			            transition: all 100ms ease-in;
-			    -webkit-filter: brightness(1.8) grayscale(1) opacity(.7);
-			       -moz-filter: brightness(1.8) grayscale(1) opacity(.7);
-			            filter: brightness(1.8) grayscale(1) opacity(.7);
-			}
-			table.graphic-types .img:hover{
-			    -webkit-filter: brightness(1.2) grayscale(.5) opacity(.9);
-			       -moz-filter: brightness(1.2) grayscale(.5) opacity(.9);
-			            filter: brightness(1.2) grayscale(.5) opacity(.9);
-			}
 
+			table.graphic-types input {
+				position: absolute;
+				z-index: 999;
+			}
+			table.graphic-types input:active +.thumbnail {
+				opacity: 0.9;
+			}
+			table.graphic-types input:checked +.thumbnail {
+				filter: none;
+			}
+			table.graphic-types .thumbnail {
+				margin: 0 5px 0 0;
+				cursor: pointer;
+				background-size: contain;
+				background-repeat: no-repeat;
+				display: inline-block;
+				width: 100px;
+				height: 100px;
+				transition: all 100ms ease-in;
+				filter: grayscale(.7) opacity(.7);
+			}
+			table.graphic-types .thumbnail:hover{
+				filter: grayscale(.5) opacity(.9);
+			}
 			table.graphic-types label {
 				vertical-align: top;
 			}
