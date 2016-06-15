@@ -25,7 +25,7 @@ $isAdvancedMode = (strpos($_SERVER['REQUEST_URI'],'?mode=advanced') !== false);
 <?php if ($isAdvancedMode) { ?>
 	<div class="col-md-9">
 <?php } else { ?>
-	<div class="col-md-7">
+	<div class="col-md-8">
 <?php } ?>
 
 <div class="panel panel-primary">
@@ -39,6 +39,7 @@ $isAdvancedMode = (strpos($_SERVER['REQUEST_URI'],'?mode=advanced') !== false);
 		<input id="search" type="text" class="form-control" value="" placeholder="Filter by graphic name" aria-label="Search">
 	</div>
 </form>
+</div>
 
 <table class="table table-hover">
 <tbody id="results">
@@ -138,14 +139,14 @@ if ($handle = opendir('graphics')) {
 ?>
 </tbody>
 </table>
-</div>
+
 </div>
 </div>
 
 <?php if ($isAdvancedMode) { ?>
 	<div class="col-md-3">
 <?php } else { ?>
-	<div class="col-md-5">
+	<div class="col-md-4">
 <?php } ?>
 
 
