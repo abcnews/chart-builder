@@ -62,6 +62,7 @@ if ($slug) {
 			}
 			break;
 
+		case "deploy": // legacy support for parent.html links
 		case "update_from_content":
 			$x = runAndLogCommand("fab update_from_content:{$slug}");
 			if (strpos($x, "Done.") !== false) {
