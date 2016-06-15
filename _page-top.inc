@@ -31,13 +31,13 @@
 				-moz-appearance:none;
 				appearance:none;
 			}
-			table.graphic-types input:active +.thumbnail {
+			table.graphic-types input:active + .thumbnail {
 				border: 3px solid #ddd;
 			}
-			table.graphic-types input:checked +.thumbnail {
+			table.graphic-types input:checked + .thumbnail {
 				border: 3px solid #999;
 			}
-			table.graphic-types input:checked +label {
+			table.graphic-types input:checked ~ label {
 				font-weight: bold;
 			}
 			table.graphic-types .thumbnail {
