@@ -113,8 +113,7 @@ if ($status == 'danger') {
 
 // header("Location: " . $redirect);
 echo "<div><a class='btn btn-${status} btn-lg' href='{$redirect}'>Continue</a></div>";
-?>
-</div>
 
-</body>
-</html>
+require '_page-bottom.inc';
+
+?>
