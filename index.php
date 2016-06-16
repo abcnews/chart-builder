@@ -13,7 +13,7 @@ $files = array();
 if ($handle = opendir('graphics')) {
 	while (false !== ($entry = readdir($handle))) {
 		if ($entry != "." && $entry != "..") {
-			$flag = fopen('graphics/' . $entry . '/.undeployed-changes.flag', "r");
+			$flag = @fopen('graphics/' . $entry . '/.undeployed-changes.flag', "r");
 			if ($flag) {
 				fclose($flag);
 				$undeployed = true;
