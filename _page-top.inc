@@ -12,9 +12,8 @@
 			.graphic-types input {
 				margin: 0;
 				padding: 0;
-				-webkit-appearance: none;
-				-moz-appearance: none;
-				appearance: none;
+				position: absolute;
+				visibility: hidden;
 			}
 			.graphic-types input:active + .thumbnail {
 				border: 3px solid #ddd;
