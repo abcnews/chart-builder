@@ -18,11 +18,14 @@ $(document).ready(function () {
 
 	$('.dropdown-menu a').click(function (event) {
 		event.preventDefault();
-		$(this).closest('form')
-			.find('input[name=type]')
-				.val($(this).data('type'))
-				.end()
-			.submit();
+		var $a = $(this);
+		var $form = $a.closest('form');
+		var formaction = $a.closest('.dropdown-menu').data('formaction');
+		if (formaction) {
+			$form.attr('action', formaction);
+		}
+		$form.find('input[name=type]').val($a.data('type'));
+		$form.submit();
 	});
 
 });

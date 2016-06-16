@@ -83,28 +83,31 @@ if ($handle = opendir('graphics')) {
 	closedir($handle);
 	usort($files, "cmp");
 	foreach ($files as $entry) {
-		echo "<tr><td width='100%'>";
+		echo "<tr>";
+		echo "<td width='100%'>";
 		echo "<div><code>{$entry['name']}</code></div>";
 		echo "<small class='text-muted'>{$entry['mtimeStr']}</small>";
-		echo "</td><td><div class='panel panel-info'>";
+		echo "</td>";
+		echo "<td width='25%'>";
+		echo "<form method='post'>";
+		echo "<input type='hidden' name='slug' value='{$entry['name']}' />";
+		echo "<input type='hidden' name='type' value='' />";
+		echo "<div class='panel panel-info'>";
 		echo "<div class='panel-heading'><a href='graphics/{$entry['name']}/build/'>Staging</a></div>";
 		echo "<div class='list-group'>";
+
 		echo "<div class='list-group-item'>";
-		echo "<form action='server.php?action=update_from_content' method='post'>";
-		echo "<input type='hidden' name='slug' value='{$entry['name']}' />";
-		echo "<button class='btn btn-xs btn-primary' type='submit' title='Update graphic to use latest content from its Google Sheet.'>Refresh content</button> ";
-		echo "</form>";
+		echo "<button class='btn btn-xs btn-primary' type='submit' formaction='server.php?action=update_from_content' title='Update graphic to use latest content from its Google Sheet.'>Refresh content</button> ";
 		echo "</div>";
+
 		if ($isAdvancedMode) {
+
 			echo "<div class='list-group-item'>";
-			echo "<form action='server.php?action=update_from_template' method='post'>";
-			echo "<input type='hidden' name='slug' value='{$entry['name']}' />";
-			echo "<input type='hidden' name='type' value='' />";
 			echo "<div class='btn-group'>";
 			echo "<button type='button' class='btn btn-xs btn-primary dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='Update graphic to use the latest templates from the chosen graphic type.'>";
 			echo "Rebuild from template <span class='caret'></span>";
 			echo "</button>";
-			echo "<ul class='dropdown-menu'>";
+			echo "<ul class='dropdown-menu' data-formaction='server.php?action=update_from_template'>";
 			foreach ($graphics->base as $graphic) {
 				echo "<li><a href='#' data-type='{$graphic->id}'>{$graphic->description}</a></li>";
 			}
@@ -114,28 +117,37 @@ if ($handle = opendir('graphics')) {
 			}
 			echo "</ul>";
 			echo "</div>";
-			echo "</form>";
 			echo "</div>";
+
 			echo "<div class='list-group-item'>";
-			echo "<form action='server.php?action=remove' method='post'>";
-			echo "<input type='hidden' name='slug' value='{$entry['name']}' />";
-			echo "<button class='btn btn-xs btn-danger' type='submit' title='Remove graphic from Chart Builder interface. Chart is still live but can no longer be managed.'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span> Remove</button>";
-			echo "</form>";
+			echo "<button class='btn btn-xs btn-danger' type='submit' formaction='server.php?action=remove' title='Remove graphic from Chart Builder interface. Chart is still live but can no longer be managed.'>";
+			echo "<span class='glyphicon glyphicon-remove' aria-hidden='true'></span> Remove";
+			echo "</button>";
 			echo "</div>";
+
 		}
-		echo "</div></div></td><td><div class='panel panel-success'>";
+		echo "</div>";
+		echo "</div>";
+		echo "</form>";
+
+		$panelClass = $entry['undeployed'] ? 'warning' : 'success';
+		echo "</td>";
+		echo "<td width='25%'>";
+		echo "<div class='panel panel-${panelClass}'>";
 		echo "<div class='panel-heading'><a href='http://www.abc.net.au/dat/news/interactives/graphics/{$entry['name']}/'>Production</a></div>";
 		if ($entry['undeployed']) {
 			echo "<div class='list-group'>";
 			echo "<div class='list-group-item'>";
 			echo "<form action='server.php?action=deploy_to_production' method='post'>";
 			echo "<input type='hidden' name='slug' value='{$entry['name']}' />";
-			echo "<button class='btn btn-xs btn-success' type='submit' title=''>Update</button> ";
+			echo "<button class='btn btn-xs btn-${panelClass}' type='submit' title=''>Update</button> ";
 			echo "</form>";
 			echo "</div>";
 			echo "</div>";
 		}
-		echo "</div></td></tr>";
+		echo "</div>";
+		echo "</td>";
+		echo "</tr>";
 	}
 }
 ?>
