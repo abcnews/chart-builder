@@ -64,10 +64,14 @@ if ($slug) {
 			$slug = clean($slug);
 			$x = runAndLogCommand("fab add_{$type}:{$slug}");
 			if (strpos($x, "Done.") !== false) {
-				// auto deploy when first created
-				$y = runAndLogCommand("fab deploy_to_production:{$slug}");
+				// auto build when first created
+				$y = runAndLogCommand("fab update_from_content:{$slug}");
 				if (strpos($y, "Done.") !== false) {
-					$status = 'success';
+					// auto deploy when first created
+					$z = runAndLogCommand("fab deploy_to_production:{$slug}");
+					if (strpos($z, "Done.") !== false) {
+						$status = 'success';
+					}
 				}
 			}
 			break;
