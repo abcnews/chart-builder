@@ -71,7 +71,7 @@ if ($handle = opendir('graphics')) {
 <div class="panel-heading">
 	<h3 class="panel-title">
 		Existing graphics
-		<span class="badge"><?php count($files); ?></span>
+		<span class="badge"><?php echo count($files); ?></span>
 	</h3>
 </div>
 <div class="panel-body">
