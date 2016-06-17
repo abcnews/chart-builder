@@ -2,79 +2,64 @@
 	"base": [
 		{
 			"id": "line_chart",
-			"image": "line-chart",
 			"description": "Line chart"
 		},
 		{
 			"id": "slopegraph",
-			"image": "slopegraph",
 			"description": "Slopegraph"
 		},
 		{
 			"id": "bar_chart",
-			"image": "bar-chart",
 			"description": "Bar chart"
 		},
 		{
 			"id": "grouped_bar_chart",
-			"image": "grouped-bar-chart",
 			"description": "Grouped bar chart"
 		},
 		{
 			"id": "stacked_bar_chart",
-			"image": "stacked-bar-chart",
 			"description": "Stacked bar chart"
 		},
 		{
 			"id": "column_chart",
-			"image": "column-chart",
 			"description": "Column chart"
 		},
 		{
 			"id": "stacked_column_chart",
-			"image": "stacked-column-chart",
 			"description": "Stacked column chart"
 		},
 		{
 			"id": "dot_chart",
-			"image": "dot-chart",
 			"description": "Dot chart"
 		},
 		{
 			"id": "pie_chart",
-			"image": "pie-chart",
 			"description": "Pie chart"
 		}
 	],
 	"advanced": [
 		{
 			"id": "scatterplot",
-			"image": "scatterplot",
 			"description": "Scatterplot"
 		},
 		{
 			"id": "table",
-			"image": "table",
 			"description": "Responsive HTML table"
 		},
 		{
 			"id": "block_histogram",
-			"image": "block-histogram",
 			"description": "Block histogram"
 		},
 		{
 			"id": "locator_map",
-			"image": "locator-map",
 			"description": "Locator map"
 		},
 		{
 			"id": "state_grid_map",
-			"image": "state-grid-map",
 			"description": "USA state grid map"
 		},
 		{
 			"id": "graphic",
-			"image": "graphic",
 			"description": "Very basic new graphic"
 		}
 	]
