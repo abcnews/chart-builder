@@ -7,7 +7,6 @@
 		<title>Chart Builder - ABC News</title>
 		<!-- Loading Bootstrap assets locally because of unpredictable ABC network behaviour -->
 		<link rel="stylesheet" href="bootstrap/3.3.6/css/bootstrap.min.css">
-		<link rel="stylesheet" href="bootstrap/3.3.6/css/bootstrap-theme.min.css">
 		<link rel="stylesheet" href="assets/styles.css">
 		<link rel="shortcut icon" href="assets/favicon.ico" />
 	</head>
