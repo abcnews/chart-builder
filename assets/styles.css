@@ -1,3 +1,7 @@
+table .panel {
+	margin: 0;
+}
+
 .graphic-types input {
 	margin: 0;
 	padding: 0;
