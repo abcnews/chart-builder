@@ -1,11 +1,16 @@
 function search(input) {
 	$("#results > tr").each(function () {
 		var $tr = $(this);
-		var text = $tr.find("code").text();
+		var $code = $tr.find("code");
+		var text = $code.text();
 		if (text.indexOf(input) === -1) {
 			$tr.hide();
 		} else {
 			$tr.show();
+			if (input.length) {
+				text = text.split(input).join('<mark>' + input + '</mark>');
+			}
+			$code.html(text);
 		}
 	});
 }
