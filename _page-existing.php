@@ -75,8 +75,7 @@ foreach ($files as $entry) {
 	echo "<form method='post'>";
 	echo "<input type='hidden' name='slug' value='{$entry['name']}' />";
 	echo "<input type='hidden' name='type' value='' />";
-	echo "<div class='panel panel-info'>";
-	echo "<div class='panel-heading'>";
+	echo "<div class='env bg-info'>";
 	echo "<div class='btn-group'>";
 
 	echo "<button class='btn btn-primary' type='submit' formaction='server.php?action=update_from_content' title='Update graphic to use latest content from its Google Sheet.'>";
@@ -107,27 +106,24 @@ foreach ($files as $entry) {
 	echo "</div>";
 	echo "<a class='btn btn-link' href='graphics/{$entry['name']}/build/'>Staging</a>";
 	echo "</div>";
-	echo "</div>";
 	echo "</form>";
 
 	$panelClass = $entry['undeployed'] ? 'warning' : 'success';
 	echo "</div>";
 
 	echo "<div class='col-lg-3 col-md-4 col-sm-6 col-xs-6'>";
-	echo "<div class='panel panel-${panelClass}'>";
-	echo "<div class='panel-heading'>";
+	echo "<div class='env bg-${panelClass}'>";
 	if ($entry['undeployed']) {
 		echo "<form action='server.php?action=deploy_to_production' method='post'>";
 		echo "<input type='hidden' name='slug' value='{$entry['name']}' />";
 		echo "<button class='btn btn-${panelClass}' type='submit' title='Update'>";
 		echo "<span class='glyphicon glyphicon-refresh' aria-hidden='true'></span>";
 		echo "</button> ";
-		echo "<a class='btn btn-link' href='http://www.abc.net.au/dat/news/interactives/graphics/{$entry['name']}/'>Production</a>";
-		echo "</form>";
-	} else {
-		echo "<a class='btn btn-link' href='http://www.abc.net.au/dat/news/interactives/graphics/{$entry['name']}/'>Production</a>";
 	}
-	echo "</div>";
+	echo "<a class='btn btn-link' href='http://www.abc.net.au/dat/news/interactives/graphics/{$entry['name']}/'><span class='text-${panelClass}'>Production</span></a>";
+	if ($entry['undeployed']) {
+		echo "</form>";
+	}
 	echo "</div>";
 	echo "</div>";
 	echo "</div>\n";
