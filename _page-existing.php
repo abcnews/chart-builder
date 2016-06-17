@@ -31,6 +31,7 @@ if ($handle = opendir('graphics')) {
 			$files[] = array(
 				"name" => $entry,
 				"mtime" => $mtime,
+				"mtimeAtom" => $mtimeAtom,
 				"mtimeStr" => $mtimeStr,
 				"undeployed" => $undeployed
 			);
