@@ -1,12 +1,12 @@
 function search(input) {
-	$("#results > tr").each(function () {
-		var $tr = $(this);
-		var $code = $tr.find("code");
+	$("#results > *").each(function () {
+		var $row = $(this);
+		var $code = $row.find("code");
 		var text = $code.text();
 		if (text.indexOf(input) === -1) {
-			$tr.hide();
+			$row.hide();
 		} else {
-			$tr.show();
+			$row.show();
 			if (input.length) {
 				text = text.split(input).join('<mark>' + input + '</mark>');
 			}
@@ -25,7 +25,7 @@ $(document).ready(function () {
 		event.preventDefault();
 		var $a = $(this);
 		var $form = $a.closest('form');
-		var formaction = $a.closest('.dropdown-menu').data('formaction');
+		var formaction = $a.data('formaction');
 		if (formaction) {
 			$form.attr('action', formaction);
 		}

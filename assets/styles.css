@@ -1,5 +1,18 @@
-table .panel {
+#results {
+	margin-top: 15px;
+}
+#results div.row {
+	border-top: 1px solid #ddd;
+	padding: 8px 0;
+}
+#results div.row:hover {
+	background: #f5f5f5;
+}
+#results .panel {
 	margin: 0;
+}
+#results .panel-heading {
+	padding: 5px;
 }
 
 .graphic-types input {

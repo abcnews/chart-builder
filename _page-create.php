@@ -24,11 +24,8 @@ $graphics = json_decode(file_get_contents('graphic-templates.json'));
 					foreach ($graphics->base as $graphic) {
 						echo "<li><a href='#' data-type='{$graphic->id}'>{$graphic->description}</a></li>";
 					}
-				?>
-				<li role='separator' class='divider'></li>
-				<?php
 					foreach ($graphics->advanced as $graphic) {
-						echo "<li><a href='#' data-type='{$graphic->id}'>{$graphic->description}</a></li>";
+						echo "<li><a href='#' data-type='{$graphic->id}'><span class='text-warning'>{$graphic->description}</span></a></li>";
 					}
 				?>
 			</ul>
