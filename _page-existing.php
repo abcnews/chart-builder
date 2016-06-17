@@ -88,7 +88,7 @@ foreach ($files as $entry) {
 		echo "<span class='caret'></span><span class='sr-only'>Toggle Dropdown</span>";
 		echo "</button>";
 		echo "<ul class='dropdown-menu'>";
-		echo "<li><a formaction='server.php?action=update_from_content' href='#' title='Update graphic to use latest content from its Google Sheet.'><span class='text-success'><span class='glyphicon glyphicon-refresh' aria-hidden='true'></span> Refresh content</span></a></li>";
+		echo "<li><a data-formaction='server.php?action=update_from_content' href='#' title='Update graphic to use latest content from its Google Sheet.'><span class='text-success'><span class='glyphicon glyphicon-refresh' aria-hidden='true'></span> Refresh content</span></a></li>";
 		echo "<li role='separator' class='divider'></li>";
 		echo "<li class='dropdown-header'><span class='glyphicon glyphicon-stats' aria-hidden='true'></span> Rebuild from template</li>";
 		foreach ($graphics->base as $graphic) {
@@ -98,7 +98,7 @@ foreach ($files as $entry) {
 			echo "<li><a data-formaction='server.php?action=update_from_template' href='#' data-type='{$graphic->id}'><span class='text-warning'>{$graphic->description}</span></a></li>";
 		}
 		echo "<li role='separator' class='divider'></li>";
-		echo "<li><a formaction='server.php?action=remove' href='#' class='text-danger' title='Remove graphic from Chart Builder interface. Chart is still live but can no longer be managed.'>";
+		echo "<li><a data-formaction='server.php?action=remove' href='#' class='text-danger' title='Remove graphic from Chart Builder interface. Chart is still live but can no longer be managed.'>";
 		echo "<span class='text-danger'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span> Remove graphic</span>";
 		echo "</a></li>";
 		echo "</ul>";
