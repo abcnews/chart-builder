@@ -44,17 +44,6 @@ function bootstrapAlert($type, $msg){
 
 $slug = $_POST['slug'];
 $type = (isset($_POST['type']) ? $_POST['type'] : 'graphic');
-
-if (isset($_POST['redirect'])) {
-	if (strpos($_SERVER['HTTP_REFERER'], "newsdev3") !== false) {
-		$redirect = "graphics/{$slug}/build/";
-	} else {
-		$redirect = "http://www.abc.net.au/dat/news/interactives/graphics/{$slug}/";
-	}
-} else {
-	$redirect = ".";
-}
-
 $status = 'danger';
 
 if ($slug) {
@@ -112,7 +101,7 @@ if ($status == 'danger') {
 }
 
 // header("Location: " . $redirect);
-echo "<div><a class='btn btn-${status} btn-lg' href='{$redirect}'>Continue</a></div>";
+echo "<div><a class='btn btn-{$status} btn-lg' href='{$_SERVER['HTTP_REFERER']}'>Continue</a></div>";
 
 require '_page-bottom.inc';
 
