@@ -21,10 +21,12 @@ if ($handle = opendir('graphics')) {
 				$dat = fstat($f);
 				fclose($f);
 				$mtime = $dat['mtime'];
-				$mtimeStr = date(DATE_ATOM, $mtime);
+				$mtimeAtom = date(DATE_ATOM, $mtime);
+				$mtimeStr = date("D, d M Y H:i", $mtime);
 			} else {
 				$mtime = 0;
-				$mtimeStr = "Not deployed";
+				$mtimeAtom = "! Not deployed !";
+				$mtimeStr = "! Not deployed !";
 			}
 			$files[] = array(
 				"name" => $entry,
@@ -66,7 +68,7 @@ foreach ($files as $entry) {
 	echo "<tr>";
 	echo "<td width='100%'>";
 	echo "<div><code>{$entry['name']}</code></div>";
-	echo "<small class='text-muted'>{$entry['mtimeStr']}</small>";
+	echo "<small><time class='text-muted' datetime='{$entry['mtimeAtom']}'>{$entry['mtimeStr']}</time></small>";
 	echo "</td>";
 	echo "<td width='25%'>";
 	echo "<form method='post'>";
