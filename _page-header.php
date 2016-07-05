@@ -7,7 +7,7 @@
 			</a>
 		</li>
 		<li role="presentation">
-			<a href="https://github.com/abcnews/dailygraphics/issues">Report a bug</a>
+			<a href="https://github.com/abcnews/dailygraphics/issues">Issue tracker</a>
 		</li>
 		<li role="presentation">
 			<?php if ($isAdvancedMode) { ?>
