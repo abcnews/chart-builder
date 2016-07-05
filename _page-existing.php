@@ -23,8 +23,12 @@ if ($handle = opendir('graphics')) {
 				}
 			}
 
-			if ($meta->production->date) {
-				$undeployed = ($mtime > $meta->production->date);
+			if (isset($meta->production->date)) {
+				if (empty($meta->production->date)) {
+					$undeployed = true;
+				} else {
+					$undeployed = ($mtime > $meta->production->date);
+				}
 			} else {
 				$flag = @fopen('graphics/' . $entry . '/.undeployed-changes.flag', "r");
 				if ($flag) {
