@@ -148,7 +148,7 @@ foreach ($files as $entry) {
 		echo "<small title='Last modified' class='text-muted'><span class='glyphicon glyphicon-calendar' aria-hidden='true'></span> <time datetime='{$entry['mtimeAtom']}'>{$entry['mtimeStr']}</time></small>";
 	}
 	if ($entry['stagingTemplateType']) {
-		echo " <span class='label label-default'>{$entry['stagingTemplateType']}</span>";
+		echo " <span class='label {$entry['stagingTemplateType']}'>{$entry['stagingTemplateType']}</span>";
 	}
 	echo "</div>";
 
