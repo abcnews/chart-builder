@@ -11,30 +11,6 @@ $graphics = json_decode(file_get_contents('graphic-templates.json'));
 	<h3 class="panel-title">Create new graphic</h3>
 </div>
 
-<?php if ($isAdvancedMode) { ?>
-
-	<div class="panel-body">
-	<input type='hidden' name='type' value='' />
-	<div class="input-group">
-		<input type="text" class="form-control" name="slug" placeholder="Graphic name">
-		<div class="input-group-btn">
-			<button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Create <span class="caret"></span></button>
-			<ul class='dropdown-menu dropdown-menu-right'>
-				<?php
-					foreach ($graphics->base as $graphic) {
-						echo "<li><a href='#' data-type='{$graphic->id}'>{$graphic->description}</a></li>";
-					}
-					foreach ($graphics->advanced as $graphic) {
-						echo "<li><a href='#' data-type='{$graphic->id}'><span class='text-warning'>{$graphic->description}</span></a></li>";
-					}
-				?>
-			</ul>
-		</div>
-	</div><!-- /input-group -->
-	</div>
-
-<?php } else { ?>
-
 <ul class="list-group graphic-types">
 
 <?php
@@ -59,8 +35,6 @@ $graphics = json_decode(file_get_contents('graphic-templates.json'));
 		</span>
 	</div><!-- /input-group -->
 </div>
-
-<?php } ?>
 
 </div>
 

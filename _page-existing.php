@@ -165,55 +165,53 @@ foreach ($files as $entry) {
 	echo "<span class='glyphicon glyphicon-refresh' aria-hidden='true'></span>";
 	echo "</button>";
 
-	if ($isAdvancedMode) {
-		echo "<button type='button' class='btn btn-primary dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>";
-		echo "<span class='caret'></span><span class='sr-only'>Toggle Dropdown</span>";
-		echo "</button>";
-		echo "<ul class='dropdown-menu'>";
-		echo "<li><a href='#' title='Update graphic to use latest content from its Google Sheet.'>";
-		echo "<span class='text-success'>";
-		echo "<span class='glyphicon glyphicon-refresh' aria-hidden='true'></span> Refresh content";
-		echo "</span></a></li>";
-		if ($entry['stagingContentDate']) {
-			echo "<li class='dropdown-header'>";
-			echo "Last refreshed <time datetime='{$entry['stagingContentDateAtom']}'>{$entry['stagingContentDateStr']}</time></li>";
-		}
-		echo "<li role='separator' class='divider'></li>";
-		echo "<li><a data-formaction='server.php?action=update_from_template' href='#' data-type='{$entry['stagingTemplateType']}'>";
-		echo "<span class='text-warning'>";
-		echo "<span class='glyphicon glyphicon-stats' aria-hidden='true'></span> Rebuild from template";
-		echo "</span></a></li>";
-		echo "<li class='dropdown-header'><select class='form-control' name='type'>";
-		echo "<option value='' disabled>Select graphic template</option>";
-		echo "<option value='' disabled></option>";
-		foreach ($graphics->base as $graphic) {
-			$selected = ($graphic->id == $entry['stagingTemplateType']) ? " selected='selected'" : '';
-			echo "<option value='{$graphic->id}'{$selected}>{$graphic->description}</option>";
-		}
-		echo "<option value='' disabled></option>";
-		foreach ($graphics->advanced as $graphic) {
-			$selected = ($graphic->id == $entry['stagingTemplateType']) ? " selected='selected'" : '';
-			echo "<option value='{$graphic->id}'{$selected}>{$graphic->description}</option>";
-		}
-		echo "</select></li>";
-		if ($entry['stagingTemplateDate']) {
-			echo "<li class='dropdown-header'>";
-			echo "Last rebuilt <time datetime='{$entry['stagingTemplateDateAtom']}'>{$entry['stagingTemplateDateStr']}</time></li>";
-		}
-		echo "<li role='separator' class='divider'></li>";
-		echo "<li><a data-formaction='server.php?action=deploy_to_production' href='#'>";
-		echo "<span class='text-primary'><span class='glyphicon glyphicon-arrow-right' aria-hidden='true'></span> Push to production</span>";
-		echo "</a></li>";
-		if ($entry['productionDate']) {
-			echo "<li class='dropdown-header'>";
-			echo "Last pushed <time datetime='{$entry['productionDateAtom']}'>{$entry['productionDateStr']}</time></li>";
-		}
-		echo "<li role='separator' class='divider'></li>";
-		echo "<li><a data-formaction='server.php?action=remove' href='#' title='Remove graphic from Chart Builder interface. Chart is still live but can no longer be managed.'>";
-		echo "<span class='text-danger'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span> Remove graphic</span>";
-		echo "</a></li>";
-		echo "</ul>";
+	echo "<button type='button' class='btn btn-primary dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>";
+	echo "<span class='caret'></span><span class='sr-only'>Toggle Dropdown</span>";
+	echo "</button>";
+	echo "<ul class='dropdown-menu'>";
+	echo "<li><a href='#' title='Update graphic to use latest content from its Google Sheet.'>";
+	echo "<span class='text-success'>";
+	echo "<span class='glyphicon glyphicon-refresh' aria-hidden='true'></span> Refresh content";
+	echo "</span></a></li>";
+	if ($entry['stagingContentDate']) {
+		echo "<li class='dropdown-header'>";
+		echo "Last refreshed <time datetime='{$entry['stagingContentDateAtom']}'>{$entry['stagingContentDateStr']}</time></li>";
 	}
+	echo "<li role='separator' class='divider'></li>";
+	echo "<li><a data-formaction='server.php?action=update_from_template' href='#' data-type='{$entry['stagingTemplateType']}'>";
+	echo "<span class='text-warning'>";
+	echo "<span class='glyphicon glyphicon-stats' aria-hidden='true'></span> Rebuild from template";
+	echo "</span></a></li>";
+	echo "<li class='dropdown-header'><select class='form-control' name='type'>";
+	echo "<option value='' disabled>Select graphic template</option>";
+	echo "<option value='' disabled></option>";
+	foreach ($graphics->base as $graphic) {
+		$selected = ($graphic->id == $entry['stagingTemplateType']) ? " selected='selected'" : '';
+		echo "<option value='{$graphic->id}'{$selected}>{$graphic->description}</option>";
+	}
+	echo "<option value='' disabled></option>";
+	foreach ($graphics->advanced as $graphic) {
+		$selected = ($graphic->id == $entry['stagingTemplateType']) ? " selected='selected'" : '';
+		echo "<option value='{$graphic->id}'{$selected}>{$graphic->description}</option>";
+	}
+	echo "</select></li>";
+	if ($entry['stagingTemplateDate']) {
+		echo "<li class='dropdown-header'>";
+		echo "Last rebuilt <time datetime='{$entry['stagingTemplateDateAtom']}'>{$entry['stagingTemplateDateStr']}</time></li>";
+	}
+	echo "<li role='separator' class='divider'></li>";
+	echo "<li><a data-formaction='server.php?action=deploy_to_production' href='#'>";
+	echo "<span class='text-primary'><span class='glyphicon glyphicon-arrow-right' aria-hidden='true'></span> Push to production</span>";
+	echo "</a></li>";
+	if ($entry['productionDate']) {
+		echo "<li class='dropdown-header'>";
+		echo "Last pushed <time datetime='{$entry['productionDateAtom']}'>{$entry['productionDateStr']}</time></li>";
+	}
+	echo "<li role='separator' class='divider'></li>";
+	echo "<li><a data-formaction='server.php?action=remove' href='#' title='Remove graphic from Chart Builder interface. Chart is still live but can no longer be managed.'>";
+	echo "<span class='text-danger'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span> Remove graphic</span>";
+	echo "</a></li>";
+	echo "</ul>";
 
 	echo "</div>";
 	echo "<a class='btn btn-link' href='graphics/{$entry['name']}/build/'>Staging</a>";

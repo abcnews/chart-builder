@@ -1,7 +1,5 @@
 <?php
 
-$isAdvancedMode = (strpos($_SERVER['REQUEST_URI'],'?mode=advanced') !== false);
-
 require '_page-top.inc';
 require '_page-header.php';
 

@@ -9,13 +9,6 @@
 		<li role="presentation">
 			<a href="https://github.com/abcnews/dailygraphics/issues">Issue tracker</a>
 		</li>
-		<li role="presentation">
-			<?php if ($isAdvancedMode) { ?>
-					<a href="?mode=basic">Basic mode</a>
-			<?php } else { ?>
-					<a href="?mode=advanced">Advanced mode</a>
-			<?php } ?>
-		</li>
 	</ul>
 	<h1>Chart Builder</h1>
 </div>
