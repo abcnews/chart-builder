@@ -26,6 +26,8 @@
 }
 .graphic-types input:checked + .thumbnail {
 	border: 3px solid #999;
+	width: 100px;
+	height: 100px;
 }
 .graphic-types input:checked ~ label {
 	font-weight: bold;
@@ -36,8 +38,11 @@
 	background-size: contain;
 	background-repeat: no-repeat;
 	display: inline-block;
-	width: 100px;
-	height: 100px;
+	width: 20px;
+	height: 20px;
+	transition-property: height, width;
+	transition-duration: 0.1s;
+	transition-timing-function: linear;
 }
 .graphic-types .thumbnail:hover{
 	border: 3px solid #ddd;
@@ -45,6 +50,8 @@
 .graphic-types label {
 	vertical-align: middle;
 	font-weight: normal;
+	margin-bottom: 0;
+	cursor: pointer;
 }
 
 .label {
