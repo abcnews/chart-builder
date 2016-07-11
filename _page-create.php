@@ -23,6 +23,14 @@ $graphics = json_decode(file_get_contents('graphic-templates.json'));
 		echo "</li>";
 		$checked = '';
 	}
+	foreach ($graphics->advanced as $graphic) {
+		echo "<li class='list-group-item'>";
+		echo "<input{$checked} type='radio' name='type' value='{$graphic->id}' id='input-{$graphic->id}' />";
+		echo "<label for='input-{$graphic->id}' class='thumbnail' style='background-image:url(https://raw.githubusercontent.com/abcnews/dailygraphics/master/graphic_templates/_thumbs/" . str_replace("_","-",$graphic->id) . ".png);'></label>";
+		echo "<label for='input-{$graphic->id}' class='text-danger'>{$graphic->description}</label>";
+		echo "</li>";
+		$checked = '';
+	}
 ?>
 
 </ul>
