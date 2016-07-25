@@ -63,42 +63,45 @@
 .label.line_chart {
 	background: hsla(20, 100%, 90%, 1);
 }
-.label.scatterplot {
+.label.bubbleplot {
 	background: hsla(40, 100%, 90%, 1);
 }
+.label.scatterplot {
+	background: hsla(60, 100%, 90%, 1);
+}
 .label.column_chart {
-	background: hsla(70, 100%, 90%, 1);
+	background: hsla(80, 100%, 90%, 1);
 }
 .label.stacked_column_chart {
-	background: hsla(90, 100%, 90%, 1);
+	background: hsla(100, 100%, 90%, 1);
 }
 .label.slopegraph {
 	background: hsla(120, 100%, 90%, 1);
 }
 .label.bar_chart {
-	background: hsla(150, 100%, 90%, 1);
+	background: hsla(140, 100%, 90%, 1);
 }
 .label.grouped_bar_chart {
-	background: hsla(170, 100%, 90%, 1);
+	background: hsla(160, 100%, 90%, 1);
 }
 .label.stacked_bar_chart {
-	background: hsla(200, 100%, 90%, 1);
+	background: hsla(180, 100%, 90%, 1);
 }
 .label.dot_chart {
-	background: hsla(220, 100%, 90%, 1);
+	background: hsla(200, 100%, 90%, 1);
 }
 .label.block_histogram {
-	background: hsla(240, 100%, 90%, 1);
-}
-.label.graphic {
-	background: hsla(260, 0%, 90%, 1);
+	background: hsla(220, 100%, 90%, 1);
 }
 .label.locator_map {
-	background: hsla(260, 100%, 90%, 1);
+	background: hsla(240, 100%, 90%, 1);
 }
 .label.state_grid_map {
-	background: hsla(280, 100%, 90%, 1);
+	background: hsla(260, 100%, 90%, 1);
 }
 .label.table {
-	background: hsla(300, 100%, 90%, 1);
+	background: hsla(280, 100%, 90%, 1);
+}
+.label.graphic {
+	background: hsla(0, 0%, 90%, 1);
 }
