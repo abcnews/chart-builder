@@ -43,6 +43,10 @@
 			"description": "Scatterplot"
 		},
 		{
+			"id": "bubbleplot",
+			"description": "Bubbleplot"
+		},
+		{
 			"id": "table",
 			"description": "Responsive HTML table"
 		},
