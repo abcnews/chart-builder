@@ -93,6 +93,15 @@ if ($slug) {
 			bootstrapAlert($status, 'The graphic is not removed from production. Only from the Chart Builder interface.');
 			// TODO: also remove from contentftp?
 			break;
+
+		case "git_pull_dailygraphics":
+			runAndLogCommand("git pull");
+			break;
+
+		case "git_pull_chartbuilder":
+			runAndLogCommand("git -C ../ pull");
+			break;
+
 	}
 }
 
