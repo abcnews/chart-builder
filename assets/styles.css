@@ -102,6 +102,9 @@
 .label.table {
 	background: hsla(280, 100%, 90%, 1);
 }
+.label.ai2html {
+	background: hsla(320, 100%, 90%, 1);
+}
 .label.graphic {
 	background: hsla(0, 0%, 90%, 1);
 }
