@@ -35,6 +35,10 @@
 		{
 			"id": "pie_chart",
 			"description": "Pie chart"
+		},
+		{
+			"id": "waffle_chart",
+			"description": "Waffle chart"
 		}
 	],
 	"advanced": [
