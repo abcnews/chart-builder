@@ -108,3 +108,6 @@
 .label.graphic {
 	background: hsla(0, 0%, 90%, 1);
 }
+.label.waffle_chart {
+	background: hsla(19, 100%, 94%, 1);
+}
