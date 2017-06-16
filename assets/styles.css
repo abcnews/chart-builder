@@ -111,3 +111,6 @@
 .label.waffle_chart {
 	background: hsla(19, 100%, 94%, 1);
 }
+.label.sparkline_chart {
+	background: hsla(54, 77%, 75%, 1);
+}

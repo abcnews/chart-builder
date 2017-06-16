@@ -39,6 +39,10 @@
 		{
 			"id": "waffle_chart",
 			"description": "Waffle chart"
+		},
+		{
+			"id": "sparkline_chart",
+			"description": "Sparkline chart"
 		}
 	],
 	"advanced": [
