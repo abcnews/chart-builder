@@ -1,5 +1,5 @@
-export const PROJECT_NAME = 'power-prices-explainer';
-export const MARKER_NAME = 'powerpricesexplainer';
+export const PROJECT_NAME = 'chart-builder';
+export const MARKER_NAME = 'chart';
 export const MARKERS = [];
 
 export const SCROLLY_OPENER_PREFIX = `#scrollytellerNAME${MARKER_NAME}CONFIG`;
