@@ -2,16 +2,20 @@ import type { InferInput, InferOutput } from 'valibot';
 import type {
   AnnotationSchema,
   ArrowSchema,
+  ColumnDefinitionSchema,
   DataRowSchema,
   DataSchema,
+  DataSetSchema,
   DataSourceSchema,
   DeletableSchema,
   HighlightSchema,
+  SeriesLineSchema,
   SeriesSchema,
   VisualisationSchema
 } from './schemas';
 import type { Readable } from 'svelte/store';
 
+export type DataSetType = InferOutput<typeof DataSetSchema>;
 export type DataSchemaType = InferOutput<typeof DataSchema>;
 export type DataRowSchemaType = InferOutput<typeof DataRowSchema>;
 export type DeletableType = InferOutput<typeof DeletableSchema>;
@@ -22,6 +26,10 @@ export type ArrowType = InferOutput<typeof ArrowSchema>;
 export type HighlightType = InferOutput<typeof HighlightSchema>;
 export type SeriesType = InferOutput<typeof SeriesSchema>;
 export type DataSourceType = InferInput<typeof DataSourceSchema>;
+
+export type SeriesLineType = InferOutput<typeof SeriesLineSchema>;
+
+export type ColumnDefinitionType = InferOutput<typeof ColumnDefinitionSchema>;
 
 export enum AnnotationAnchorType {
   Top = 'TOP',
@@ -38,7 +46,7 @@ export enum AnnotationAnchorType {
 export type CustomLayerCakeContextType = { showConstructionMarks: boolean };
 
 export type LayerCakeGroupedDataType = LayerCakeGroupedDataGroupType[];
-export type LayerCakeGroupedDataGroupType = { series: string; values: LayerCakeGroupedDataGroupValuesType[] };
+export type LayerCakeGroupedDataGroupType = { group: string; values: LayerCakeGroupedDataGroupValuesType[] };
 export type LayerCakeGroupedDataGroupValuesType = { date: Date; value: number; series: string };
 
 export type LayerCakeContextType = {

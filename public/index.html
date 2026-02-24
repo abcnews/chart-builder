@@ -1,27 +1,12 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Chart</title>
-    <!-- If you add `extractCSS:true` to your build config, add the <link> below -->
-    <!-- <link rel="stylesheet" href="index.css" /> -->
+    <title>Chart Builder</title>
     <script src="builder.js"></script>
-    <link
-      rel="preload"
-      href="//res.abc.net.au/fonts/abcsansnova/20211112/abcsansnova-regular.woff2"
-      as="font"
-      type="font/woff2"
-    />
-    <!-- If you add `addModernJS:true` to your build config, replace the <script> above with the ones below -->
-    <!-- <script type="module" src="index_modern.js"></script> -->
-    <!-- <script nomodule src="index.js"></script> -->
   </head>
   <body>
     <div data-mount id="chart"></div>
-    <!-- Mock Odyssey's loaded event so the `whenOdysseyLoaded` promise resolves -->
-    <script>
-      window.dispatchEvent(new CustomEvent('odyssey:api'));
-    </script>
   </body>
 </html>

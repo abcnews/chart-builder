@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { data } from '../lib/data.svelte';
   import { visState } from '../lib/state.svelte';
 
   import { LayerCake, Svg, Html, groupLonger, flatten } from 'layercake';
@@ -17,31 +16,66 @@
   import type { CustomLayerCakeContextType } from '../lib/types';
   import Lines from './layercake-components/Lines.svg.svelte';
   import FontProvider from './FontProvider.svelte';
+  import Line from './primatives/Line.svg.svelte';
+  import { csvParse } from 'd3-dsv';
+  import { rowParser } from '../lib/data-helpers';
 
   interface Props {
     showConstructionMarks?: boolean;
   }
 
-  const xKey = 'date';
-  const yKey = 'value';
+  const xKey = 'x';
+  const yKey = 'y';
   const zKey = 'series';
+
+  let seriesWithData = $derived.by(async () => {
+    const datasets = await Promise.all(
+      visState.config.series.map(async series => {
+        if (series.deleted) return undefined;
+        const dataset = visState.config.data.find(data => data.name === series.dataset);
+        if (typeof dataset === 'undefined') return undefined;
+        const raw = await fetch(dataset.url).then(res => res.text());
+        const data = csvParse(raw, rowParser(dataset.columns));
+        return { id: series.id, x: series.x, y: series.y, columns: dataset.columns, type: series.type, data };
+      })
+    );
+    return datasets.filter(set => !!set);
+  });
+
+  let flatData = $derived.by(async () => {
+    const series = await seriesWithData;
+    const result = series.flatMap(({ x, y, data, id }) => {
+      if (typeof x === 'undefined' || typeof y === 'undefined') {
+        console.warn(`Missing x or y column for series ${id}`);
+        return [];
+      }
+      return data.map(d => {
+        return { x: d[x], y: d[y], series: id };
+      });
+    });
+
+    return result;
+  });
+
+  let groupedData = $derived.by(async () => {
+    const flat = await flatData;
+    return groupLonger(
+      flat,
+      visState.config.series.map(d => d.id)
+    );
+  });
+
+  let chartData = $derived(Promise.all([flatData, groupedData]));
+
+  $effect(() => {
+    chartData.then(d => console.log(d));
+  });
 
   const seriesColors = ['#007BC7', '#00297E'];
 
-  const seriesNames = Object.keys(data[0]).filter(d => d !== xKey);
-
-  const groupedData = $derived(
-    groupLonger(data, seriesNames, {
-      groupTo: zKey,
-      valueTo: yKey
-    })
-  );
-
-  const flatData = $derived(flatten(groupedData, 'values')); // This is apparently equivalent to Array.prototype.flat TODO: swap it out when understood
-
   let annotations = $derived(visState.config.annotations.filter(d => !d.deleted));
   let arrows = $derived(visState.config.arrows.filter(d => !d.deleted));
-  let lines = $derived(visState.config.lines.filter(d => !d.deleted));
+  let series = $derived(visState.config.series.filter(d => !d.deleted));
 
   const formatLabelX = timeFormat('%b. %Y');
   const formatLabelY = (d: number) => format(`~s`)(d);
@@ -65,32 +99,34 @@
         <h3 class="chart-subtitle">{visState.config.subtitle}</h3>
       {/if}
     </header>
-    <LayerCake
-      padding={plotPadding}
-      x={xKey}
-      y={yKey}
-      z={zKey}
-      zScale={scaleOrdinal()}
-      zRange={seriesColors}
-      {flatData}
-      data={groupedData}
-      custom={customLayerCakeContext}
-    >
-      <Html>
-        <BackgroundHighlight />
-      </Html>
-      <Svg>
-        <AxisX gridlines={false} ticks={Math.floor(chartWidth / 130)} format={formatLabelX} tickMarks />
-        <AxisY ticks={4} format={formatLabelY} />
-        <Lines {lines} />
-      </Svg>
-      <Html>
-        <Annotations {annotations} />
-      </Html>
-      <Svg>
-        <Arrows {arrows} />
-      </Svg>
-    </LayerCake>
+    {#await chartData then [flatData, groupedData]}
+      <LayerCake
+        padding={plotPadding}
+        x={xKey}
+        y={yKey}
+        z={zKey}
+        zScale={scaleOrdinal()}
+        zRange={seriesColors}
+        {flatData}
+        data={groupedData}
+        custom={customLayerCakeContext}
+      >
+        <Html>
+          <BackgroundHighlight />
+        </Html>
+        <Svg>
+          <AxisX gridlines={false} ticks={Math.floor(chartWidth / 130)} format={formatLabelX} tickMarks />
+          <AxisY ticks={4} format={formatLabelY} />
+          <Lines lines={series.filter(s => s.type === 'line')} />
+        </Svg>
+        <Html>
+          <Annotations {annotations} />
+        </Html>
+        <Svg>
+          <Arrows {arrows} />
+        </Svg>
+      </LayerCake>
+    {/await}
     {#if (visState.config.description && visState.config.description.length > 0) || visState.config.sources.length}
       <footer>
         {#if visState.config.description}<p>{visState.config.description}</p>{/if}

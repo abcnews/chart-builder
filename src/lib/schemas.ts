@@ -3,15 +3,19 @@ import {
   array,
   enum_,
   intersect,
+  literal,
   nullable,
   number,
   object,
   optional,
   picklist,
   pipe,
+  record,
   string,
   transform,
-  union
+  union,
+  url,
+  variant
 } from 'valibot';
 import { AnnotationAnchorType } from './types';
 
@@ -20,8 +24,8 @@ export const DeletableSchema = object({
 });
 
 export const orientations = ['left', 'right', 'above', 'below', 'middle'] as const;
-
 export const shapes = ['circle', 'diamond', 'square'] as const;
+export const columnTypes = ['string', 'number', 'date', 'boolean'] as const;
 
 export const DataRowSchema = object({
   date: pipe(
@@ -37,6 +41,20 @@ export const DataSchema = array(DataRowSchema);
 export const ShapesSchema = picklist(shapes);
 
 export const AnnotationAnchorSchema = enum_(AnnotationAnchorType);
+
+export const ColumnTypesSchema = picklist(columnTypes);
+
+export const ColumnDefinitionSchema = record(string(), ColumnTypesSchema);
+
+/**
+ * This defines a generic dataset that can be used in the builder. Essentially it's just a name and a URL with some
+ * additional options to configure how its interpreted.
+ */
+export const DataSetSchema = object({
+  name: string(),
+  url: string(),
+  columns: optional(ColumnDefinitionSchema, {})
+});
 
 export const AnnotationSchema = object({
   label: string(),
@@ -68,10 +86,15 @@ export const HighlightSchema = object({
   })
 });
 
-export const SeriesSchema = object({
+export const SeriesLineSchema = object({
   id: string(),
-  series: string()
+  type: literal('line'),
+  dataset: optional(string()),
+  x: optional(string()),
+  y: optional(string())
 });
+
+export const SeriesSchema = variant('type', [SeriesLineSchema]);
 
 export const DataSourceSchema = object({
   label: string(),
@@ -92,7 +115,8 @@ export const VisualisationSchema = object({
   annotations: optional(array(intersect([AnnotationSchema, DeletableSchema])), []),
   arrows: optional(array(intersect([ArrowSchema, DeletableSchema])), []),
   highlights: optional(array(intersect([HighlightSchema, DeletableSchema])), []),
-  lines: optional(array(intersect([SeriesSchema, DeletableSchema])), []),
+  series: optional(array(intersect([SeriesSchema, DeletableSchema])), []),
+  data: optional(array(intersect([DataSetSchema, DeletableSchema])), []),
   sources: optional(array(intersect([DataSourceSchema, DeletableSchema])), [])
 });
 

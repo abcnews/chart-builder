@@ -12,6 +12,7 @@
     AnnotationAnchorType,
     type AnnotationType,
     type ArrowType,
+    type DataSetType,
     type DataSourceType,
     type DeletableType,
     type HighlightType,
@@ -19,12 +20,14 @@
   } from '../../lib/types';
   import { PROJECT_NAME, SCROLLY_MARK_PREFIX, SCROLLY_OPENER_PREFIX } from '../../lib/constants';
 
-  import LineEditForm from './edit-forms/LineEditForm.svelte';
+  import LineEditForm from './edit-forms/SeriesEditForm.svelte';
   import AnnotationEditForm from './edit-forms/AnnotationEditForm.svelte';
   import ArrowEditForm from './edit-forms/ArrowEditForm.svelte';
   import HighlightEditForm from './edit-forms/HighlightEditForm.svelte';
   import ItemCollection from './ItemCollection.svelte';
   import DataSourceEditForm from './edit-forms/DataSourceEditForm.svelte';
+  import DataSetEditForm from './edit-forms/DataSetEditForm.svelte';
+  import SeriesEditForm from './edit-forms/SeriesEditForm.svelte';
 
   const prefixes = {
     'Scrolly mark': SCROLLY_MARK_PREFIX,
@@ -55,16 +58,18 @@
     };
   });
 
+  const defaultDataSet = { name: '', url: '', columns: {} };
   const defaultAnnotation = { label: '', x: '', y: 0, anchor: AnnotationAnchorType.TopLeft, width: 10 };
   const defaultArrow = { from: { x: '', y: 0 }, to: { x: '', y: 0 } };
   const defaultHighlight = { tl: { x: '2019-01-01', y: 10 }, br: { x: '2020-01-01', y: 100 } };
-  const defaultLine = { id: '', series: 'excl' };
+  const defaultSeries = { id: '', type: 'line' as 'line' };
   const defaultDataSource = { label: '', url: '' };
 
+  let currentDataSet: (DataSetType & DeletableType) | undefined = $state();
   let currentAnnotation: (AnnotationType & DeletableType) | undefined = $state();
   let currentArrow: (ArrowType & DeletableType) | undefined = $state();
   let currentHighlight: (HighlightType & DeletableType) | undefined = $state();
-  let currentLine: (SeriesType & DeletableType) | undefined = $state();
+  let currentSeries: (SeriesType & DeletableType) | undefined = $state();
   let currentDataSource: (DataSourceType & DeletableType) | undefined = $state();
 
   let showConstructionMarks: boolean = $state(localStorage.getItem('showConstructionMarks') !== null);
@@ -79,7 +84,6 @@
 
   $effect(() => {
     const url = new URL(document.location.href);
-
     url.hash = encode(visState.config);
     history.replaceState(undefined, document.title, url.toString());
   });
@@ -90,6 +94,18 @@
 {/snippet}
 
 {#snippet Sidebar()}
+  <ItemCollection
+    legend="Data sets"
+    bind:current={currentDataSet}
+    bind:collection={visState.config.data}
+    template={defaultDataSet}
+    itemLabelGetter={d => d.name}
+  >
+    {#snippet EditForm()}
+      <DataSetEditForm bind:set={currentDataSet} />
+    {/snippet}
+  </ItemCollection>
+
   <fieldset>
     <legend>Chart options</legend>
     <label class="item" for="chart-title">Title</label>
@@ -97,15 +113,16 @@
     <label class="item" for="chart-description">Description</label>
     <textarea id="chart-description" bind:value={visState.config.description}></textarea>
     <hr />
+
     <ItemCollection
-      legend="Lines"
-      bind:current={currentLine}
-      template={defaultLine}
-      bind:collection={visState.config.lines}
-      itemLabelGetter={line => line.id}
+      legend="Series"
+      bind:current={currentSeries}
+      template={defaultSeries}
+      bind:collection={visState.config.series}
+      itemLabelGetter={series => series.id}
     >
       {#snippet EditForm()}
-        <LineEditForm bind:line={currentLine} />
+        <SeriesEditForm bind:series={currentSeries} />
       {/snippet}
     </ItemCollection>
 

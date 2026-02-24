@@ -7,24 +7,27 @@
     type LayerCakeContextType,
     type LayerCakeGroupedDataGroupType,
     type LayerCakeGroupedDataGroupValuesType,
+    type SeriesLineType,
     type SeriesType
   } from '../../lib/types';
 
   interface Props {
-    lines: SeriesType[];
+    lines: SeriesLineType[];
     curve?: CurveFactory;
   }
   const { data, xGet, yGet, zGet } = getContext<LayerCakeContextType>('LayerCake');
 
   const getSeries = (name: string) => {
-    return $data.find(d => d.series === name);
+    return $data.find(d => {
+      return d.group === name;
+    });
   };
 
   let { curve = curveLinear, lines }: Props = $props();
   let lineGenerator = $derived(line<LayerCakeGroupedDataGroupValuesType>($xGet, $yGet).curve(curve));
   const renderedLines = $derived(
     lines.flatMap(line => {
-      const series = getSeries(line.series);
+      const series = getSeries(line.id);
       if (!series) return [];
       return {
         id: line.id,

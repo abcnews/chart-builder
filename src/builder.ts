@@ -1,7 +1,7 @@
 import { whenDOMReady } from '@abcnews/env-utils';
 import { selectMounts } from '@abcnews/mount-utils';
 import type { Mount } from '@abcnews/mount-utils';
-import BuilderApp from './components/builder/BuilderApp.svelte';
+import BuilderApp from './components/Builder/BuilderApp.svelte';
 import { mount } from 'svelte';
 import { proxy } from '@abcnews/dev-proxy';
 import { MARKER_NAME, PROJECT_NAME } from './lib/constants';
