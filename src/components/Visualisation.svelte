@@ -8,7 +8,7 @@
   import { format } from 'd3-format';
   import AxisX from './layercake-components/AxisX.svg.svelte';
   import AxisY from './layercake-components/AxisY.svg.svelte';
-  import { plotPadding } from '../lib/constants';
+  import { defaultAxisLabelFormatStrings, plotPadding } from '../lib/constants';
   import Annotations from './layercake-components/Annotations.html.svelte';
   import Arrows from './layercake-components/Arrows.svg.svelte';
   import BackgroundHighlight from './layercake-components/BackgroundHighlight.svelte';
@@ -81,13 +81,13 @@
   let yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
 
   let getAxisLabelFormatter = (axisOptions: AxisOptionsType, axisDataType: ColumnTypesType) => {
-    if (axisDataType === 'date') return timeFormat(axisOptions.format || '%b. %Y');
+    if (axisDataType === 'date') return timeFormat(axisOptions.format || defaultAxisLabelFormatStrings.date);
     if (axisDataType === 'number') {
       return (d: number) => {
         try {
-          return format(axisOptions.format || '~s')(d);
+          return format(axisOptions.format || defaultAxisLabelFormatStrings.number)(d);
         } catch (e) {
-          return format('~s')(d);
+          return format(defaultAxisLabelFormatStrings.number)(d);
         }
       };
     }

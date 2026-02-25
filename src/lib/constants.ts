@@ -13,3 +13,8 @@ export const plotPadding = {
   left: 30,
   right: 10
 };
+
+export const defaultAxisLabelFormatStrings = {
+  date: '%b. %Y',
+  number: '~s'
+};

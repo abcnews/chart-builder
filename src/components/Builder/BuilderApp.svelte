@@ -18,7 +18,12 @@
     type HighlightType,
     type SeriesType
   } from '../../lib/types';
-  import { PROJECT_NAME, SCROLLY_MARK_PREFIX, SCROLLY_OPENER_PREFIX } from '../../lib/constants';
+  import {
+    defaultAxisLabelFormatStrings,
+    PROJECT_NAME,
+    SCROLLY_MARK_PREFIX,
+    SCROLLY_OPENER_PREFIX
+  } from '../../lib/constants';
 
   import AnnotationEditForm from './edit-forms/AnnotationEditForm.svelte';
   import ArrowEditForm from './edit-forms/ArrowEditForm.svelte';
@@ -27,6 +32,7 @@
   import DataSourceEditForm from './edit-forms/DataSourceEditForm.svelte';
   import DataSetEditForm from './edit-forms/DataSetEditForm.svelte';
   import SeriesEditForm from './edit-forms/SeriesEditForm.svelte';
+  import FieldGroup from './edit-forms/FieldGroup.svelte';
 
   const prefixes = {
     'Scrolly mark': SCROLLY_MARK_PREFIX,
@@ -117,10 +123,22 @@
     <hr />
     <fieldset>
       <legend>Axes</legend>
-      <label for="x-axis-format">x-axis ({xAxisDataType}) format string</label>
-      <input id="x-axis-format" type="text" bind:value={visState.config.axes.x.format} />
-      <label for="y-axis-format">y-axis ({yAxisDataType}) format string</label>
-      <input id="y-axis-format" type="text" bind:value={visState.config.axes.y.format} />
+      <FieldGroup label="Formatting">
+        <label for="x-axis-format">x ({xAxisDataType})</label>
+        <input
+          id="x-axis-format"
+          type="text"
+          bind:value={visState.config.axes.x.format}
+          placeholder={`Default: ${defaultAxisLabelFormatStrings[xAxisDataType || ''] || ''}`}
+        />
+        <label for="y-axis-format">y ({yAxisDataType})</label>
+        <input
+          id="y-axis-format"
+          type="text"
+          bind:value={visState.config.axes.y.format}
+          placeholder={`Default: ${defaultAxisLabelFormatStrings[yAxisDataType || ''] || ''}`}
+        />
+      </FieldGroup>
       <small>
         Formatting uses d3's formatting functions (<a href="https://d3js.org/d3-format#locale_format">numbers</a>,
         <a href="https://d3js.org/d3-time-format#locale_format">dates</a>).

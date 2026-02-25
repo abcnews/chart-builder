@@ -10,6 +10,8 @@
 <style>
   div {
     display: grid;
+    row-gap: 5px;
+    column-gap: 5px;
   }
   .columns-2 {
     grid-template-columns: auto auto;
