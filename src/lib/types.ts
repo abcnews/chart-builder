@@ -2,7 +2,10 @@ import type { InferInput, InferOutput } from 'valibot';
 import type {
   AnnotationSchema,
   ArrowSchema,
+  AxisConfigSchema,
+  AxisOptionsSchema,
   ColumnDefinitionSchema,
+  ColumnTypesSchema,
   DataRowSchema,
   DataSchema,
   DataSetSchema,
@@ -28,7 +31,9 @@ export type SeriesType = InferOutput<typeof SeriesSchema>;
 export type DataSourceType = InferInput<typeof DataSourceSchema>;
 
 export type SeriesLineType = InferOutput<typeof SeriesLineSchema>;
-
+export type AxisConfigType = InferOutput<typeof AxisConfigSchema>;
+export type AxisOptionsType = InferOutput<typeof AxisOptionsSchema>;
+export type ColumnTypesType = InferOutput<typeof ColumnTypesSchema>;
 export type ColumnDefinitionType = InferOutput<typeof ColumnDefinitionSchema>;
 
 export enum AnnotationAnchorType {
@@ -47,7 +52,13 @@ export type CustomLayerCakeContextType = { showConstructionMarks: boolean };
 
 export type LayerCakeGroupedDataType = LayerCakeGroupedDataGroupType[];
 export type LayerCakeGroupedDataGroupType = { group: string; values: LayerCakeGroupedDataGroupValuesType[] };
-export type LayerCakeGroupedDataGroupValuesType = { date: Date; value: number; series: string };
+export type LayerCakeGroupedDataGroupValuesType =
+  | {
+      x: string | number | boolean | Date | null | undefined;
+      y: string | number | boolean | Date | null | undefined;
+      series: string;
+    }[]
+  | undefined;
 
 export type LayerCakeContextType = {
   xScale: Readable<(date: Date) => number>;

@@ -3,12 +3,9 @@
   import { line, curveLinear, type CurveFactory } from 'd3-shape';
   import { fade } from 'svelte/transition';
   import {
-    type DataRowSchemaType,
     type LayerCakeContextType,
-    type LayerCakeGroupedDataGroupType,
     type LayerCakeGroupedDataGroupValuesType,
-    type SeriesLineType,
-    type SeriesType
+    type SeriesLineType
   } from '../../lib/types';
 
   interface Props {
@@ -18,9 +15,10 @@
   const { data, xGet, yGet, zGet } = getContext<LayerCakeContextType>('LayerCake');
 
   const getSeries = (name: string) => {
-    return $data.find(d => {
+    const series = $data.find(d => {
       return d.group === name;
     });
+    return series;
   };
 
   let { curve = curveLinear, lines }: Props = $props();
@@ -29,11 +27,13 @@
     lines.flatMap(line => {
       const series = getSeries(line.id);
       if (!series) return [];
-      return {
-        id: line.id,
-        d: lineGenerator(series.values),
-        stroke: $zGet(series.values[0])
-      };
+      return [
+        {
+          id: line.id,
+          d: lineGenerator(series.values),
+          stroke: $zGet(series.values[0])
+        }
+      ];
     })
   );
 </script>

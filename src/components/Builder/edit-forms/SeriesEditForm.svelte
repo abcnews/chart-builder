@@ -8,8 +8,9 @@
   }
 
   let { series = $bindable() }: Props = $props();
-
-  let dataset = $derived(visState.config.data.find(d => d.name === series?.dataset));
+  let dataset = $derived.by(() => {
+    return visState.config.data.find(d => d.name === series?.dataset);
+  });
 </script>
 
 {#if series}
@@ -21,19 +22,19 @@
       <option id={dataset.name}>{dataset.name}</option>
     {/each}
   </select>
-  {#if dataset}
-    <label for="series-x">x</label>
-    <select id="series-x" bind:value={series.x}>
-      {#each Object.entries(dataset.columns) as [name, type], i}
-        <option value={name}>{name} ({type})</option>
-      {/each}
-    </select>
-    <label for="series-y">y</label>
-    <select id="series-y" bind:value={series.y}>
-      {#each Object.entries(dataset.columns) as [name, type], i}
-        <option value={name}>{name} ({type})</option>
-      {/each}
-    </select>
-  {/if}
+
+  <label for="series-x">x</label>
+  <select id="series-x" bind:value={series.x}>
+    {#each Object.entries(dataset?.columns || []) as [name, type], i}
+      <option value={name}>{name} ({type})</option>
+    {/each}
+  </select>
+  <label for="series-y">y</label>
+  <select id="series-y" bind:value={series.y}>
+    {#each Object.entries(dataset?.columns || []) as [name, type], i}
+      <option value={name}>{name} ({type})</option>
+    {/each}
+  </select>
+
   <FormActions bind:item={series} />
 {/if}

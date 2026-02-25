@@ -101,6 +101,15 @@ export const DataSourceSchema = object({
   url: optional(string())
 });
 
+export const AxisOptionsSchema = object({
+  format: optional(string())
+});
+
+export const AxisConfigSchema = object({
+  x: AxisOptionsSchema,
+  y: AxisOptionsSchema
+});
+
 /**
  * Over time, the goal is to move toward following the [Vega schema](https://vega.github.io/vega/docs/). It is a minumum viable
  * interpretation for this specific visualisation with the idea that it might be used as a starting point for expansion
@@ -117,7 +126,8 @@ export const VisualisationSchema = object({
   highlights: optional(array(intersect([HighlightSchema, DeletableSchema])), []),
   series: optional(array(intersect([SeriesSchema, DeletableSchema])), []),
   data: optional(array(intersect([DataSetSchema, DeletableSchema])), []),
-  sources: optional(array(intersect([DataSourceSchema, DeletableSchema])), [])
+  sources: optional(array(intersect([DataSourceSchema, DeletableSchema])), []),
+  axes: optional(AxisConfigSchema, { x: {}, y: {} })
 });
 
 export const VisualisationStateSchema = object({

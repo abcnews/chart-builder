@@ -4,7 +4,7 @@
   import Visualisation from '../Visualisation.svelte';
   import { visState } from '../../lib/state.svelte';
   import { onMount } from 'svelte';
-  import { loadMarkerConfig } from '../../lib/data-accessors';
+  import { getAxisDataType, loadMarkerConfig } from '../../lib/data-accessors';
   import { isValiError } from 'valibot';
   import ScreenshotTool from './ScreenshotTool/ScreenshotTool.svelte';
 
@@ -20,7 +20,6 @@
   } from '../../lib/types';
   import { PROJECT_NAME, SCROLLY_MARK_PREFIX, SCROLLY_OPENER_PREFIX } from '../../lib/constants';
 
-  import LineEditForm from './edit-forms/SeriesEditForm.svelte';
   import AnnotationEditForm from './edit-forms/AnnotationEditForm.svelte';
   import ArrowEditForm from './edit-forms/ArrowEditForm.svelte';
   import HighlightEditForm from './edit-forms/HighlightEditForm.svelte';
@@ -87,6 +86,9 @@
     url.hash = encode(visState.config);
     history.replaceState(undefined, document.title, url.toString());
   });
+
+  let xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
+  let yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
 </script>
 
 {#snippet Viz()}
@@ -113,7 +115,17 @@
     <label class="item" for="chart-description">Description</label>
     <textarea id="chart-description" bind:value={visState.config.description}></textarea>
     <hr />
-
+    <fieldset>
+      <legend>Axes</legend>
+      <label for="x-axis-format">x-axis ({xAxisDataType}) format string</label>
+      <input id="x-axis-format" type="text" bind:value={visState.config.axes.x.format} />
+      <label for="y-axis-format">y-axis ({yAxisDataType}) format string</label>
+      <input id="y-axis-format" type="text" bind:value={visState.config.axes.y.format} />
+      <small>
+        Formatting uses d3's formatting functions (<a href="https://d3js.org/d3-format#locale_format">numbers</a>,
+        <a href="https://d3js.org/d3-time-format#locale_format">dates</a>).
+      </small>
+    </fieldset>
     <ItemCollection
       legend="Series"
       bind:current={currentSeries}
