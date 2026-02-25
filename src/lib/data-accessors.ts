@@ -18,7 +18,7 @@ export const loadMarkerConfig = (data: string | Record<string, unknown>) => {
 };
 
 export const getAxisDataType = (config: VisualisationType, axis: 'x' | 'y') => {
-  const series = config.series[0];
+  const series = config.series.filter(d => !d.deleted)[0];
   if (!series || !series[axis]) return undefined;
   const dataset = config.data.find(d => d.name === series.dataset);
   if (!dataset) return undefined;

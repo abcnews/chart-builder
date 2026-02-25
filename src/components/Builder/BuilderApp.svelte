@@ -158,7 +158,9 @@
       itemLabelGetter={arrow => `${Object.values(arrow.from).join(', ')} → ${Object.values(arrow.to).join(', ')}`}
     >
       {#snippet EditForm()}
-        <ArrowEditForm bind:arrow={currentArrow} />
+        {#if currentArrow}
+          <ArrowEditForm bind:arrow={currentArrow} />
+        {/if}
       {/snippet}
     </ItemCollection>
 

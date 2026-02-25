@@ -4,6 +4,7 @@ import type {
   ArrowSchema,
   AxisConfigSchema,
   AxisOptionsSchema,
+  ChartPositionSchema,
   ColumnDefinitionSchema,
   ColumnTypesSchema,
   DataRowSchema,
@@ -35,6 +36,7 @@ export type AxisConfigType = InferOutput<typeof AxisConfigSchema>;
 export type AxisOptionsType = InferOutput<typeof AxisOptionsSchema>;
 export type ColumnTypesType = InferOutput<typeof ColumnTypesSchema>;
 export type ColumnDefinitionType = InferOutput<typeof ColumnDefinitionSchema>;
+export type ChartPositionType = InferOutput<typeof ChartPositionSchema>;
 
 export enum AnnotationAnchorType {
   Top = 'TOP',

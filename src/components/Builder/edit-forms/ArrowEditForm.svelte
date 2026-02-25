@@ -1,23 +1,33 @@
 <script lang="ts">
+  import { getAxisDataType } from '../../../lib/data-accessors';
+  import { visState } from '../../../lib/state.svelte';
   import type { ArrowType, DeletableType } from '../../../lib/types';
+  import ChartPositionInput from './ChartPositionInput.svelte';
   import FormActions from './FormActions.svelte';
 
   interface Props {
-    arrow: (ArrowType & DeletableType) | undefined;
+    arrow: ArrowType & DeletableType;
   }
 
   let { arrow = $bindable() }: Props = $props();
+  const xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
+  const yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
 </script>
 
-{#if arrow}
-  <label for="annotation-text">from x</label>
-  <input type="date" bind:value={arrow.from.x} />
-  <label for="annotation-text">from y</label>
-  <input type="number" bind:value={arrow.from.y} />
-  <label for="annotation-text">to x</label>
-  <input type="date" bind:value={arrow.to.x} />
-  <label for="annotation-text">to y</label>
-  <input type="number" bind:value={arrow.to.y} />
-
-  <FormActions bind:item={arrow} />
+{#if typeof xAxisDataType === 'undefined' || typeof yAxisDataType === 'undefined'}
+  <p>You must add a series before arrows can be positioned.</p>
+{:else}
+  <ChartPositionInput
+    label="From"
+    id="arrow-start"
+    bind:value={arrow.from}
+    columnTypes={{ x: xAxisDataType, y: yAxisDataType }}
+  />
+  <ChartPositionInput
+    label="To"
+    id="arrow-end"
+    bind:value={arrow.to}
+    columnTypes={{ x: xAxisDataType, y: yAxisDataType }}
+  />
 {/if}
+<FormActions bind:item={arrow} />

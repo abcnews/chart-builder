@@ -1,6 +1,7 @@
 import { parse } from 'date-fns';
 import {
   array,
+  date,
   enum_,
   intersect,
   literal,
@@ -13,6 +14,7 @@ import {
   record,
   string,
   transform,
+  tuple,
   union,
   url,
   variant
@@ -46,6 +48,13 @@ export const ColumnTypesSchema = picklist(columnTypes);
 
 export const ColumnDefinitionSchema = record(string(), ColumnTypesSchema);
 
+export const AxisPositionSchema = union([number(), string()]);
+
+export const ChartPositionSchema = object({
+  x: AxisPositionSchema,
+  y: AxisPositionSchema
+});
+
 /**
  * This defines a generic dataset that can be used in the builder. Essentially it's just a name and a URL with some
  * additional options to configure how its interpreted.
@@ -56,34 +65,23 @@ export const DataSetSchema = object({
   columns: optional(ColumnDefinitionSchema, {})
 });
 
-export const AnnotationSchema = object({
-  label: string(),
-  x: union([number(), string()]),
-  y: number(),
-  anchor: optional(AnnotationAnchorSchema, AnnotationAnchorType.Top),
-  width: optional(number(), 10) // Width in em units
-});
+export const AnnotationSchema = intersect([
+  object({
+    label: string(),
+    anchor: optional(AnnotationAnchorSchema, AnnotationAnchorType.Top),
+    width: optional(number(), 10) // Width in em units
+  }),
+  ChartPositionSchema
+]);
 
 export const ArrowSchema = object({
-  from: object({
-    x: union([number(), string()]),
-    y: number()
-  }),
-  to: object({
-    x: union([number(), string()]),
-    y: number()
-  })
+  from: ChartPositionSchema,
+  to: ChartPositionSchema
 });
 
 export const HighlightSchema = object({
-  tl: object({
-    x: union([number(), string()]),
-    y: number()
-  }),
-  br: object({
-    x: union([number(), string()]),
-    y: number()
-  })
+  tl: ChartPositionSchema,
+  br: ChartPositionSchema
 });
 
 export const SeriesLineSchema = object({
@@ -102,7 +100,8 @@ export const DataSourceSchema = object({
 });
 
 export const AxisOptionsSchema = object({
-  format: optional(string())
+  format: optional(string()),
+  domain: optional(array(ColumnTypesSchema))
 });
 
 export const AxisConfigSchema = object({

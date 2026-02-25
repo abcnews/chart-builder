@@ -1,5 +1,8 @@
 <script lang="ts">
+  import { getAxisDataType } from '../../../lib/data-accessors';
+  import { visState } from '../../../lib/state.svelte';
   import type { DeletableType, HighlightType } from '../../../lib/types';
+  import ChartPositionInput from './ChartPositionInput.svelte';
   import FormActions from './FormActions.svelte';
 
   interface Props {
@@ -7,39 +10,25 @@
   }
 
   let { highlight = $bindable() }: Props = $props();
+  const xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
+  const yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
 </script>
 
 {#if highlight}
-  <fieldset>
-    <legend>Top left</legend>
-    <label for="highlight-top-left-x">x</label>
-    <input id="highlight-top-left-x" type="date" bind:value={highlight.tl.x} />
-    <label for="highlight-top-left-y">y</label>
-    <input id="highlight-to--left-y" type="number" bind:value={highlight.tl.y} />
-  </fieldset>
-  <fieldset>
-    <legend>Bottom right</legend>
-    <label for="highlight-bottom-right-x">x</label>
-    <input id="highlight-bottom-right-x" type="date" bind:value={highlight.br.x} />
-    <label for="highlight-bottom-right-y">y</label>
-    <input id="highlight-bottom-right-y" type="number" bind:value={highlight.br.y} />
-  </fieldset>
+  {#if !xAxisDataType || !yAxisDataType}{:else}
+    <ChartPositionInput
+      id="highlight-top-left"
+      label="Top left"
+      bind:value={highlight.tl}
+      columnTypes={{ x: xAxisDataType, y: yAxisDataType }}
+    />
+    <ChartPositionInput
+      id="highlight-bottom-right"
+      label="Bottom right"
+      bind:value={highlight.br}
+      columnTypes={{ x: xAxisDataType, y: yAxisDataType }}
+    />
+  {/if}
 
   <FormActions bind:item={highlight} />
 {/if}
-
-<style>
-  fieldset {
-    border: none;
-    padding: 0;
-    display: grid;
-    grid-template-columns: auto auto;
-    position: relative;
-
-    legend {
-      position: relative;
-      display: block;
-      grid-row: 1/3;
-    }
-  }
-</style>

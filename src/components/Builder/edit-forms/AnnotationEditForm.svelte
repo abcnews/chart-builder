@@ -1,6 +1,10 @@
 <script lang="ts">
+  import { getAxisDataType } from '../../../lib/data-accessors';
+  import { visState } from '../../../lib/state.svelte';
   import type { AnnotationType, DeletableType } from '../../../lib/types';
   import AnchorPointSelector from '../AnchorPointSelector.svelte';
+  import ChartPositionInput from './ChartPositionInput.svelte';
+
   import FormActions from './FormActions.svelte';
 
   interface Props {
@@ -8,18 +12,27 @@
   }
 
   let { annotation = $bindable() }: Props = $props();
+
+  const xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
+  const yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
 </script>
 
 {#if annotation}
   <label for="annotation-text">Label</label>
   <input id="annotation-text" type="text" bind:value={annotation.label} />
-  <label for="x-position">x</label>
-  <input id="x-position" type="date" bind:value={annotation.x} />
-  <label for="y-position">y</label>
-  <input id="y-position" type="number" bind:value={annotation.y} />
-  <span>Anchor position</span>
-  <AnchorPointSelector bind:value={annotation.anchor} />
-  <label for="label-width">Width</label>
-  <input id="label-width" type="number" min="5" max="100" bind:value={annotation.width} />em
+  {#if xAxisDataType === undefined || yAxisDataType === undefined}
+    <p>You must add a series before annotations can be positioned.</p>
+  {:else}
+    <ChartPositionInput
+      label="Position"
+      bind:value={annotation}
+      id="anchor-position"
+      columnTypes={{ x: xAxisDataType, y: yAxisDataType }}
+    />
+    <span>Anchor position</span>
+    <AnchorPointSelector bind:value={annotation.anchor} />
+    <label for="label-width">Width</label>
+    <input id="label-width" type="number" min="5" max="100" bind:value={annotation.width} />
+  {/if}
   <FormActions bind:item={annotation} />
 {/if}
