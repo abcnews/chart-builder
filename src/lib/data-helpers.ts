@@ -111,7 +111,7 @@ export const getDomain = (
   });
 
   const isDefined = (input: string | number | null | undefined): input is string | number => {
-    return typeof input !== 'undefined' && input !== null;
+    return !(typeof input === 'undefined' || input === null || (typeof input === 'string' && input.length === 0));
   };
 
   console.log('filtered :>> ', filtered);
