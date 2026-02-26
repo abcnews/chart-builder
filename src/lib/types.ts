@@ -63,8 +63,8 @@ export type LayerCakeGroupedDataGroupValuesType =
   | undefined;
 
 export type LayerCakeContextType = {
-  xScale: Readable<(date: Date) => number>;
-  yScale: Readable<(d: number) => number>;
+  xScale: Readable<(date: Date | number | string) => number>;
+  yScale: Readable<(d: Date | number | string) => number>;
   custom: Readable<CustomLayerCakeContextType>;
   data: Readable<LayerCakeGroupedDataType>;
   xGet: Readable<(d: LayerCakeGroupedDataGroupValuesType) => number>;

@@ -8,6 +8,9 @@
     type LayerCakeContextType
   } from '../../lib/types';
   import { fade } from 'svelte/transition';
+  import { getAxisDataType } from '../../lib/data-accessors';
+  import { visState } from '../../lib/state.svelte';
+  import { coerceToColumnDataType } from '../../lib/data-helpers';
 
   interface Props {
     annotations: (AnnotationType & DeletableType)[];
@@ -15,28 +18,32 @@
 
   const { annotations }: Props = $props();
   const { xScale, yScale, custom } = getContext<LayerCakeContextType>('LayerCake');
+  let xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
+  let yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
 </script>
 
-{#each annotations.filter(d => !d.deleted) as annotation}
-  <span
-    transition:fade
-    class:show-construction-marks={$custom.showConstructionMarks}
-    style:left={`${$xScale(new Date(annotation.x))}px`}
-    style:top={`${$yScale(annotation.y)}px`}
-    style:width={`${annotation.width}em`}
-    class:middle={annotation.anchor === AnnotationAnchorType.Middle}
-    class:top-left={annotation.anchor === AnnotationAnchorType.TopLeft}
-    class:top={annotation.anchor === AnnotationAnchorType.Top}
-    class:top-right={annotation.anchor === AnnotationAnchorType.TopRight}
-    class:right={annotation.anchor === AnnotationAnchorType.Right}
-    class:bottom-right={annotation.anchor === AnnotationAnchorType.BottomRight}
-    class:bottom={annotation.anchor === AnnotationAnchorType.Bottom}
-    class:bottom-left={annotation.anchor === AnnotationAnchorType.BottomLeft}
-    class:left={annotation.anchor === AnnotationAnchorType.Left}
-  >
-    {annotation.label}
-  </span>
-{/each}
+{#if xAxisDataType && yAxisDataType}
+  {#each annotations.filter(d => !d.deleted) as annotation}
+    <span
+      transition:fade
+      class:show-construction-marks={$custom.showConstructionMarks}
+      style:left={`${$xScale(coerceToColumnDataType(annotation.x, xAxisDataType))}px`}
+      style:top={`${$yScale(coerceToColumnDataType(annotation.y, yAxisDataType))}px`}
+      style:width={`${annotation.width}em`}
+      class:middle={annotation.anchor === AnnotationAnchorType.Middle}
+      class:top-left={annotation.anchor === AnnotationAnchorType.TopLeft}
+      class:top={annotation.anchor === AnnotationAnchorType.Top}
+      class:top-right={annotation.anchor === AnnotationAnchorType.TopRight}
+      class:right={annotation.anchor === AnnotationAnchorType.Right}
+      class:bottom-right={annotation.anchor === AnnotationAnchorType.BottomRight}
+      class:bottom={annotation.anchor === AnnotationAnchorType.Bottom}
+      class:bottom-left={annotation.anchor === AnnotationAnchorType.BottomLeft}
+      class:left={annotation.anchor === AnnotationAnchorType.Left}
+    >
+      {annotation.label}
+    </span>
+  {/each}
+{/if}
 
 <style>
   span {

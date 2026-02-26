@@ -1,35 +1,39 @@
 <script lang="ts">
-  import { visState } from '../lib/state.svelte';
-
   import { LayerCake, Svg, Html } from 'layercake';
+  import { Tween } from 'svelte/motion';
 
   import { scaleOrdinal } from 'd3-scale';
-  import { timeFormat } from 'd3-time-format';
-  import { format } from 'd3-format';
+  import { csvParse } from 'd3-dsv';
+  import { extent } from 'd3-array';
+  import { getOrdinalCategoricalPalette } from '@abcnews/palette';
+
+  import FontProvider from './FontProvider.svelte';
   import AxisX from './layercake-components/AxisX.svg.svelte';
   import AxisY from './layercake-components/AxisY.svg.svelte';
-  import { defaultAxisLabelFormatStrings, plotPadding } from '../lib/constants';
   import Annotations from './layercake-components/Annotations.html.svelte';
   import Arrows from './layercake-components/Arrows.svg.svelte';
   import BackgroundHighlight from './layercake-components/BackgroundHighlight.svelte';
-  import type { AxisOptionsType, ColumnTypesType, CustomLayerCakeContextType } from '../lib/types';
   import Lines from './layercake-components/Lines.svg.svelte';
-  import FontProvider from './FontProvider.svelte';
 
-  import { csvParse } from 'd3-dsv';
-  import { rowParser } from '../lib/data-helpers';
+  import type { CustomLayerCakeContextType } from '../lib/types';
+
+  import { coerceToColumnDataType, getAxisLabelFormatter, getDomain, rowParser } from '../lib/data-helpers';
   import { getAxisDataType } from '../lib/data-accessors';
+
+  import { visState } from '../lib/state.svelte';
+  import { plotPadding } from '../lib/constants';
+  import { untrack } from 'svelte';
 
   interface Props {
     showConstructionMarks?: boolean;
   }
 
-  const xKey = 'x';
-  const yKey = 'y';
-  const zKey = 'series';
-
+  // TODO: Move fetched and parsed data to a central state object from state.svelte.ts
+  // A state variable to store the raw data from each of the data sources defined in the config.
   const rawData: Record<string, string> = $state({});
 
+  // Load these into state via an effect to avoid use of #await. If the config changes so a new data needs to be fetched
+  // we don't want the UI to change to an awaiting state while it's loading.
   $effect(() => {
     visState.config.data.forEach(async ({ name, url }) => {
       const raw = await fetch(url).then(res => res.text());
@@ -50,8 +54,7 @@
   });
 
   let flatData = $derived.by(() => {
-    const series = seriesWithData;
-    const result = series.flatMap(({ x, y, data, id }) => {
+    return seriesWithData.flatMap(({ x, y, data, id }) => {
       if (typeof x === 'undefined' || typeof y === 'undefined') {
         console.warn(`Missing x or y column for series ${id}`);
         return [];
@@ -60,18 +63,16 @@
         return { x: d[x], y: d[y], series: id };
       });
     });
-
-    return result;
   });
 
   let groupedData = $derived.by(() => {
-    const grouped = Object.entries(Object.groupBy(flatData, d => d.series));
-    return grouped.map(([series, data]) => {
+    return Object.entries(Object.groupBy(flatData, d => d.series)).map(([series, data]) => {
       return { group: series, values: data };
     });
   });
 
-  const seriesColors = ['#007BC7', '#00297E'];
+  // TODO: Warn if there are too many categories.
+  let seriesColors = $derived(getOrdinalCategoricalPalette(Math.min(5, Math.max(2, groupedData.length))));
 
   let annotations = $derived(visState.config.annotations.filter(d => !d.deleted));
   let arrows = $derived(visState.config.arrows.filter(d => !d.deleted));
@@ -80,26 +81,52 @@
   let xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
   let yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
 
-  let getAxisLabelFormatter = (axisOptions: AxisOptionsType, axisDataType: ColumnTypesType) => {
-    if (axisDataType === 'date') return timeFormat(axisOptions.format || defaultAxisLabelFormatStrings.date);
-    if (axisDataType === 'number') {
-      return (d: number) => {
-        try {
-          return format(axisOptions.format || defaultAxisLabelFormatStrings.number)(d);
-        } catch (e) {
-          return format(defaultAxisLabelFormatStrings.number)(d);
-        }
-      };
-    }
-
-    // Default to returning coercing to a string for booleans or strings
-    return (d: string | boolean): string => String(d);
-  };
-
   let formatLabelX = $derived(xAxisDataType && getAxisLabelFormatter(visState.config.axes.x, xAxisDataType));
   let formatLabelY = $derived(yAxisDataType && getAxisLabelFormatter(visState.config.axes.y, yAxisDataType));
   let chartWidth: number = $state(0);
+
   let { showConstructionMarks = false }: Props = $props();
+
+  let xDomain = $derived(
+    getDomain(
+      visState.config.axes.x,
+      flatData.map(d => d.x),
+      xAxisDataType
+    )
+  );
+  let yDomain = $derived(
+    getDomain(
+      visState.config.axes.y,
+      flatData.map(d => d.y),
+      yAxisDataType
+    )
+  );
+
+  let xAxisDomainTween = $derived.by(() => {
+    if (flatData.length === 0) return undefined;
+    if (xAxisDataType === 'number') return new Tween(untrack(() => xDomain));
+    if (xAxisDataType === 'date') return new Tween(untrack(() => xDomain));
+    return undefined;
+  });
+
+  let yAxisDomainTween = $derived.by(() => {
+    if (flatData.length === 0) return undefined;
+    if (yAxisDataType === 'number') return new Tween(untrack(() => yDomain));
+    if (yAxisDataType === 'date') return new Tween(untrack(() => yDomain));
+    return undefined;
+  });
+
+  $effect(() => {
+    if (xDomain && xAxisDomainTween) {
+      xAxisDomainTween.target = xDomain;
+    }
+  });
+
+  $effect(() => {
+    if (yDomain && yAxisDomainTween) {
+      yAxisDomainTween.target = yDomain;
+    }
+  });
 
   let customLayerCakeContext: CustomLayerCakeContextType = $derived({ showConstructionMarks });
 </script>
@@ -121,9 +148,11 @@
 
     <LayerCake
       padding={plotPadding}
-      x={xKey}
-      y={yKey}
-      z={zKey}
+      x="x"
+      y="y"
+      z="series"
+      xDomain={xAxisDomainTween ? xAxisDomainTween.current : xDomain}
+      yDomain={yAxisDomainTween ? yAxisDomainTween.current : yDomain}
       zScale={scaleOrdinal()}
       zRange={seriesColors}
       {flatData}
@@ -136,6 +165,8 @@
       <Svg>
         <AxisX gridlines={false} ticks={Math.floor(chartWidth / 130)} format={formatLabelX} tickMarks />
         <AxisY ticks={4} format={formatLabelY} />
+      </Svg>
+      <Svg overflow="hidden">
         <Lines lines={series.filter(s => s.type === 'line')} />
       </Svg>
       <Html>

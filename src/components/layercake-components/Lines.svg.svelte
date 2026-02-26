@@ -1,7 +1,6 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import { line, curveLinear, type CurveFactory } from 'd3-shape';
-  import { fade } from 'svelte/transition';
   import {
     type LayerCakeContextType,
     type LayerCakeGroupedDataGroupValuesType,
@@ -40,7 +39,7 @@
 
 <g class="line-group">
   {#each renderedLines as line (line.id || line)}
-    <path transition:fade class="path-line" d={line.d} stroke={line.stroke}></path>
+    <path class="path-line" d={line.d} stroke={line.stroke}></path>
   {/each}
 </g>
 

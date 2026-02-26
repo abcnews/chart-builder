@@ -27,7 +27,7 @@ export const DeletableSchema = object({
 
 export const orientations = ['left', 'right', 'above', 'below', 'middle'] as const;
 export const shapes = ['circle', 'diamond', 'square'] as const;
-export const columnTypes = ['string', 'number', 'date', 'boolean'] as const;
+export const columnTypes = ['number', 'date', 'boolean', 'string'] as const;
 
 export const DataRowSchema = object({
   date: pipe(
@@ -87,9 +87,9 @@ export const HighlightSchema = object({
 export const SeriesLineSchema = object({
   id: string(),
   type: literal('line'),
-  dataset: optional(string()),
-  x: optional(string()),
-  y: optional(string())
+  dataset: optional(string()), // Name of the dataset
+  x: optional(string()), // Field to be used for x value
+  y: optional(string()) // Field to be used for y value
 });
 
 export const SeriesSchema = variant('type', [SeriesLineSchema]);
@@ -101,7 +101,10 @@ export const DataSourceSchema = object({
 
 export const AxisOptionsSchema = object({
   format: optional(string()),
-  domain: optional(array(ColumnTypesSchema))
+  domain: object({
+    min: optional(nullable(AxisPositionSchema)),
+    max: optional(nullable(AxisPositionSchema))
+  })
 });
 
 export const AxisConfigSchema = object({
@@ -126,7 +129,7 @@ export const VisualisationSchema = object({
   series: optional(array(intersect([SeriesSchema, DeletableSchema])), []),
   data: optional(array(intersect([DataSetSchema, DeletableSchema])), []),
   sources: optional(array(intersect([DataSourceSchema, DeletableSchema])), []),
-  axes: optional(AxisConfigSchema, { x: {}, y: {} })
+  axes: optional(AxisConfigSchema, { x: { domain: {} }, y: { domain: {} } })
 });
 
 export const VisualisationStateSchema = object({

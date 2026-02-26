@@ -33,6 +33,7 @@
   import DataSetEditForm from './edit-forms/DataSetEditForm.svelte';
   import SeriesEditForm from './edit-forms/SeriesEditForm.svelte';
   import FieldGroup from './edit-forms/FieldGroup.svelte';
+  import AxisPositionInput from './edit-forms/AxisPositionInput.svelte';
 
   const prefixes = {
     'Scrolly mark': SCROLLY_MARK_PREFIX,
@@ -121,29 +122,6 @@
     <label class="item" for="chart-description">Description</label>
     <textarea id="chart-description" bind:value={visState.config.description}></textarea>
     <hr />
-    <fieldset>
-      <legend>Axes</legend>
-      <FieldGroup label="Formatting">
-        <label for="x-axis-format">x ({xAxisDataType})</label>
-        <input
-          id="x-axis-format"
-          type="text"
-          bind:value={visState.config.axes.x.format}
-          placeholder={`Default: ${defaultAxisLabelFormatStrings[xAxisDataType || ''] || ''}`}
-        />
-        <label for="y-axis-format">y ({yAxisDataType})</label>
-        <input
-          id="y-axis-format"
-          type="text"
-          bind:value={visState.config.axes.y.format}
-          placeholder={`Default: ${defaultAxisLabelFormatStrings[yAxisDataType || ''] || ''}`}
-        />
-      </FieldGroup>
-      <small>
-        Formatting uses d3's formatting functions (<a href="https://d3js.org/d3-format#locale_format">numbers</a>,
-        <a href="https://d3js.org/d3-time-format#locale_format">dates</a>).
-      </small>
-    </fieldset>
     <ItemCollection
       legend="Series"
       bind:current={currentSeries}
@@ -155,7 +133,61 @@
         <SeriesEditForm bind:series={currentSeries} />
       {/snippet}
     </ItemCollection>
-
+    <fieldset>
+      <legend>Axes</legend>
+      {#if !xAxisDataType || !yAxisDataType}
+        <p>At least one series must be defined before axis options can be set.</p>
+      {:else}
+        <FieldGroup label="Formatting">
+          <label for="x-axis-format">x ({xAxisDataType})</label>
+          <input
+            id="x-axis-format"
+            type="text"
+            bind:value={visState.config.axes.x.format}
+            placeholder={`Default: ${defaultAxisLabelFormatStrings[xAxisDataType || ''] || ''}`}
+          />
+          <label for="y-axis-format">y ({yAxisDataType})</label>
+          <input
+            id="y-axis-format"
+            type="text"
+            bind:value={visState.config.axes.y.format}
+            placeholder={`Default: ${defaultAxisLabelFormatStrings[yAxisDataType || ''] || ''}`}
+          />
+        </FieldGroup>
+        <small>
+          Formatting uses d3's formatting functions (<a href="https://d3js.org/d3-format#locale_format">numbers</a>,
+          <a href="https://d3js.org/d3-time-format#locale_format">dates</a>).
+        </small>
+        <FieldGroup label="Chart extent x-axis">
+          <AxisPositionInput
+            label="Min"
+            id="x-axis-domain-min"
+            bind:value={visState.config.axes.x.domain.min}
+            columnType={xAxisDataType}
+          />
+          <AxisPositionInput
+            label="Max"
+            id="x-axis-domain-max"
+            bind:value={visState.config.axes.x.domain.max}
+            columnType={xAxisDataType}
+          />
+        </FieldGroup>
+        <FieldGroup label="Chart extent y-axis">
+          <AxisPositionInput
+            label="Min"
+            id="y-axis-domain-min"
+            bind:value={visState.config.axes.y.domain.min}
+            columnType={yAxisDataType}
+          />
+          <AxisPositionInput
+            label="Max"
+            id="y-axis-domain-max"
+            bind:value={visState.config.axes.y.domain.max}
+            columnType={yAxisDataType}
+          />
+        </FieldGroup>
+      {/if}
+    </fieldset>
     <ItemCollection
       legend="Annotations"
       bind:current={currentAnnotation}
