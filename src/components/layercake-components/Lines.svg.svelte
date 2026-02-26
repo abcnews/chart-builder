@@ -26,10 +26,19 @@
     lines.flatMap(line => {
       const series = getSeries(line.id);
       if (!series) return [];
+
+      // Remove data where y-axis value is null or undefined.
+      // TODO: Add option to split the series for missing data.Or some other missing data display options.
+      const vals = series.values.flatMap(d => {
+        if (d === undefined) return [];
+        if (d.y === undefined || d.y === null) return [];
+        return [d];
+      });
+
       return [
         {
           id: line.id,
-          d: lineGenerator(series.values),
+          d: lineGenerator(vals),
           stroke: $zGet(series.values[0])
         }
       ];

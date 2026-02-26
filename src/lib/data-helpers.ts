@@ -33,7 +33,7 @@ export const rowParser = (columnDefinitions: ColumnDefinitionType) => (row: DSVR
           if (fixtz && !!m[4] && !m[7]) value = value.replace(/-/g, '/').replace(/T/, ' ');
           value = new Date(value);
         } else value = null;
-      } else if (specified === 'number') value = !isNaN((number = +value)) ? number : null;
+      } else if (specified === 'number') value = value.length === 0 ? null : !isNaN((number = +value)) ? number : null;
     } else {
       if (!value) value = null;
       else if (value === 'true') value = true;
@@ -113,8 +113,6 @@ export const getDomain = (
   const isDefined = (input: string | number | null | undefined): input is string | number => {
     return !(typeof input === 'undefined' || input === null || (typeof input === 'string' && input.length === 0));
   };
-
-  console.log('filtered :>> ', filtered);
 
   let min = isDefined(axisOptions.domain.min)
     ? coerceToColumnDataType(axisOptions.domain.min, dataType)

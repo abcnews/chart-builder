@@ -59,7 +59,7 @@ export type LayerCakeGroupedDataGroupValuesType =
       x: string | number | boolean | Date | null | undefined;
       y: string | number | boolean | Date | null | undefined;
       series: string;
-    }[]
+    }
   | undefined;
 
 export type LayerCakeContextType = {
