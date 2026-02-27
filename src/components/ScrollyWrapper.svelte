@@ -17,10 +17,10 @@
     }
   };
 
-  //
-  // Find any bolded electorate names in the panel copy, and enhance them visually
-  //
   let { panels } = $props();
+  $effect(() => {
+    if (panels[0].data) updateState(panels[0].data);
+  });
 </script>
 
 <Scrollyteller
