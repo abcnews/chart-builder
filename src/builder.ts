@@ -6,7 +6,7 @@ import { mount } from 'svelte';
 import { proxy } from '@abcnews/dev-proxy';
 import { MARKER_NAME, PROJECT_NAME } from './lib/constants';
 
-let appMountEl: Mount;
+let appMountEl: Mount | undefined;
 
 Promise.all([whenDOMReady, proxy(PROJECT_NAME)]).then(() => {
   [appMountEl] = selectMounts(MARKER_NAME);
@@ -14,6 +14,8 @@ Promise.all([whenDOMReady, proxy(PROJECT_NAME)]).then(() => {
     mount(BuilderApp, {
       target: appMountEl
     });
+  } else {
+    console.error('appMountEl not found');
   }
 });
 
