@@ -89,7 +89,13 @@
   // TODO: Warn if there are too many categories.
   let seriesColors = $derived(getDefaultPalette(visState.config.series));
 
-  let annotations = $derived(visState.config.annotations.filter(d => !d.deleted));
+  let annotations = $derived.by(() => {
+    console.log('visState.config.annotations :>> ', visState.config.annotations);
+    return visState.config.annotations.filter(d => {
+      console.log('d :>> ', d);
+      return !d.deleted;
+    });
+  });
   let arrows = $derived(visState.config.arrows.filter(d => !d.deleted));
   let series = $derived(visState.config.series.filter(d => !d.deleted));
 

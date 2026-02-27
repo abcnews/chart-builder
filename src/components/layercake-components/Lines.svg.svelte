@@ -53,7 +53,7 @@
     stroke-linecap: round;
     stroke-width: 2px;
     stroke-dasharray: var(--line-dasharray, none);
-    transition: d 0.5s ease;
+
     &.outline {
       stroke-width: 3px;
       stroke: #fff;
