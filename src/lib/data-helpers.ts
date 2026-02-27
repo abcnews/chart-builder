@@ -80,19 +80,20 @@ export const coerceToColumnDataType = <T extends keyof ColumnDataTypeMap>(
 };
 
 export const getAxisLabelFormatter = (axisOptions: AxisOptionsType, axisDataType: ColumnTypesType) => {
-  if (axisDataType === 'date') return timeFormat(axisOptions.format || defaultAxisLabelFormatStrings.date);
+  if (axisDataType === 'date') {
+    const formatter = timeFormat(axisOptions.format || defaultAxisLabelFormatStrings.date);
+    return formatter;
+  }
   if (axisDataType === 'number') {
-    return (d: number) => {
-      try {
-        return format(axisOptions.format || defaultAxisLabelFormatStrings.number)(d);
-      } catch (e) {
-        return format(defaultAxisLabelFormatStrings.number)(d);
-      }
-    };
+    try {
+      return format(axisOptions.format || defaultAxisLabelFormatStrings.number);
+    } catch (e) {
+      return format(defaultAxisLabelFormatStrings.number);
+    }
   }
 
-  // Default to returning coercing to a string for booleans or strings
-  return (d: string | boolean): string => String(d);
+  // Default to returning coercing to a string for anything else
+  return (d: any) => String(d);
 };
 
 export const getDomain = (

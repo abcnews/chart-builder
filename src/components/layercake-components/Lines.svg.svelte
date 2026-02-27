@@ -1,6 +1,6 @@
 <script lang="ts">
   import { getContext } from 'svelte';
-  import { line, curveLinear, type CurveFactory } from 'd3-shape';
+  import { line, curveCatmullRom, type CurveFactory, curveLinear, curveCardinal } from 'd3-shape';
   import { type LayerCakeContextType, type LayerCakeGroupedDataGroupValuesType } from '../../lib/types';
 
   interface Props {
@@ -8,7 +8,7 @@
   }
   const { data, xGet, yGet, zGet } = getContext<LayerCakeContextType>('LayerCake');
 
-  let { curve = curveLinear }: Props = $props();
+  let { curve = curveCardinal }: Props = $props();
   let lineGenerator = $derived(line<LayerCakeGroupedDataGroupValuesType>($xGet, $yGet).curve(curve));
   const renderedLines = $derived(
     $data.flatMap(({ values, config }) => {
@@ -29,7 +29,8 @@
         {
           id: config.id,
           d: lineGenerator(vals),
-          stroke: config.colour || (vals[0] ? $zGet(vals[0]) : '#000')
+          stroke: config.colour || (vals[0] ? $zGet(vals[0]) : '#000'),
+          dasharray: config.dasharray
         }
       ];
     })
@@ -38,8 +39,10 @@
 
 <g class="line-group">
   {#each renderedLines as line (line.id || line)}
-    <path class="path-line outline" d={line.d}></path>
-    <path class="path-line" d={line.d} stroke={line.stroke}></path>
+    <g class="line" style:--line-dasharray={line.dasharray ? line.dasharray : undefined}>
+      <path class="path-line outline" d={line.d}></path>
+      <path class="path-line" d={line.d} stroke={line.stroke}></path>
+    </g>
   {/each}
 </g>
 
@@ -49,6 +52,7 @@
     stroke-linejoin: round;
     stroke-linecap: round;
     stroke-width: 2px;
+    stroke-dasharray: var(--line-dasharray, none);
     transition: d 0.5s ease;
     &.outline {
       stroke-width: 3px;

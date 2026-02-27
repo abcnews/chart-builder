@@ -3,6 +3,7 @@
   import { visState } from '../../../lib/state.svelte';
   import type { ArrowType, DeletableType } from '../../../lib/types';
   import ChartPositionInput from './ChartPositionInput.svelte';
+  import ColourField from './ColourField.svelte';
   import FormActions from './FormActions.svelte';
 
   interface Props {
@@ -29,5 +30,6 @@
     bind:value={arrow.to}
     columnTypes={{ x: xAxisDataType, y: yAxisDataType }}
   />
+  <ColourField bind:value={arrow.colour} defaultValue="#000000" />
 {/if}
 <FormActions bind:item={arrow} />

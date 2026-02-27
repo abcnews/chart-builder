@@ -4,6 +4,7 @@
   import type { AnnotationType, DeletableType } from '../../../lib/types';
   import AnchorPointSelector from '../AnchorPointSelector.svelte';
   import ChartPositionInput from './ChartPositionInput.svelte';
+  import ColourField from './ColourField.svelte';
 
   import FormActions from './FormActions.svelte';
 
@@ -34,5 +35,6 @@
     <label for="label-width">Width</label>
     <input id="label-width" type="number" min="5" max="100" bind:value={annotation.width} />
   {/if}
+  <ColourField bind:value={annotation.colour} defaultValue="#00000" />
   <FormActions bind:item={annotation} />
 {/if}

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { visState } from '../../../lib/state.svelte';
   import type { DeletableType, SeriesType } from '../../../lib/types';
+  import ColourField from './ColourField.svelte';
   import FormActions from './FormActions.svelte';
 
   interface Props {
@@ -37,8 +38,10 @@
     {/each}
   </select>
 
-  <label for="series-colour">Colour</label>
-  <input type="text" id="series-colour" bind:value={series.colour} placeholder="Default: " />
+  <ColourField bind:value={series.colour} />
+
+  <label for="dasharray">Dash pattern</label>
+  <input id="dasharray" type="text" bind:value={series.dasharray} placeholder="Default: none" />
 
   <FormActions bind:item={series} />
 {/if}

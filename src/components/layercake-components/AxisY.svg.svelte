@@ -1,50 +1,46 @@
-<!--
-  @component
-  Generates an SVG y-axis. This component is also configured to detect if your y-scale is an ordinal scale. If so, it will place the tickMarks in the middle of the bandwidth.
- -->
-<script>
+<script lang="ts">
+  import { type format as d3Format } from 'd3-format';
+  import type { timeFormat as d3TimeFormat } from 'd3-time-format';
   import { getContext } from 'svelte';
+  import { type LayerCakeContextType } from '../../lib/types';
 
-  const { xRange, yScale, width } = getContext('LayerCake');
+  const { xRange, yScale, width } = getContext<LayerCakeContextType>('LayerCake');
 
-  /**
-   * @typedef {Object} Props
-   * @property {boolean} [tickMarks=false] - Show marks next to the tick label.
-   * @property {string} [labelPosition='even'] - Whether the label sits even with its value ('even') or sits on top ('above') the tick mark. Default is 'even'.
-   * @property {boolean} [snapBaselineLabel=false] - When labelPosition='even', adjust the lowest label so that it sits above the tick mark.
-   * @property {boolean} [gridlines=true] - Show gridlines extending into the chart area.
-   * @property {number} [tickMarkLength] - The length of the tick mark. If not set, becomes the length of the widest tick.
-   * @property {(d: any) => string} [format=d => d] - A function that passes the current tick value and expects a nicely formatted value in return.
-   * @property {number|Array<any>|Function} [ticks=4] - If this is a number, it passes that along to the [d3Scale.ticks](https://github.com/d3/d3-scale) function. If this is an array, hardcodes the ticks to those values. If it's a function, passes along the default tick values and expects an array of tick values in return.
-   * @property {number} [tickGutter=0] - The amount of whitespace between the start of the tick and the chart drawing area (the xRange min).
-   * @property {number} [dx=0] - Any optional value passed to the `dx` attribute on the text label.
-   * @property {number} [dy=0] - Any optional value passed to the `dy` attribute on the text label.
-   * @property {number} [charPixelWidth=7.25] - Used to calculate the widest label length to offset labels. Adjust if the automatic tick length doesn't look right because you have a bigger font (or just set `tickMarkLength` to a pixel value).
-   */
+  interface Props {
+    tickMarks?: boolean;
+    labelPosition?: string;
+    snapBaselineLabel?: boolean;
+    gridlines?: boolean;
+    tickMarkLength?: number;
+    format?: ReturnType<typeof d3Format> | ReturnType<typeof d3TimeFormat>;
+    ticks?: number | Array<any> | Function;
+    tickGutter?: number;
+    dx?: number;
+    dy?: number;
+    charPixelWidth?: number;
+  }
 
-  /** @type {Props} */
   let {
     tickMarks = false,
     labelPosition = 'even',
     snapBaselineLabel = false,
     gridlines = true,
     tickMarkLength = undefined,
-    format = d => d,
+    format = d => String(d),
     ticks = 4,
     tickGutter = 0,
     dx = 0,
     dy = 0,
     charPixelWidth = 7.25
-  } = $props();
+  }: Props = $props();
 
-  /** @param {number} sum
-   *  @param {string} val */
-  function calcStringLength(sum, val) {
+  function calcStringLength(sum: number, val: string) {
     if (val === ',' || val === '.') return sum + charPixelWidth * 0.5;
     return sum + charPixelWidth;
   }
 
   let isBandwidth = $derived(typeof $yScale.bandwidth === 'function');
+
   /** @type {Array<any>} */
   let tickVals = $derived(
     Array.isArray(ticks)
@@ -71,7 +67,7 @@
     {@const tickValPx = $yScale(tick)}
     <g class="tick tick-{tick}" transform="translate({$xRange[0]}, {tickValPx})">
       {#if gridlines === true}
-        <line class="gridline" {x1} x2={$width} y1={y} y2={y}></line>
+        <line class="gridline" class:zero={tick === 0} {x1} x2={$width} y1={y} y2={y}></line>
       {/if}
       {#if tickMarks === true}
         <line class="tick-mark" {x1} x2={x1 + tickLen} y1={y} y2={y}></line>
@@ -94,14 +90,17 @@
   }
 
   .tick line {
-    stroke: #aaa;
+    stroke: #d6dde4;
+    stroke-width: 1px;
   }
-  .tick .gridline {
-    stroke-dasharray: 2;
+
+  .gridline.zero {
+    stroke: #68788e;
   }
 
   .tick text {
-    fill: #666;
+    fill: #68788e;
+    font-size: 12px;
   }
 
   .tick.tick-0 line {

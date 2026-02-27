@@ -11,6 +11,7 @@
   <div
     class="highlight"
     transition:fade
+    style:--highlight-color={highlight.colour && highlight.colour.length > 2 ? highlight.colour : undefined}
     style:left={`${$xScale(new Date(highlight.tl.x))}px`}
     style:top={`${$yScale(highlight.tl.y)}px`}
     style:width={`${$xScale(new Date(highlight.br.x)) - $xScale(new Date(highlight.tl.x))}px`}
@@ -21,7 +22,7 @@
 <style>
   .highlight {
     position: absolute;
-    background: rgba(0, 0, 0, 0.2);
+    background: var(--highlight-color, rgba(0, 0, 0, 0.2));
     border-radius: 4px;
   }
 </style>

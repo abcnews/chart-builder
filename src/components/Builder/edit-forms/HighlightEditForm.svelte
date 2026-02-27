@@ -3,6 +3,7 @@
   import { visState } from '../../../lib/state.svelte';
   import type { DeletableType, HighlightType } from '../../../lib/types';
   import ChartPositionInput from './ChartPositionInput.svelte';
+  import ColourField from './ColourField.svelte';
   import FormActions from './FormActions.svelte';
 
   interface Props {
@@ -15,7 +16,9 @@
 </script>
 
 {#if highlight}
-  {#if !xAxisDataType || !yAxisDataType}{:else}
+  {#if !xAxisDataType || !yAxisDataType}
+    <p>Define at least one series before adding highlights.</p>
+  {:else}
     <ChartPositionInput
       id="highlight-top-left"
       label="Top left"
@@ -28,6 +31,7 @@
       bind:value={highlight.br}
       columnTypes={{ x: xAxisDataType, y: yAxisDataType }}
     />
+    <ColourField bind:value={highlight.colour} />
   {/if}
 
   <FormActions bind:item={highlight} />

@@ -26,6 +26,7 @@
   {#each annotations.filter(d => !d.deleted) as annotation}
     <span
       transition:fade
+      style:--annotation-color={annotation.colour && annotation.colour.length > 3 ? annotation.colour : undefined}
       class:show-construction-marks={$custom.showConstructionMarks}
       style:left={`${$xScale(coerceToColumnDataType(annotation.x, xAxisDataType))}px`}
       style:top={`${$yScale(coerceToColumnDataType(annotation.y, yAxisDataType))}px`}
@@ -52,6 +53,10 @@
     vertical-align: middle;
     text-wrap: balance;
     line-height: 1.1;
+    paint-order: stroke fill;
+    -webkit-text-stroke: 2px #fff;
+    font-weight: 700;
+    color: var(--annotation-color, #000);
   }
 
   .middle {

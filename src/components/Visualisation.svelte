@@ -178,7 +178,14 @@
         <BackgroundHighlight />
       </Html>
       <Svg>
-        <AxisX gridlines={false} ticks={Math.floor(chartWidth / 130)} format={formatLabelX} tickMarks />
+        <AxisX
+          gridlines={false}
+          ticks={Math.floor(chartWidth / 130)}
+          format={formatLabelX}
+          dy={14}
+          baseline={true}
+          tickMarks
+        />
         <AxisY ticks={4} format={formatLabelY} />
       </Svg>
       <Svg overflow="hidden">
@@ -223,7 +230,7 @@
 
   header,
   footer {
-    margin: 1.25em var(--plot-padding-right, 1em) 1em var(--plot-padding-left, 0);
+    margin: 1.25em 1em;
 
     > :first-child {
       margin-top: 0;
@@ -234,6 +241,7 @@
   }
 
   .chart-title {
-    font-family: var(--sl-font-stack-serif);
+    font-family: var(--sl-font-stack-sans);
+    font-size: calc(1rem * (20 / 16));
   }
 </style>

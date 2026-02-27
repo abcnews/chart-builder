@@ -18,6 +18,7 @@ import type {
   VisualisationSchema
 } from './schemas';
 import type { Readable } from 'svelte/store';
+import type { ScaleBand, ScaleLinear, ScaleOrdinal } from 'd3-scale';
 
 export type DataSetType = InferOutput<typeof DataSetSchema>;
 export type DataSchemaType = InferOutput<typeof DataSchema>;
@@ -66,8 +67,12 @@ export type LayerCakeGroupedDataGroupValuesType = {
 };
 
 export type LayerCakeContextType = {
-  xScale: Readable<(date: Date | number | string) => number>;
-  yScale: Readable<(d: Date | number | string) => number>;
+  width: Readable<number>;
+  height: Readable<number>;
+  xScale: Readable<ScaleLinear<number | Date, number>>;
+  yScale: Readable<ScaleLinear<number | Date, number>>;
+  xRange: Readable<[number, number]>;
+  yRange: Readable<[number, number]>;
   custom: Readable<CustomLayerCakeContextType>;
   data: Readable<LayerCakeGroupedDataType>;
   xGet: Readable<(d: LayerCakeGroupedDataGroupValuesType) => number>;

@@ -65,23 +65,28 @@ export const DataSetSchema = object({
   columns: optional(ColumnDefinitionSchema, {})
 });
 
+const ElementColourSchema = optional(string());
+
 export const AnnotationSchema = intersect([
   object({
     label: string(),
     anchor: optional(AnnotationAnchorSchema, AnnotationAnchorType.Top),
-    width: optional(number(), 10) // Width in em units
+    width: optional(number(), 10), // Width in em units
+    colour: ElementColourSchema
   }),
   ChartPositionSchema
 ]);
 
 export const ArrowSchema = object({
   from: ChartPositionSchema,
-  to: ChartPositionSchema
+  to: ChartPositionSchema,
+  colour: ElementColourSchema
 });
 
 export const HighlightSchema = object({
   tl: ChartPositionSchema,
-  br: ChartPositionSchema
+  br: ChartPositionSchema,
+  colour: ElementColourSchema
 });
 
 export const SeriesLineSchema = object({
@@ -90,7 +95,8 @@ export const SeriesLineSchema = object({
   dataset: optional(string()), // Name of the dataset
   x: optional(string()), // Field to be used for x value
   y: optional(string()), // Field to be used for y value
-  colour: optional(string())
+  colour: ElementColourSchema,
+  dasharray: optional(string())
 });
 
 export const SeriesSchema = variant('type', [SeriesLineSchema]);
