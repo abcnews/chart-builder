@@ -89,7 +89,8 @@ export const SeriesLineSchema = object({
   type: literal('line'),
   dataset: optional(string()), // Name of the dataset
   x: optional(string()), // Field to be used for x value
-  y: optional(string()) // Field to be used for y value
+  y: optional(string()), // Field to be used for y value
+  colour: optional(string())
 });
 
 export const SeriesSchema = variant('type', [SeriesLineSchema]);

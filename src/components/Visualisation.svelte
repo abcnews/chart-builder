@@ -4,8 +4,6 @@
 
   import { scaleOrdinal } from 'd3-scale';
   import { csvParse } from 'd3-dsv';
-  import { extent } from 'd3-array';
-  import { getOrdinalCategoricalPalette } from '@abcnews/palette';
 
   import FontProvider from './FontProvider.svelte';
   import AxisX from './layercake-components/AxisX.svg.svelte';
@@ -15,9 +13,13 @@
   import BackgroundHighlight from './layercake-components/BackgroundHighlight.svelte';
   import Lines from './layercake-components/Lines.svg.svelte';
 
-  import type { CustomLayerCakeContextType } from '../lib/types';
+  import type {
+    CustomLayerCakeContextType,
+    LayerCakeGroupedDataGroupValuesType,
+    LayerCakeGroupedDataType
+  } from '../lib/types';
 
-  import { coerceToColumnDataType, getAxisLabelFormatter, getDomain, rowParser } from '../lib/data-helpers';
+  import { getAxisLabelFormatter, getDefaultPalette, getDomain, rowParser } from '../lib/data-helpers';
   import { getAxisDataType } from '../lib/data-accessors';
 
   import { visState } from '../lib/state.svelte';
@@ -49,30 +51,43 @@
       const raw = rawData[dataset.name];
       if (typeof raw === 'undefined') return [];
       const data = csvParse(raw, rowParser(dataset.columns));
-      return [{ id: series.id, x: series.x, y: series.y, columns: dataset.columns, type: series.type, data }];
+      return [{ config: series, columns: dataset.columns, data }];
     });
   });
 
-  let flatData = $derived.by(() => {
-    return seriesWithData.flatMap(({ x, y, data, id }) => {
+  let flatData: LayerCakeGroupedDataGroupValuesType[] = $derived.by(() => {
+    return seriesWithData.flatMap(({ config, data }) => {
+      const { x, y, id } = config;
       if (typeof x === 'undefined' || typeof y === 'undefined') {
         console.warn(`Missing x or y column for series ${id}`);
         return [];
       }
       return data.map(d => {
-        return { x: d[x], y: d[y], series: id };
+        return { x: d[x], y: d[y], z: id, row: d };
       });
     });
   });
 
-  let groupedData = $derived.by(() => {
-    return Object.entries(Object.groupBy(flatData, d => d.series)).map(([series, data]) => {
-      return { group: series, values: data };
+  let groupedData: LayerCakeGroupedDataType = $derived.by(() => {
+    const data = seriesWithData.flatMap(series => {
+      const { x, y, id } = series.config;
+      if (typeof x === 'undefined' || typeof y === 'undefined') {
+        console.warn(`Missing x or y column for series ${series.config.id}`);
+        return [];
+      }
+      return [
+        {
+          group: series.config.id,
+          values: series.data.map(d => ({ x: d[x], y: d[y], z: id, row: d })),
+          config: series.config
+        }
+      ];
     });
+    return data;
   });
 
   // TODO: Warn if there are too many categories.
-  let seriesColors = $derived(getOrdinalCategoricalPalette(Math.min(5, Math.max(2, groupedData.length))));
+  let seriesColors = $derived(getDefaultPalette(visState.config.series));
 
   let annotations = $derived(visState.config.annotations.filter(d => !d.deleted));
   let arrows = $derived(visState.config.arrows.filter(d => !d.deleted));
@@ -167,7 +182,7 @@
         <AxisY ticks={4} format={formatLabelY} />
       </Svg>
       <Svg overflow="hidden">
-        <Lines lines={series.filter(s => s.type === 'line')} />
+        <Lines />
       </Svg>
       <Html>
         <Annotations {annotations} />

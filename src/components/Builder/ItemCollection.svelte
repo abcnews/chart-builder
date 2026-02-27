@@ -10,7 +10,7 @@
     collection: Item[];
     legend: string;
     itemLabelGetter(item: Item): string;
-    EditForm: Snippet<[Item]>;
+    EditForm: Snippet<[number]>;
   }
 
   let {
@@ -31,7 +31,7 @@
 <fieldset>
   <legend>{legend}</legend>
   {#if current}
-    {@render EditForm(current)}
+    {@render EditForm(collection.indexOf(current))}
   {:else}
     <button class="new-item" onclick={add}><Plus /> New</button>
     <ItemList bind:items={collection} edit={item => (current = item)} getLabel={itemLabelGetter} />

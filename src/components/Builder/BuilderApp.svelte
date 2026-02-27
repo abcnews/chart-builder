@@ -129,8 +129,8 @@
       bind:collection={visState.config.series}
       itemLabelGetter={series => series.id}
     >
-      {#snippet EditForm()}
-        <SeriesEditForm bind:series={currentSeries} />
+      {#snippet EditForm(index)}
+        <SeriesEditForm {index} bind:series={currentSeries} />
       {/snippet}
     </ItemCollection>
     <fieldset>

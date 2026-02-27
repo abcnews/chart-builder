@@ -1,9 +1,10 @@
 import type { DSVRowString } from 'd3-dsv';
-import type { AxisOptionsType, ColumnDefinitionType, ColumnTypesType } from './types';
+import type { AxisOptionsType, ColumnDefinitionType, ColumnTypesType, SeriesType } from './types';
 import { timeFormat } from 'd3-time-format';
 import { format } from 'd3-format';
 import { defaultAxisLabelFormatStrings } from './constants';
 import { extent } from 'd3-array';
+import { getOrdinalCategoricalPalette } from '@abcnews/palette';
 
 /**
  * This is a modified version of the d3 autotype function
@@ -122,4 +123,8 @@ export const getDomain = (
     : filtered.reduce((max, val) => (val > max ? val : max), -Infinity);
 
   return [min, max];
+};
+
+export const getDefaultPalette = (series: SeriesType[]) => {
+  return getOrdinalCategoricalPalette(Math.min(5, Math.max(2, series.length)));
 };

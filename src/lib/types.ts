@@ -53,14 +53,17 @@ export enum AnnotationAnchorType {
 export type CustomLayerCakeContextType = { showConstructionMarks: boolean };
 
 export type LayerCakeGroupedDataType = LayerCakeGroupedDataGroupType[];
-export type LayerCakeGroupedDataGroupType = { group: string; values: LayerCakeGroupedDataGroupValuesType[] };
-export type LayerCakeGroupedDataGroupValuesType =
-  | {
-      x: string | number | boolean | Date | null | undefined;
-      y: string | number | boolean | Date | null | undefined;
-      series: string;
-    }
-  | undefined;
+export type LayerCakeGroupedDataGroupType = {
+  group: string;
+  values: LayerCakeGroupedDataGroupValuesType[];
+  config: SeriesType;
+};
+export type LayerCakeGroupedDataGroupValuesType = {
+  x: string | number | boolean | Date | null | undefined;
+  y: string | number | boolean | Date | null | undefined;
+  z: string;
+  row: Record<string, string | number | boolean | Date | null>;
+};
 
 export type LayerCakeContextType = {
   xScale: Readable<(date: Date | number | string) => number>;

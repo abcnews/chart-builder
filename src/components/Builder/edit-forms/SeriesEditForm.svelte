@@ -5,6 +5,7 @@
 
   interface Props {
     series: (SeriesType & DeletableType) | undefined;
+    index: number; // The index of this item in its collection
   }
 
   let { series = $bindable() }: Props = $props();
@@ -35,6 +36,9 @@
       <option value={name}>{name} ({type})</option>
     {/each}
   </select>
+
+  <label for="series-colour">Colour</label>
+  <input type="text" id="series-colour" bind:value={series.colour} placeholder="Default: " />
 
   <FormActions bind:item={series} />
 {/if}
