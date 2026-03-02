@@ -90,9 +90,7 @@
   let seriesColors = $derived(getDefaultPalette(visState.config.series));
 
   let annotations = $derived.by(() => {
-    console.log('visState.config.annotations :>> ', visState.config.annotations);
     return visState.config.annotations.filter(d => {
-      console.log('d :>> ', d);
       return !d.deleted;
     });
   });
