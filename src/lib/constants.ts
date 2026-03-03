@@ -7,6 +7,7 @@ export const SCROLLY_MARK_PREFIX = '#markCONFIG';
 
 export const LARGE_TABLET_BREAKPOINT = 992;
 export const DESKTOP_BREAKPOINT = 1500;
+export const MOBILE_MAX = 462;
 
 export const plotPadding = {
   bottom: 30,

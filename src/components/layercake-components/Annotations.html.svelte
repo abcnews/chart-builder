@@ -25,6 +25,7 @@
 {#if xAxisDataType && yAxisDataType}
   {#each annotations.filter(d => !d.deleted) as annotation}
     <span
+      class="annotations__annotation"
       transition:fade
       style:--annotation-color={annotation.colour && annotation.colour.length > 3 ? annotation.colour : undefined}
       class:show-construction-marks={$custom.showConstructionMarks}
@@ -47,16 +48,27 @@
 {/if}
 
 <style>
-  span {
+  .annotations__annotation {
     position: absolute;
     text-align: center;
     vertical-align: middle;
     text-wrap: balance;
-    line-height: 1.1;
     paint-order: stroke fill;
-    -webkit-text-stroke: 2px #fff;
-    font-weight: 700;
     color: var(--annotation-color, #000);
+
+    -webkit-text-stroke-width: 2px;
+    -webkit-text-stroke-color: #fff;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+  }
+
+  @container (width > 462px) {
+    .annotations__annotation {
+      /* Desktop settings */
+      font-size: 14px;
+    }
   }
 
   .middle {

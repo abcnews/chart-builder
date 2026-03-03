@@ -152,6 +152,7 @@
 
 <FontProvider>
   <div
+    class="visualisation"
     bind:clientWidth={chartWidth}
     style:--plot-padding-left={`${plotPadding.left}px`}
     style:--plot-padding-right={`${plotPadding.right}px`}
@@ -223,6 +224,12 @@
 </FontProvider>
 
 <style lang="scss">
+  // TODO: Dark mode not supported yet.
+  .visualisation {
+    background: white;
+    container-type: inline-size;
+    /* MOBILE_MAX=462 */
+  }
   div {
     width: 100%;
     height: 100%;

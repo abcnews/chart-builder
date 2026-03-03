@@ -6,9 +6,12 @@
 
   // TODO : Make fade into a prop
 
-  let { from, to, lineWidth = 2 }: { from: Coordinate; to: Coordinate; lineWidth?: number } = $props();
-
-  // let { length = 10, width = 3, headAngle = 30, headLength = 4, rounding = 1, px = 100, py = 100 } = $props();
+  let {
+    from,
+    to,
+    lineWidth = 2,
+    colour = 'black'
+  }: { from: Coordinate; to: Coordinate; lineWidth?: number; colour?: string } = $props();
 
   const HEAD_LENGTH = 7;
   const HEAD_ANGLE = 45;
@@ -26,13 +29,7 @@
   transition:fade
   d={path}
   transform-origin="left middle"
+  style:stroke={colour}
+  style:stroke-width="{lineWidth}px"
   style:transform="translate({to.x}px,{to.y}px) rotate({rotation}deg)"
 />
-
-<style>
-  path {
-    stroke: var(--arrow-stroke-color, transparent);
-    stroke-width: var(--arrow-stroke-width, 1);
-    fill: var(--arrow-fill-color, black);
-  }
-</style>
