@@ -15,6 +15,7 @@
 {#each arrows as arrow}
   <Arrow
     lineWidth={1}
+    colour={arrow.colour || 'black'}
     from={{ x: $xScale(new Date(arrow.from.x)), y: $yScale(arrow.from.y) }}
     to={{ x: $xScale(new Date(arrow.to.x)), y: $yScale(arrow.to.y) }}
   />
