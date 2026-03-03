@@ -95,11 +95,11 @@ export const getAxisLabelFormatter = (axisOptions: AxisOptionsType, axisDataType
   // Default to returning coercing to a string for anything else
   return (d: any) => String(d);
 };
-
 export const getDomain = (
   axisOptions: AxisOptionsType,
   data: (string | number | boolean | Date | null | undefined)[],
-  dataType: ColumnTypesType | undefined
+  dataType: ColumnTypesType | undefined,
+  padding: number = 0.05
 ) => {
   if (dataType === undefined) {
     return undefined;
@@ -116,12 +116,27 @@ export const getDomain = (
     return !(typeof input === 'undefined' || input === null || (typeof input === 'string' && input.length === 0));
   };
 
-  let min = isDefined(axisOptions.domain.min)
-    ? coerceToColumnDataType(axisOptions.domain.min, dataType)
+  const hasMin = isDefined(axisOptions.domain.min);
+  const hasMax = isDefined(axisOptions.domain.max);
+
+  let min = hasMin
+    ? coerceToColumnDataType(axisOptions.domain.min as string | number, dataType)
     : filtered.reduce((min, val) => (val < min ? val : min), Infinity);
-  let max = isDefined(axisOptions.domain.max)
-    ? coerceToColumnDataType(axisOptions.domain.max, dataType)
+  let max = hasMax
+    ? coerceToColumnDataType(axisOptions.domain.max as string | number, dataType)
     : filtered.reduce((max, val) => (val > max ? val : max), -Infinity);
+
+  // Apply default padding if the domain is auto-calculated and numeric.
+  if (dataType === 'number') {
+    const range = (max as number) - (min as number);
+    const padAmount = range * padding;
+    if (!hasMin) {
+      min = (min as number) - padAmount;
+    }
+    if (!hasMax) {
+      max = (max as number) + padAmount;
+    }
+  }
 
   return [min, max];
 };
