@@ -30,11 +30,11 @@
 
 <fieldset>
   <legend>{legend}</legend>
+  <button class="new-item" onclick={add}><Plus /> New</button>
+  <ItemList bind:items={collection} edit={item => (current = item)} getLabel={itemLabelGetter} />
+
   {#if current}
     {@render EditForm(collection.indexOf(current))}
-  {:else}
-    <button class="new-item" onclick={add}><Plus /> New</button>
-    <ItemList bind:items={collection} edit={item => (current = item)} getLabel={itemLabelGetter} />
   {/if}
 </fieldset>
 
