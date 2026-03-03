@@ -227,6 +227,8 @@
   // TODO: Dark mode not supported yet.
   .visualisation {
     background: white;
+    container-type: inline-size;
+    /* MOBILE_MAX=462 */
   }
   div {
     width: 100%;
