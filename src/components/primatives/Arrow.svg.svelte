@@ -29,8 +29,7 @@
   transition:fade
   d={path}
   transform-origin="left middle"
-  style:fill={color}
-  style:stroke={color}
+  style:stroke={colour}
   style:stroke-width="{lineWidth}px"
   style:transform="translate({to.x}px,{to.y}px) rotate({rotation}deg)"
 />
