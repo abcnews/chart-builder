@@ -16,6 +16,7 @@ export const loadMarkerConfig = (data: string | Record<string, unknown>) => {
         if (source[key] === undefined) {
           if (Array.isArray(target) && typeof +key === 'number' && +key === +key) {
             console.log(`Removing index ${+key} from target ${JSON.stringify(target)}`);
+            target.splice(+key, 1);
           } else {
             console.log(`Deleting "${typeof target[key] === 'object' ? JSON.stringify(target[key]) : target[key]}"`);
             delete target[key];
