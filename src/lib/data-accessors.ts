@@ -13,25 +13,24 @@ export const loadMarkerConfig = (data: string | Record<string, unknown>) => {
   const apply = (diff: {}, source: {}, target: {}, path: string[] = []) => {
     for (const key in diff) {
       const replace = () => {
-        console.log('path :>> ', [...path, key]);
         if (source[key] === undefined) {
-          console.log(`Deleted "${typeof target[key] === 'object' ? JSON.stringify(target[key]) : target[key]}"`);
-          delete target[key];
+          if (Array.isArray(target) && typeof +key === 'number' && +key === +key) {
+            console.log(`Removing index ${+key} from target ${JSON.stringify(target)}`);
+          } else {
+            console.log(`Deleting "${typeof target[key] === 'object' ? JSON.stringify(target[key]) : target[key]}"`);
+            delete target[key];
+          }
         } else {
           console.log(
-            `Replaced "${target[key]}" with "${
+            `Replacing "${target[key]}" with "${
               typeof source[key] === 'object' ? JSON.stringify(source[key]) : source[key]
             }"`
           );
           target[key] = source[key];
         }
       };
-      if (typeof diff[key] === 'object') {
-        if (target[key] !== undefined) {
-          apply(diff[key], source[key], target[key], [...path, key]);
-        } else {
-          replace();
-        }
+      if (typeof diff[key] === 'object' && typeof target[key] !== 'undefined') {
+        apply(diff[key], source[key], target[key], [...path, key]);
       } else {
         replace();
       }
@@ -41,8 +40,9 @@ export const loadMarkerConfig = (data: string | Record<string, unknown>) => {
   const result = safeParse(VisualisationSchema, obj);
   if (result.success) {
     const configDiff = diff(visState.config, result.output);
-    console.log('configDiff :>> ', configDiff);
+    console.log('APPLYING DIFF', configDiff);
     apply(configDiff, result.output, visState.config);
+    console.log('UPDATE FINISHED');
     // visState.config = result.output;
   } else {
     console.error(result.issues);
