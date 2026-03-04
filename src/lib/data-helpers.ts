@@ -149,11 +149,13 @@ export const getDomain = (
 export const parseManualTicks = (ticksString: string | undefined, dataType: ColumnTypesType | undefined) => {
   if (!ticksString || !dataType) return undefined;
 
-  return ticksString
+  const ticks = ticksString
     .split(',')
     .map(s => s.trim())
     .filter(s => s.length > 0)
     .map(s => coerceToColumnDataType(s, dataType));
+
+  return ticks.length > 0 ? ticks : undefined;
 };
 
 export const getDefaultPalette = (series: SeriesType[]) => {
