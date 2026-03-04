@@ -19,7 +19,13 @@
     LayerCakeGroupedDataType
   } from '../lib/types';
 
-  import { getAxisLabelFormatter, getDefaultPalette, getDomain, rowParser } from '../lib/data-helpers';
+  import {
+    getAxisLabelFormatter,
+    getDefaultPalette,
+    getDomain,
+    parseManualTicks,
+    rowParser
+  } from '../lib/data-helpers';
   import { getAxisDataType } from '../lib/data-accessors';
 
   import { visState } from '../lib/state.svelte';
@@ -102,6 +108,10 @@
 
   let formatLabelX = $derived(xAxisDataType && getAxisLabelFormatter(visState.config.axes.x, xAxisDataType));
   let formatLabelY = $derived(yAxisDataType && getAxisLabelFormatter(visState.config.axes.y, yAxisDataType));
+
+  let xTicks = $derived(parseManualTicks(visState.config.axes.x.ticks, xAxisDataType));
+  let yTicks = $derived(parseManualTicks(visState.config.axes.y.ticks, yAxisDataType));
+
   let chartWidth: number = $state(0);
 
   let { showConstructionMarks = false }: Props = $props();
@@ -185,13 +195,13 @@
       <Svg>
         <AxisX
           gridlines={false}
-          ticks={Math.floor(chartWidth / 130)}
+          ticks={xTicks || Math.floor(chartWidth / 130)}
           format={formatLabelX}
           dy={14}
           baseline={true}
           tickMarks
         />
-        <AxisY ticks={4} format={formatLabelY} />
+        <AxisY ticks={yTicks || 4} format={formatLabelY} />
       </Svg>
       <Svg overflow="hidden">
         <Lines />

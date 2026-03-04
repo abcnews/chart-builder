@@ -139,19 +139,33 @@
         <p>At least one series must be defined before axis options can be set.</p>
       {:else}
         <FieldGroup label="Formatting">
-          <label for="x-axis-format">x ({xAxisDataType})</label>
+          <label for="x-axis-format">x ({xAxisDataType}) format</label>
           <input
             id="x-axis-format"
             type="text"
             bind:value={visState.config.axes.x.format}
             placeholder={`Default: ${defaultAxisLabelFormatStrings[xAxisDataType || ''] || ''}`}
           />
-          <label for="y-axis-format">y ({yAxisDataType})</label>
+          <label for="x-axis-ticks">x labels (ticks)</label>
+          <input
+            id="x-axis-ticks"
+            type="text"
+            bind:value={visState.config.axes.x.ticks}
+            placeholder="e.g. 1980, 1985, 1990"
+          />
+          <label for="y-axis-format">y ({yAxisDataType}) format</label>
           <input
             id="y-axis-format"
             type="text"
             bind:value={visState.config.axes.y.format}
             placeholder={`Default: ${defaultAxisLabelFormatStrings[yAxisDataType || ''] || ''}`}
+          />
+          <label for="y-axis-ticks">y labels (ticks)</label>
+          <input
+            id="y-axis-ticks"
+            type="text"
+            bind:value={visState.config.axes.y.ticks}
+            placeholder="e.g. 0, 50, 100"
           />
         </FieldGroup>
         <small>
