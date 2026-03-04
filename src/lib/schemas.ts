@@ -108,6 +108,7 @@ export const DataSourceSchema = object({
 
 export const AxisOptionsSchema = object({
   format: optional(string()),
+  ticks: optional(string()),
   domain: object({
     min: optional(nullable(AxisPositionSchema)),
     max: optional(nullable(AxisPositionSchema))

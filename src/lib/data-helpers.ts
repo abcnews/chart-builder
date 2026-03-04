@@ -141,6 +141,23 @@ export const getDomain = (
   return [min, max];
 };
 
+/**
+ * Parse a comma-separated string of ticks and coerce them to the axis data type.
+ * @param ticksString Comma-separated string of ticks
+ * @param dataType Column data type for coercion
+ */
+export const parseManualTicks = (ticksString: string | undefined, dataType: ColumnTypesType | undefined) => {
+  if (!ticksString || !dataType) return undefined;
+
+  const ticks = ticksString
+    .split(',')
+    .map(s => s.trim())
+    .filter(s => s.length > 0)
+    .map(s => coerceToColumnDataType(s, dataType));
+
+  return ticks.length > 0 ? ticks : undefined;
+};
+
 export const getDefaultPalette = (series: SeriesType[]) => {
   return getOrdinalCategoricalPalette(Math.min(5, Math.max(2, series.length)));
 };
