@@ -45,6 +45,12 @@
         bind:value={axis.format}
         placeholder={`Default: ${defaultAxisLabelFormatStrings[columnType || ''] || ''}`}
       />
+      {#if label === 'X'}
+        <label for="x-axis-baseline">
+          <input id="x-axis-baseline" type="checkbox" bind:checked={axis.baseline} />
+          Show axis line
+        </label>
+      {/if}
     </FieldGroup>
     <small>
       Formatting uses d3's formatting functions (<a href="https://d3js.org/d3-format#locale_format">numbers</a>,
