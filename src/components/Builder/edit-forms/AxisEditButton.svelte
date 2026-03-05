@@ -30,6 +30,13 @@
 
 {#if isEditing}
   <ItemCollectionEditModal title="Edit {label} Axis" onClose={() => (isEditing = false)}>
+    {#snippet titleIcon()}
+      {#if label === 'X'}
+        <Arrows />
+      {:else if label === 'Y'}
+        <ArrowsVertical />
+      {/if}
+    {/snippet}
     <FieldGroup>
       <label for="{label.toLowerCase()}-axis-ticks">Labels</label>
       <input

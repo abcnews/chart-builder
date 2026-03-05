@@ -28,7 +28,7 @@
 	"dependencies": {
 		"@abcnews/alternating-case-to-object": "^3.1.1",
 		"@abcnews/base-36-props": "^1.4.0",
-		"@abcnews/components-builder": "^0.0.18",
+		"@abcnews/components-builder": "^0.0.19",
 		"@abcnews/components-storylab": "^0.1.0",
 		"@abcnews/dev-proxy": "^1.2.1",
 		"@abcnews/env-utils": "^6.0.0",

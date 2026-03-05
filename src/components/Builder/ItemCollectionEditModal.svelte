@@ -7,12 +7,13 @@
     onClose: () => void;
     children: Snippet;
     footer?: Snippet;
+    titleIcon?: Snippet;
   }
 
-  let { title, onClose, children, footer }: Props = $props();
+  let { title, onClose, children, footer, titleIcon }: Props = $props();
 </script>
 
-<Modal {onClose} {title} position="right">
+<Modal {onClose} {title} {titleIcon} position="right">
   <div class="item-collection-modal-content">
     {@render children()}
   </div>
