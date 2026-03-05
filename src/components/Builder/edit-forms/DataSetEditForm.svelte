@@ -3,6 +3,7 @@
   import { csvParse } from 'd3-dsv';
   import FormActions from './FormActions.svelte';
   import { Loader } from '@abcnews/components-builder';
+  import ItemCollectionEditModal from '../ItemCollectionEditModal.svelte';
 
   interface Props {
     set: (DataSetType & DeletableType) | undefined;
@@ -20,29 +21,34 @@
 </script>
 
 {#if set}
-  <label for="name">Name</label>
-  <input type="text" bind:value={set.name} />
-  <label for="name">URL</label>
-  <input type="text" bind:value={set.url} />
-  {#if set.url}
-    <fieldset>
-      <legend>Column types</legend>
-      {#await columns}
-        <Loader />
-      {:then columns}
-        {#if columns}
-          {#each columns as columnName, i}
-            <label for="column-name-{i}">{columnName}</label>
-            <select bind:value={set.columns[columnName]} id="column-name-{i}">
-              <option value="string">text</option>
-              <option value="boolean">true/false</option>
-              <option value="number">number</option>
-              <option value="date">date</option>
-            </select>
-          {/each}
-        {/if}
-      {/await}
-    </fieldset>
-  {/if}
-  <FormActions bind:item={set} />
+  <ItemCollectionEditModal title="Edit Dataset" onClose={() => (set = undefined)}>
+    <label for="name">Name</label>
+    <input type="text" bind:value={set.name} />
+    <label for="name">URL</label>
+    <input type="text" bind:value={set.url} />
+    {#if set.url}
+      <fieldset>
+        <legend>Column types</legend>
+        {#await columns}
+          <Loader />
+        {:then columns}
+          {#if columns}
+            {#each columns as columnName, i}
+              <label for="column-name-{i}">{columnName}</label>
+              <select bind:value={set.columns[columnName]} id="column-name-{i}">
+                <option value="string">text</option>
+                <option value="boolean">true/false</option>
+                <option value="number">number</option>
+                <option value="date">date</option>
+              </select>
+            {/each}
+          {/if}
+        {/await}
+      </fieldset>
+    {/if}
+
+    {#snippet footer()}
+      <FormActions bind:item={set} />
+    {/snippet}
+  </ItemCollectionEditModal>
 {/if}

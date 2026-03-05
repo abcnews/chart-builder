@@ -3,6 +3,7 @@
   import type { DeletableType, SeriesType } from '../../../lib/types';
   import ColourField from './ColourField.svelte';
   import FormActions from './FormActions.svelte';
+  import ItemCollectionEditModal from '../ItemCollectionEditModal.svelte';
 
   interface Props {
     series: (SeriesType & DeletableType) | undefined;
@@ -16,32 +17,36 @@
 </script>
 
 {#if series}
-  <label for="series-id">ID</label>
-  <input id="series-id" type="text" bind:value={series.id} />
-  <label for="series-dataset">Dataset</label>
-  <select id="series-dataset" bind:value={series.dataset}>
-    {#each visState.config.data as dataset}
-      <option id={dataset.name}>{dataset.name}</option>
-    {/each}
-  </select>
+  <ItemCollectionEditModal title="Edit Series" onClose={() => (series = undefined)}>
+    <label for="series-id">ID</label>
+    <input id="series-id" type="text" bind:value={series.id} />
+    <label for="series-dataset">Dataset</label>
+    <select id="series-dataset" bind:value={series.dataset}>
+      {#each visState.config.data as dataset}
+        <option id={dataset.name}>{dataset.name}</option>
+      {/each}
+    </select>
 
-  <label for="series-x">x</label>
-  <select id="series-x" bind:value={series.x}>
-    {#each Object.entries(dataset?.columns || []) as [name, type], i}
-      <option value={name}>{name} ({type})</option>
-    {/each}
-  </select>
-  <label for="series-y">y</label>
-  <select id="series-y" bind:value={series.y}>
-    {#each Object.entries(dataset?.columns || []) as [name, type], i}
-      <option value={name}>{name} ({type})</option>
-    {/each}
-  </select>
+    <label for="series-x">x</label>
+    <select id="series-x" bind:value={series.x}>
+      {#each Object.entries(dataset?.columns || []) as [name, type], i}
+        <option value={name}>{name} ({type})</option>
+      {/each}
+    </select>
+    <label for="series-y">y</label>
+    <select id="series-y" bind:value={series.y}>
+      {#each Object.entries(dataset?.columns || []) as [name, type], i}
+        <option value={name}>{name} ({type})</option>
+      {/each}
+    </select>
 
-  <ColourField bind:value={series.colour} />
+    <ColourField bind:value={series.colour} />
 
-  <label for="dasharray">Dash pattern</label>
-  <input id="dasharray" type="text" bind:value={series.dasharray} placeholder="Default: none" />
+    <label for="dasharray">Dash pattern</label>
+    <input id="dasharray" type="text" bind:value={series.dasharray} placeholder="Default: none" />
 
-  <FormActions bind:item={series} />
+    {#snippet footer()}
+      <FormActions bind:item={series} />
+    {/snippet}
+  </ItemCollectionEditModal>
 {/if}

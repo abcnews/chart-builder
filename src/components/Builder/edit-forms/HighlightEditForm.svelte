@@ -5,6 +5,7 @@
   import ChartPositionInput from './ChartPositionInput.svelte';
   import ColourField from './ColourField.svelte';
   import FormActions from './FormActions.svelte';
+  import ItemCollectionEditModal from '../ItemCollectionEditModal.svelte';
 
   interface Props {
     highlight: (HighlightType & DeletableType) | undefined;
@@ -16,23 +17,27 @@
 </script>
 
 {#if highlight}
-  {#if !xAxisDataType || !yAxisDataType}
-    <p>Define at least one series before adding highlights.</p>
-  {:else}
-    <ChartPositionInput
-      id="highlight-top-left"
-      label="Top left"
-      bind:value={highlight.tl}
-      columnTypes={{ x: xAxisDataType, y: yAxisDataType }}
-    />
-    <ChartPositionInput
-      id="highlight-bottom-right"
-      label="Bottom right"
-      bind:value={highlight.br}
-      columnTypes={{ x: xAxisDataType, y: yAxisDataType }}
-    />
-    <ColourField bind:value={highlight.colour} />
-  {/if}
+  <ItemCollectionEditModal title="Edit Highlight" onClose={() => (highlight = undefined)}>
+    {#if !xAxisDataType || !yAxisDataType}
+      <p>Define at least one series before adding highlights.</p>
+    {:else}
+      <ChartPositionInput
+        id="highlight-top-left"
+        label="Top left"
+        bind:value={highlight.tl}
+        columnTypes={{ x: xAxisDataType, y: yAxisDataType }}
+      />
+      <ChartPositionInput
+        id="highlight-bottom-right"
+        label="Bottom right"
+        bind:value={highlight.br}
+        columnTypes={{ x: xAxisDataType, y: yAxisDataType }}
+      />
+      <ColourField bind:value={highlight.colour} />
+    {/if}
 
-  <FormActions bind:item={highlight} />
+    {#snippet footer()}
+      <FormActions bind:item={highlight} />
+    {/snippet}
+  </ItemCollectionEditModal>
 {/if}
