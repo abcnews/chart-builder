@@ -198,7 +198,7 @@
           ticks={xTicks || Math.floor(chartWidth / 130)}
           format={formatLabelX}
           dy={14}
-          baseline={true}
+          baseline={visState.config.axes.x.baseline}
           tickMarks
         />
         <AxisY ticks={yTicks || 4} format={formatLabelY} />

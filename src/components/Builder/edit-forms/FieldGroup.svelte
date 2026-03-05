@@ -1,5 +1,5 @@
 <script lang="ts">
-  let { children, columns = 2, label } = $props();
+  let { children, columns = 2, label = '' } = $props();
 </script>
 
 {#if label}<span>{label}</span>{/if}

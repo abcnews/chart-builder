@@ -18,12 +18,7 @@
     type HighlightType,
     type SeriesType
   } from '../../lib/types';
-  import {
-    defaultAxisLabelFormatStrings,
-    PROJECT_NAME,
-    SCROLLY_MARK_PREFIX,
-    SCROLLY_OPENER_PREFIX
-  } from '../../lib/constants';
+  import { PROJECT_NAME, SCROLLY_MARK_PREFIX, SCROLLY_OPENER_PREFIX } from '../../lib/constants';
 
   import AnnotationEditForm from './edit-forms/AnnotationEditForm.svelte';
   import ArrowEditForm from './edit-forms/ArrowEditForm.svelte';
@@ -32,8 +27,7 @@
   import DataSourceEditForm from './edit-forms/DataSourceEditForm.svelte';
   import DataSetEditForm from './edit-forms/DataSetEditForm.svelte';
   import SeriesEditForm from './edit-forms/SeriesEditForm.svelte';
-  import FieldGroup from './edit-forms/FieldGroup.svelte';
-  import AxisPositionInput from './edit-forms/AxisPositionInput.svelte';
+  import AxisEditButton from './edit-forms/AxisEditButton.svelte';
 
   const prefixes = {
     'Scrolly mark': SCROLLY_MARK_PREFIX,
@@ -138,68 +132,8 @@
       {#if !xAxisDataType || !yAxisDataType}
         <p>At least one series must be defined before axis options can be set.</p>
       {:else}
-        <FieldGroup label="Formatting">
-          <label for="x-axis-format">x ({xAxisDataType}) format</label>
-          <input
-            id="x-axis-format"
-            type="text"
-            bind:value={visState.config.axes.x.format}
-            placeholder={`Default: ${defaultAxisLabelFormatStrings[xAxisDataType || ''] || ''}`}
-          />
-          <label for="x-axis-ticks">x labels (ticks)</label>
-          <input
-            id="x-axis-ticks"
-            type="text"
-            bind:value={visState.config.axes.x.ticks}
-            placeholder="e.g. 1980, 1985, 1990"
-          />
-          <label for="y-axis-format">y ({yAxisDataType}) format</label>
-          <input
-            id="y-axis-format"
-            type="text"
-            bind:value={visState.config.axes.y.format}
-            placeholder={`Default: ${defaultAxisLabelFormatStrings[yAxisDataType || ''] || ''}`}
-          />
-          <label for="y-axis-ticks">y labels (ticks)</label>
-          <input
-            id="y-axis-ticks"
-            type="text"
-            bind:value={visState.config.axes.y.ticks}
-            placeholder="e.g. 0, 50, 100"
-          />
-        </FieldGroup>
-        <small>
-          Formatting uses d3's formatting functions (<a href="https://d3js.org/d3-format#locale_format">numbers</a>,
-          <a href="https://d3js.org/d3-time-format#locale_format">dates</a>).
-        </small>
-        <FieldGroup label="Chart extent x-axis">
-          <AxisPositionInput
-            label="Min"
-            id="x-axis-domain-min"
-            bind:value={visState.config.axes.x.domain.min}
-            columnType={xAxisDataType}
-          />
-          <AxisPositionInput
-            label="Max"
-            id="x-axis-domain-max"
-            bind:value={visState.config.axes.x.domain.max}
-            columnType={xAxisDataType}
-          />
-        </FieldGroup>
-        <FieldGroup label="Chart extent y-axis">
-          <AxisPositionInput
-            label="Min"
-            id="y-axis-domain-min"
-            bind:value={visState.config.axes.y.domain.min}
-            columnType={yAxisDataType}
-          />
-          <AxisPositionInput
-            label="Max"
-            id="y-axis-domain-max"
-            bind:value={visState.config.axes.y.domain.max}
-            columnType={yAxisDataType}
-          />
-        </FieldGroup>
+        <AxisEditButton bind:axis={visState.config.axes.x} label="X" columnType={xAxisDataType} />
+        <AxisEditButton bind:axis={visState.config.axes.y} label="Y" columnType={yAxisDataType} />
       {/if}
     </fieldset>
     <ItemCollection

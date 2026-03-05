@@ -1,7 +1,7 @@
 import { parse } from 'date-fns';
 import {
   array,
-  date,
+  boolean,
   enum_,
   intersect,
   literal,
@@ -14,9 +14,7 @@ import {
   record,
   string,
   transform,
-  tuple,
   union,
-  url,
   variant
 } from 'valibot';
 import { AnnotationAnchorType } from './types';
@@ -109,6 +107,7 @@ export const DataSourceSchema = object({
 export const AxisOptionsSchema = object({
   format: optional(string()),
   ticks: optional(string()),
+  baseline: optional(boolean(), true),
   domain: object({
     min: optional(nullable(AxisPositionSchema)),
     max: optional(nullable(AxisPositionSchema))
