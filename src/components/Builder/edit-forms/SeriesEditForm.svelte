@@ -4,7 +4,7 @@
   import ColourField from './ColourField.svelte';
   import FormActions from './FormActions.svelte';
   import ItemCollectionEditModal from '../ItemCollectionEditModal.svelte';
-  import { curveTypes } from '../../../lib/schemas';
+  import { curveTypes } from '../../../lib/curves';
 
   interface Props {
     series: (SeriesType & DeletableType) | undefined;

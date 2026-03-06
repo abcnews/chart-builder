@@ -18,6 +18,7 @@ import {
   variant
 } from 'valibot';
 import { AnnotationAnchorType } from './types';
+import { curveTypes } from './curves';
 
 export const DeletableSchema = object({
   deleted: optional(number())
@@ -26,7 +27,6 @@ export const DeletableSchema = object({
 export const orientations = ['left', 'right', 'above', 'below', 'middle'] as const;
 export const shapes = ['circle', 'diamond', 'square'] as const;
 export const columnTypes = ['number', 'date', 'boolean', 'string'] as const;
-export const curveTypes = ['linear', 'cardinal', 'step', 'stepAfter', 'stepBefore', 'monotoneX'] as const;
 
 export const DataRowSchema = object({
   date: pipe(
