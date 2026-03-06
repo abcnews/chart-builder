@@ -263,6 +263,12 @@
 
   .chart-title {
     font-family: var(--sl-font-stack-sans);
-    font-size: calc(1rem * (20 / 16));
+    font-size: 18px;
+  }
+
+  @container (width > 462px) {
+    .chart-title {
+      font-size: 20px;
+    }
   }
 </style>

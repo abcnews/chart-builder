@@ -54,7 +54,7 @@
     font-size: 14px;
     font-style: normal;
     font-weight: 700;
-    line-height: 100%; /* 14px */
+    line-height: 120%; /* 14px */
     color: var(--highlighter-color);
 
     position: absolute;
