@@ -5,12 +5,29 @@
 
   const { xScale, yScale, width, height } = getContext<LayerCakeContextType>('LayerCake');
 
+  /**
+   * BaseDragHandler provides a system for dragging elements on a Chart.
+   * It handles coordinate inversion, grid snapping, grab-offsets, and cursor state.
+   *
+   * To implement a new drag handler:
+   * 1. Create a wrapper component.
+   * 2. Import and use `BaseDragHandler`.
+   * 3. Pass a unique `type` (matching a `data-type` on your draggable HTML/SVG elements).
+   * 4. Define `getInitialPos` and `onMove` to bridge the drag logic with your state.
+   */
+
   interface Props {
+    /** The unique identifier for the element type being dragged (matches `[data-type="${type}"]`). */
     type: string;
+    /** The data type of the X axis (e.g. 'number', 'date') for coordinate inversion. */
     xAxisDataType: ColumnTypesType | undefined;
+    /** The data type of the Y axis (e.g. 'number', 'date') for coordinate inversion. */
     yAxisDataType: ColumnTypesType | undefined;
+    /** Returns the initial domain coordinates {x, y} for the element at the given index. */
     getInitialPos: (index: number, handle: string | null) => { x: any; y: any } | null;
+    /** Callback triggered during drag to update the state with new domain coordinates. */
     onMove: (index: number, handle: string | null, x: any, y: any) => void;
+    /** A function to coerce raw domain values into the correct column data type. */
     coerceValue: (val: any, type: any) => any;
   }
 
