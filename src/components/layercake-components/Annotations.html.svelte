@@ -61,7 +61,7 @@
     font-size: 12px;
     font-style: normal;
     font-weight: 700;
-    line-height: normal;
+    line-height: 120%;
   }
 
   @container (width > 462px) {
