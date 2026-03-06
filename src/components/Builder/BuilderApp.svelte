@@ -8,10 +8,15 @@
     ItemCollection,
     ScreenshotTool
   } from '@abcnews/components-builder';
+  import { BuilderStyleRoot, BuilderFrame, MarkerAdmin, UpdateChecker } from '@abcnews/components-builder';
+  import { Html, Svg } from 'layercake';
   import Visualisation from '../Visualisation.svelte';
   import { builderState, visState } from '../../lib/state.svelte';
   import { onMount } from 'svelte';
-
+  import AnnotationDragHandler from './drag-handlers/AnnotationDragHandler.svelte';
+  import ArrowDragHandler from './drag-handlers/ArrowDragHandler.svelte';
+  import BuilderArrowHandles from './BuilderArrowHandles.svg.svelte';
+  import { getAxisDataType, loadMarkerConfig } from '../../lib/data-accessors';
   import { isValiError } from 'valibot';
 
   import {
@@ -99,7 +104,17 @@
 </script>
 
 {#snippet Viz()}
-  <Visualisation />
+  <Visualisation {editorLayer} />
+{/snippet}
+
+{#snippet editorLayer()}
+  <Html>
+    <AnnotationDragHandler />
+    <ArrowDragHandler />
+  </Html>
+  <Svg>
+    <BuilderArrowHandles />
+  </Svg>
 {/snippet}
 
 {#snippet Sidebar()}
@@ -233,6 +248,3 @@
   <BuilderFrame {Viz} {Sidebar} />
   <UpdateChecker />
 </BuilderStyleRoot>
-
-<style>
-</style>

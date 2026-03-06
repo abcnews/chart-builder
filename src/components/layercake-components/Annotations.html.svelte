@@ -15,7 +15,8 @@
     annotations: (AnnotationType & DeletableType)[];
   }
 
-  const { annotations }: Props = $props();
+  let { annotations }: Props = $props();
+  const annotationsFiltered = $derived(annotations.filter(d => !d.deleted));
 
   const k = getLayerCakeContext<LayerCakeScalesTypes, LayerCakeGroupedDataType>();
   let xAxisDataType = $derived(visState.config.axes.x.type);
@@ -23,9 +24,11 @@
 </script>
 
 {#if xAxisDataType && yAxisDataType}
-  {#each annotations.filter(d => !d.deleted) as annotation (annotation.label)}
+  {#each annotationsFiltered as annotation, i (annotation.label)}
     <span
       class="annotations__annotation"
+      data-type="annotation"
+      data-index={i}
       transition:fade
       style:--annotation-color={annotation.colour && annotation.colour.length > 3 ? annotation.colour : undefined}
       class:show-construction-marks={builderState.showConstructionMarks}

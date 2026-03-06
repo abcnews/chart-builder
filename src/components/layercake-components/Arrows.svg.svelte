@@ -14,13 +14,13 @@
   const k = getLayerCakeContext<LayerCakeScalesTypes, LayerCakeGroupedDataType>();
 
   let { arrows }: Props = $props();
-
+  const arrowsFiltered = $derived(arrows.filter(d => !d.deleted));
   let xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
   let yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
 </script>
 
 {#if xAxisDataType && yAxisDataType}
-  {#each arrows as arrow (`${arrow.from.x}${arrow.from.y}${arrow.to.x}${arrow.to.y}`)}
+  {#each arrowsFiltered as arrow (`${arrow.from.x}${arrow.from.y}${arrow.to.x}${arrow.to.y}`)}
     <g transition:fade>
       <Arrow
         lineWidth={1}

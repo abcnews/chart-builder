@@ -11,6 +11,7 @@
   import Arrows from './layercake-components/Arrows.svg.svelte';
   import BackgroundHighlight from './layercake-components/BackgroundHighlight.svelte';
   import Lines from './layercake-components/Lines.svg.svelte';
+  import type { Snippet } from 'svelte';
 
   import { parseManualTicks } from '../lib/data-helpers';
   import {
@@ -27,6 +28,12 @@
 
   import { updateData } from '../lib/state-management';
   import { TypographyProvider } from '@abcnews/components-storylab';
+
+  interface Props {
+    editorLayer?: Snippet;
+  }
+
+  let { editorLayer }: Props = $props();
 
   const tweenConfig = $derived({
     // Reduced motion timing is purposely non-zero, otherwise the transitions occur immediately
@@ -62,6 +69,8 @@
   let yTicks = $derived(parseManualTicks(visState.config.axes.y.ticks, yAxisDataType));
 
   let chartWidth: number = $state(0);
+
+  let { showConstructionMarks = false, editorLayer }: Props = $props();
 
   let xDomain = $derived(
     getDomain(
@@ -163,8 +172,8 @@
       x="x"
       y="y"
       z="series"
-      xDomain={xAxisDomainTween ? xAxisDomainTween.current : xDomain}
-      yDomain={yAxisDomainTween ? yAxisDomainTween.current : yDomain}
+      xDomain={(xAxisDomainTween ? xAxisDomainTween.current : xDomain) as any}
+      yDomain={(yAxisDomainTween ? yAxisDomainTween.current : yDomain) as any}
       zScale={scaleOrdinal()}
       zRange={seriesColors}
       {flatData}
@@ -193,6 +202,7 @@
       <Svg>
         <Arrows {arrows} />
       </Svg>
+      {@render editorLayer?.()}
     </LayerCake>
 
     {#if (visState.config.description && visState.config.description.length > 0) || visState.config.sources.length}
