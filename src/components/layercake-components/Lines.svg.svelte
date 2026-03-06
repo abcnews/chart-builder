@@ -1,6 +1,15 @@
 <script lang="ts">
   import { getContext } from 'svelte';
-  import { line, curveCatmullRom, type CurveFactory, curveLinear, curveCardinal } from 'd3-shape';
+  import {
+    line,
+    curveCardinal,
+    curveLinear,
+    curveStep,
+    curveStepAfter,
+    curveStepBefore,
+    curveMonotoneX,
+    type CurveFactory
+  } from 'd3-shape';
   import { type LayerCakeContextType, type LayerCakeGroupedDataGroupValuesType } from '../../lib/types';
 
   interface Props {
@@ -8,15 +17,23 @@
   }
   const { data, xGet, yGet, zGet } = getContext<LayerCakeContextType>('LayerCake');
 
-  let { curve = curveCardinal }: Props = $props();
-  let lineGenerator = $derived(line<LayerCakeGroupedDataGroupValuesType>($xGet, $yGet).curve(curve));
+  let { curve }: Props = $props();
+
+  const curveMap = {
+    linear: curveLinear,
+    cardinal: curveCardinal,
+    step: curveStep,
+    stepAfter: curveStepAfter,
+    stepBefore: curveStepBefore,
+    monotoneX: curveMonotoneX
+  };
+
   const renderedLines = $derived(
     $data.flatMap(({ values, config }) => {
       // Only lines
       if (config.type !== 'line') return [];
 
       // Remove data where y-axis value is null or undefined.
-      // TODO: Add option to split the series for missing data. Or some other missing data display options.
       const vals = values.flatMap(d => {
         if (d.y === undefined || d.y === null) return [];
         return [d];
@@ -28,7 +45,9 @@
       return [
         {
           id: config.id,
-          d: lineGenerator(vals),
+          d: line<LayerCakeGroupedDataGroupValuesType>($xGet, $yGet).curve(
+            curve || (config.curveType && curveMap[config.curveType]) || curveCardinal
+          ),
           stroke: config.colour || (vals[0] ? $zGet(vals[0]) : '#000'),
           dasharray: config.dasharray
         }
