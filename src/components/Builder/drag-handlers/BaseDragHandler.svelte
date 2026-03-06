@@ -5,6 +5,17 @@
 
   const { xScale, yScale, width, height } = getContext<LayerCakeContextType>('LayerCake');
 
+  interface Props {
+    type: string;
+    xAxisDataType: ColumnTypesType | undefined;
+    yAxisDataType: ColumnTypesType | undefined;
+    getInitialPos: (index: number, handle: string | null) => { x: any; y: any } | null;
+    onMove: (index: number, handle: string | null, x: any, y: any) => void;
+    coerceValue: (val: any, type: any) => any;
+  }
+
+  let { type, xAxisDataType, yAxisDataType, getInitialPos, onMove, coerceValue }: Props = $props();
+
   /**
    * Translates a pixel coordinate in the chart container into a domain value.
    */
@@ -39,113 +50,64 @@
     grabOffsetY: number;
   };
 
-  /**
-   * Orchestrates the drag logic for a specific element type.
-   */
-  class DragHandler {
-    info = $state<DragInfo | null>(null);
+  let dragInfo = $state<DragInfo | null>(null);
 
-    constructor(
-      private getOptions: () => {
-        type: string;
-        getInitialPos: (index: number, handle: string | null) => { x: any; y: any } | null;
-        onMove: (index: number, handle: string | null, x: any, y: any) => void;
-        coerceValue: (val: any, type: ColumnTypesType) => any;
-      }
-    ) {}
+  const onmousedown = (e: MouseEvent) => {
+    const target = (e.target as HTMLElement).closest(`[data-type="${type}"]`);
+    if (!target || !target.closest('.visualisation')) return;
 
-    private get options() {
-      return this.getOptions();
-    }
+    const index = Number(target.getAttribute('data-index'));
+    const handle = target.getAttribute('data-handle');
 
-    onMousedown = (e: MouseEvent, context: { xScale: any; yScale: any; xAxisDataType: any; yAxisDataType: any }) => {
-      const target = (e.target as HTMLElement).closest(`[data-type="${this.options.type}"]`);
-      if (!target || !target.closest('.visualisation')) return;
+    const rect = document.querySelector('.visualisation .layercake-container')?.getBoundingClientRect();
+    if (!rect) return;
 
-      const index = Number(target.getAttribute('data-index'));
-      const handle = target.getAttribute('data-handle');
+    const startX = e.clientX - rect.left;
+    const startY = e.clientY - rect.top;
 
-      const rect = document.querySelector('.visualisation .layercake-container')?.getBoundingClientRect();
-      if (!rect) return;
+    const initialPos = getInitialPos(index, handle);
+    if (!initialPos) return;
 
-      const startX = e.clientX - rect.left;
-      const startY = e.clientY - rect.top;
+    const currentX = $xScale(coerceValue(initialPos.x, xAxisDataType)) + (plotPadding.left || 0);
+    const currentY = $yScale(coerceValue(initialPos.y, yAxisDataType)) + ((plotPadding as any).top || 0);
 
-      const initialPos = this.options.getInitialPos(index, handle);
-      if (!initialPos) return;
-
-      const currentX =
-        context.xScale(this.options.coerceValue(initialPos.x, context.xAxisDataType)) + (plotPadding.left || 0);
-      const currentY =
-        context.yScale(this.options.coerceValue(initialPos.y, context.yAxisDataType)) + ((plotPadding as any).top || 0);
-
-      this.info = {
-        index,
-        handle,
-        grabOffsetX: startX - currentX,
-        grabOffsetY: startY - currentY
-      };
-
-      e.preventDefault();
-      e.stopPropagation();
+    dragInfo = {
+      index,
+      handle,
+      grabOffsetX: startX - currentX,
+      grabOffsetY: startY - currentY
     };
 
-    onMousemove = (e: MouseEvent, context: { xScale: any; yScale: any; xAxisDataType: any; yAxisDataType: any }) => {
-      if (!this.info) return;
+    e.preventDefault();
+    e.stopPropagation();
+  };
 
-      const rect = document.querySelector('.visualisation .layercake-container')?.getBoundingClientRect();
-      if (!rect) return;
+  const onmousemove = (e: MouseEvent) => {
+    if (!dragInfo) return;
 
-      const rawX = e.clientX - rect.left - this.info.grabOffsetX;
-      const rawY = e.clientY - rect.top - this.info.grabOffsetY;
+    const rect = document.querySelector('.visualisation .layercake-container')?.getBoundingClientRect();
+    if (!rect) return;
 
-      const snappedX = snapToGrid(rawX);
-      const snappedY = snapToGrid(rawY);
+    const rawX = e.clientX - rect.left - dragInfo.grabOffsetX;
+    const rawY = e.clientY - rect.top - dragInfo.grabOffsetY;
 
-      const domainX = getDomainValue(snappedX, 'x', context.xScale, context.xAxisDataType);
-      const domainY = getDomainValue(snappedY, 'y', context.yScale, context.yAxisDataType);
+    const snappedX = snapToGrid(rawX);
+    const snappedY = snapToGrid(rawY);
 
-      this.options.onMove(this.info.index, this.info.handle, domainX, domainY);
-    };
+    const domainX = getDomainValue(snappedX, 'x', $xScale, xAxisDataType);
+    const domainY = getDomainValue(snappedY, 'y', $yScale, yAxisDataType);
 
-    onMouseup = () => {
-      this.info = null;
-    };
-  }
+    onMove(dragInfo.index, dragInfo.handle, domainX, domainY);
+  };
 
-  interface Props {
-    type: string;
-    xAxisDataType: ColumnTypesType | undefined;
-    yAxisDataType: ColumnTypesType | undefined;
-    getInitialPos: (index: number, handle: string | null) => { x: any; y: any } | null;
-    onMove: (index: number, handle: string | null, x: any, y: any) => void;
-    coerceValue: (val: any, type: any) => any;
-  }
-
-  let { type, xAxisDataType, yAxisDataType, getInitialPos, onMove, coerceValue }: Props = $props();
-
-  const drag = new DragHandler(() => ({
-    type,
-    getInitialPos,
-    onMove,
-    coerceValue
-  }));
-
-  let dragContext = $derived({
-    xScale: $xScale,
-    yScale: $yScale,
-    xAxisDataType,
-    yAxisDataType
-  });
+  const onmouseup = () => {
+    dragInfo = null;
+  };
 </script>
 
-<svelte:window
-  onmousedown={e => drag.onMousedown(e, dragContext)}
-  onmousemove={e => drag.onMousemove(e, dragContext)}
-  onmouseup={() => drag.onMouseup()}
-/>
+<svelte:window {onmousedown} {onmousemove} {onmouseup} />
 
-{#if drag.info}
+{#if dragInfo}
   <div class="drag-overlay" style:width="{$width}px" style:height="{$height}px"></div>
 {/if}
 
