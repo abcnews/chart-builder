@@ -18,6 +18,7 @@ import {
   variant
 } from 'valibot';
 import { AnnotationAnchorType } from './types';
+import { curveTypes } from './curves';
 
 export const DeletableSchema = object({
   deleted: optional(number())
@@ -94,7 +95,8 @@ export const SeriesLineSchema = object({
   x: optional(string()), // Field to be used for x value
   y: optional(string()), // Field to be used for y value
   colour: ElementColourSchema,
-  dasharray: optional(string())
+  dasharray: optional(string()),
+  curveType: optional(picklist(curveTypes), 'cardinal')
 });
 
 export const SeriesSchema = variant('type', [SeriesLineSchema]);

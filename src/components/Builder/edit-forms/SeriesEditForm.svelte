@@ -4,6 +4,7 @@
   import ColourField from './ColourField.svelte';
   import FormActions from './FormActions.svelte';
   import ItemCollectionEditModal from '../ItemCollectionEditModal.svelte';
+  import { curveTypes } from '../../../lib/curves';
 
   interface Props {
     series: (SeriesType & DeletableType) | undefined;
@@ -44,6 +45,16 @@
 
     <label for="dasharray">Dash pattern</label>
     <input id="dasharray" type="text" bind:value={series.dasharray} placeholder="Default: none" />
+
+    <label for="series-curve">Curve type</label>
+    <select id="series-curve" bind:value={series.curveType}>
+      {#each curveTypes as type}
+        <option value={type}>{type}</option>
+      {/each}
+    </select>
+    <small>
+      See <a href="https://d3js.org/d3-shape/curve" target="_blank">D3 documentation</a> for a deep dive.
+    </small>
 
     {#snippet footer()}
       <FormActions bind:item={series} />
