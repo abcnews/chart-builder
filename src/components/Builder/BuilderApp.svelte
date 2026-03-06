@@ -1,9 +1,13 @@
 <script lang="ts">
   import { encode } from '@abcnews/base-36-props';
   import { BuilderStyleRoot, BuilderFrame, MarkerAdmin, UpdateChecker } from '@abcnews/components-builder';
+  import { Html, Svg } from 'layercake';
   import Visualisation from '../Visualisation.svelte';
   import { visState } from '../../lib/state.svelte';
   import { onMount } from 'svelte';
+  import AnnotationDragHandler from './drag-handlers/AnnotationDragHandler.svelte';
+  import ArrowDragHandler from './drag-handlers/ArrowDragHandler.svelte';
+  import BuilderArrowHandles from './BuilderArrowHandles.svg.svelte';
   import { getAxisDataType, loadMarkerConfig } from '../../lib/data-accessors';
   import { isValiError } from 'valibot';
   import ScreenshotTool from './ScreenshotTool/ScreenshotTool.svelte';
@@ -93,7 +97,17 @@
 </script>
 
 {#snippet Viz()}
-  <Visualisation {showConstructionMarks} />
+  <Visualisation {showConstructionMarks} {editorLayer} />
+{/snippet}
+
+{#snippet editorLayer()}
+  <Html>
+    <AnnotationDragHandler />
+    <ArrowDragHandler />
+  </Html>
+  <Svg>
+    <BuilderArrowHandles />
+  </Svg>
 {/snippet}
 
 {#snippet Sidebar()}
@@ -217,6 +231,3 @@
   <BuilderFrame {Viz} {Sidebar} />
   <UpdateChecker />
 </BuilderStyleRoot>
-
-<style>
-</style>
