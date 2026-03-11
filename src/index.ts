@@ -8,8 +8,7 @@ import { PROJECT_NAME } from './lib/constants';
 
 Promise.all([whenOdysseyLoaded, proxy(PROJECT_NAME)]).then(() => {
   // Don't load scrollytellers if the viewport is below the zoom threshold (e.g. high-zoom or small-screen)
-  const { isBelowThreshold } = window.__ODYSSEY__;
-  if (isBelowThreshold) {
+  if ((window.__ODYSSEY__ as { isBelowThreshold: boolean })?.isBelowThreshold) {
     return;
   }
   const mounts = selectMounts('scrollyteller', { markAsUsed: false });
