@@ -16,21 +16,24 @@
     annotations: (AnnotationType & DeletableType)[];
   }
 
-  const { annotations }: Props = $props();
+  let { annotations }: Props = $props();
+  const annotationsFiltered = $derived(annotations.filter(d => !d.deleted));
   const { xScale, yScale, custom } = getContext<LayerCakeContextType>('LayerCake');
   let xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
   let yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
 </script>
 
 {#if xAxisDataType && yAxisDataType}
-  {#each annotations.filter(d => !d.deleted) as annotation}
+  {#each annotationsFiltered as annotation, i}
     <span
       class="annotations__annotation"
+      data-type="annotation"
+      data-index={i}
       transition:fade
       style:--annotation-color={annotation.colour && annotation.colour.length > 3 ? annotation.colour : undefined}
       class:show-construction-marks={$custom.showConstructionMarks}
-      style:left={`${$xScale(coerceToColumnDataType(annotation.x, xAxisDataType))}px`}
-      style:top={`${$yScale(coerceToColumnDataType(annotation.y, yAxisDataType))}px`}
+      style:left={`${$xScale(coerceToColumnDataType(annotation.x, xAxisDataType) as any)}px`}
+      style:top={`${$yScale(coerceToColumnDataType(annotation.y, yAxisDataType) as any)}px`}
       style:width={`${annotation.width}em`}
       class:middle={annotation.anchor === AnnotationAnchorType.Middle}
       class:top-left={annotation.anchor === AnnotationAnchorType.TopLeft}
