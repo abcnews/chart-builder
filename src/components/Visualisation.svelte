@@ -1,11 +1,9 @@
 <script lang="ts">
   import { LayerCake, Svg, Html } from 'layercake';
   import { Tween } from 'svelte/motion';
-
   import { scaleOrdinal } from 'd3-scale';
   import { csvParse } from 'd3-dsv';
-
-  import FontProvider from './FontProvider.svelte';
+  import FontProvider from './FontProvider.svelte'; // TODO Swap out for @abcnews/components-storylab version
   import AxisX from './layercake-components/AxisX.svg.svelte';
   import AxisY from './layercake-components/AxisY.svg.svelte';
   import Annotations from './layercake-components/Annotations.html.svelte';
@@ -37,6 +35,8 @@
     showConstructionMarks?: boolean;
   }
 
+  let { showConstructionMarks = false }: Props = $props();
+
   // TODO: Move fetched and parsed data to a central state object from state.svelte.ts
   // A state variable to store the raw data from each of the data sources defined in the config.
   // Object key is the name given to the dataset in the builder UI
@@ -57,6 +57,7 @@
       if (series.deleted) return [];
       const dataset = visState.config.data.find(data => data.name === series.dataset);
       if (typeof dataset === 'undefined') return [];
+      // TODO: I think there's a potential race condition here if this runs before the fetch in the above effect has finished.
       const raw = rawData[dataset.name];
       if (typeof raw === 'undefined') return [];
       const data = csvParse(raw, rowParser(dataset.columns));
@@ -78,17 +79,17 @@
   });
 
   let groupedData: LayerCakeGroupedDataType = $derived.by(() => {
-    const data = seriesWithData.flatMap(series => {
-      const { x, y, id } = series.config;
+    const data = seriesWithData.flatMap(({ config, data }) => {
+      const { x, y, id } = config;
       if (typeof x === 'undefined' || typeof y === 'undefined') {
-        console.warn(`Missing x or y column for series ${series.config.id}`);
+        console.warn(`Missing x or y column for series ${config.id}`);
         return [];
       }
       return [
         {
-          group: series.config.id,
-          values: series.data.map(d => ({ x: d[x], y: d[y], z: id, row: d })),
-          config: series.config
+          group: config.id,
+          values: data.map(d => ({ x: d[x], y: d[y], z: id, row: d })),
+          config: config
         }
       ];
     });
@@ -116,8 +117,6 @@
   let yTicks = $derived(parseManualTicks(visState.config.axes.y.ticks, yAxisDataType));
 
   let chartWidth: number = $state(0);
-
-  let { showConstructionMarks = false }: Props = $props();
 
   let xDomain = $derived(
     getDomain(
