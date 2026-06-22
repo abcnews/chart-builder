@@ -66,6 +66,8 @@ export type LayerCakeGroupedDataGroupValuesType = {
   row: Record<string, string | number | boolean | Date | null>;
 };
 
+export type PlotPadding = { top?: number; bottom?: number; left?: number; right?: number };
+
 export type LayerCakeContextType = {
   width: Readable<number>;
   height: Readable<number>;
