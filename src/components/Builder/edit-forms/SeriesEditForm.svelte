@@ -44,7 +44,7 @@
     <ColourField bind:value={series.colour} />
 
     <label for="dasharray">Dash pattern</label>
-    <input id="dasharray" type="text" bind:value={series.dasharray} placeholder="Default: none" />
+    <input id="dasharray" type="text" bind:value={series.dasharray} placeholder="4, 4 (Default: none)" />
 
     <label for="series-curve">Curve type</label>
     <select id="series-curve" bind:value={series.curveType}>
