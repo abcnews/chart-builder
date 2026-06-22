@@ -5,46 +5,39 @@ import { VisualisationSchema } from './schemas';
 import type { VisualisationType } from './types';
 import { diff } from 'deep-object-diff';
 
+const replace = (source: {}, target: {}, key: string) => {
+  if (source[key] === undefined) {
+    // Arrays need special handling.
+    // This is something to do with the way Svelte signals are implemented. If the key is deleted as if it's a regular
+    // object svelte attempts to access a non-existent key.
+    if (Array.isArray(target) && typeof +key === 'number' && +key === +key) {
+      target.splice(+key, 1);
+    } else {
+      delete target[key];
+    }
+  } else {
+    target[key] = source[key];
+  }
+};
+
+const apply = (diff: {}, source: {}, target: {}) => {
+  for (const key in diff) {
+    if (typeof diff[key] === 'object' && typeof target[key] !== 'undefined') {
+      apply(diff[key], source[key], target[key]);
+    } else {
+      replace(source, target, key);
+    }
+  }
+};
+
 export const loadMarkerConfig = (data: string | Record<string, unknown>) => {
   const obj = typeof data === 'string' ? decode(data) : data;
 
   // TODO: This is where to migrate old schemas if that's needed.
 
-  const apply = (diff: {}, source: {}, target: {}, path: string[] = []) => {
-    for (const key in diff) {
-      const replace = () => {
-        if (source[key] === undefined) {
-          if (Array.isArray(target) && typeof +key === 'number' && +key === +key) {
-            console.log(`Removing index ${+key} from target ${JSON.stringify(target)}`);
-            target.splice(+key, 1);
-          } else {
-            console.log(`Deleting "${typeof target[key] === 'object' ? JSON.stringify(target[key]) : target[key]}"`);
-            delete target[key];
-          }
-        } else {
-          console.log(
-            `Replacing "${target[key]}" with "${
-              typeof source[key] === 'object' ? JSON.stringify(source[key]) : source[key]
-            }"`
-          );
-          target[key] = source[key];
-        }
-      };
-      if (typeof diff[key] === 'object' && typeof target[key] !== 'undefined') {
-        apply(diff[key], source[key], target[key], [...path, key]);
-      } else {
-        replace();
-      }
-    }
-  };
-
   const result = safeParse(VisualisationSchema, obj);
   if (result.success) {
-    const configDiff = diff(visState.config, result.output);
-    console.log('APPLYING DIFF', configDiff);
-    apply(configDiff, result.output, visState.config);
-    console.log('UPDATE FINISHED');
-    // visState.config = result.output;
+    apply(diff(visState.config, result.output), result.output, visState.config);
   } else {
     console.error(result.issues);
   }

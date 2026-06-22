@@ -20,6 +20,7 @@
   } from '../lib/types';
 
   import {
+    fetchDataUrl,
     getAxisLabelFormatter,
     getDefaultPalette,
     getDomain,
@@ -38,13 +39,15 @@
 
   // TODO: Move fetched and parsed data to a central state object from state.svelte.ts
   // A state variable to store the raw data from each of the data sources defined in the config.
+  // Object key is the name given to the dataset in the builder UI
   const rawData: Record<string, string> = $state({});
 
   // Load these into state via an effect to avoid use of #await. If the config changes so a new data needs to be fetched
   // we don't want the UI to change to an awaiting state while it's loading.
   $effect(() => {
     visState.config.data.forEach(async ({ name, url }) => {
-      const raw = await fetch(url).then(res => res.text());
+      // TODO: It would make sense to cache these locally, but for now rely on HTTP caching
+      const raw = await fetchDataUrl(url);
       rawData[name] = raw;
     });
   });

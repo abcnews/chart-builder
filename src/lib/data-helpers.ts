@@ -3,8 +3,9 @@ import type { AxisOptionsType, ColumnDefinitionType, ColumnTypesType, SeriesType
 import { timeFormat } from 'd3-time-format';
 import { format } from 'd3-format';
 import { defaultAxisLabelFormatStrings } from './constants';
-import { extent } from 'd3-array';
 import { getOrdinalCategoricalPalette } from '@abcnews/palette';
+import { fetchOne } from '@abcnews/terminus-fetch';
+import { TIERS } from '@abcnews/env-utils';
 
 /**
  * This is a modified version of the d3 autotype function
@@ -160,4 +161,18 @@ export const parseManualTicks = (ticksString: string | undefined, dataType: Colu
 
 export const getDefaultPalette = (series: SeriesType[]) => {
   return getOrdinalCategoricalPalette(Math.min(5, Math.max(2, series.length)));
+};
+
+export const fetchDataUrl = async (urlOrId: string) => {
+  // If url is parsable as a CMID, get the URL from Terminus
+  if (urlOrId.match(/^[0-9]+$/)) {
+    const doc = await fetchOne({
+      id: urlOrId,
+      type: 'DownloadObject',
+      force: window.location.hostname.includes('aus.aunty.abc') ? TIERS.PREVIEW : undefined
+    });
+    // @ts-expect-error Until terminus-fetch gets better types, this will be an error
+    if (doc.downloadURL) urlOrId = doc.downloadURL;
+  }
+  return await fetch(urlOrId).then(res => res.text());
 };

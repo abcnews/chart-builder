@@ -35,6 +35,7 @@
 		"@abcnews/mount-utils": "^3.0.0",
 		"@abcnews/palette": "^1.0.1",
 		"@abcnews/svelte-scrollyteller": "^3.0.1",
+		"@abcnews/terminus-fetch": "^7.0.0",
 		"@types/d3-format": "^3.0.4",
 		"async": "^3.2.6",
 		"d3-scale": "^4.0.2",
