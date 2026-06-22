@@ -12,6 +12,7 @@
   import Arrows from './layercake-components/Arrows.svg.svelte';
   import BackgroundHighlight from './layercake-components/BackgroundHighlight.svelte';
   import Lines from './layercake-components/Lines.svg.svelte';
+  import type { Snippet } from 'svelte';
 
   import type {
     CustomLayerCakeContextType,
@@ -35,6 +36,7 @@
 
   interface Props {
     showConstructionMarks?: boolean;
+    editorLayer?: Snippet;
   }
 
   // TODO: Move fetched and parsed data to a central state object from state.svelte.ts
@@ -117,7 +119,7 @@
 
   let chartWidth: number = $state(0);
 
-  let { showConstructionMarks = false }: Props = $props();
+  let { showConstructionMarks = false, editorLayer }: Props = $props();
 
   let xDomain = $derived(
     getDomain(
@@ -184,8 +186,8 @@
       x="x"
       y="y"
       z="series"
-      xDomain={xAxisDomainTween ? xAxisDomainTween.current : xDomain}
-      yDomain={yAxisDomainTween ? yAxisDomainTween.current : yDomain}
+      xDomain={(xAxisDomainTween ? xAxisDomainTween.current : xDomain) as any}
+      yDomain={(yAxisDomainTween ? yAxisDomainTween.current : yDomain) as any}
       zScale={scaleOrdinal()}
       zRange={seriesColors}
       {flatData}
@@ -215,6 +217,7 @@
       <Svg>
         <Arrows {arrows} />
       </Svg>
+      {@render editorLayer?.()}
     </LayerCake>
 
     {#if (visState.config.description && visState.config.description.length > 0) || visState.config.sources.length}
