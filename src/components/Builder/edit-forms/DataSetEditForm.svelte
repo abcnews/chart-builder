@@ -4,6 +4,7 @@
   import FormActions from './FormActions.svelte';
   import { Loader } from '@abcnews/components-builder';
   import ItemCollectionEditModal from '../ItemCollectionEditModal.svelte';
+  import { fetchDataUrl } from '../../../lib/data-helpers';
 
   interface Props {
     set: (DataSetType & DeletableType) | undefined;
@@ -13,7 +14,7 @@
 
   let columns = $derived.by(async () => {
     if (set?.url) {
-      const raw = await fetch(set.url).then(res => res.text());
+      const raw = await fetchDataUrl(set.url);
       const csv = csvParse(raw);
       return csv.columns;
     }
