@@ -1,4 +1,3 @@
-import { parse } from 'date-fns';
 import {
   array,
   boolean,
@@ -10,10 +9,8 @@ import {
   object,
   optional,
   picklist,
-  pipe,
   record,
   string,
-  transform,
   union,
   variant
 } from 'valibot';
@@ -27,17 +24,6 @@ export const DeletableSchema = object({
 export const orientations = ['left', 'right', 'above', 'below', 'middle'] as const;
 export const shapes = ['circle', 'diamond', 'square'] as const;
 export const columnTypes = ['number', 'date', 'boolean', 'string'] as const;
-
-export const DataRowSchema = object({
-  date: pipe(
-    string(),
-    transform(d => parse(d, 'LLL-yy', new Date()))
-  ),
-  excl: number(),
-  incl: nullable(number())
-});
-
-export const DataSchema = array(DataRowSchema);
 
 export const ShapesSchema = picklist(shapes);
 
