@@ -7,8 +7,6 @@ import type {
   ChartPositionSchema,
   ColumnDefinitionSchema,
   ColumnTypesSchema,
-  DataRowSchema,
-  DataSchema,
   DataSetSchema,
   DataSourceSchema,
   DeletableSchema,
@@ -21,8 +19,6 @@ import type { Readable } from 'svelte/store';
 import type { ScaleBand, ScaleLinear, ScaleOrdinal } from 'd3-scale';
 
 export type DataSetType = InferOutput<typeof DataSetSchema>;
-export type DataSchemaType = InferOutput<typeof DataSchema>;
-export type DataRowSchemaType = InferOutput<typeof DataRowSchema>;
 export type DeletableType = InferOutput<typeof DeletableSchema>;
 export type VisualisationType = InferOutput<typeof VisualisationSchema>;
 export type VisualisationInputType = InferInput<typeof VisualisationSchema>;
