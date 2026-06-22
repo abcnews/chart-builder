@@ -1,3 +1,5 @@
+import type { PlotPadding } from './types';
+
 export const PROJECT_NAME = 'chart-builder';
 export const MARKER_NAME = 'chart';
 export const MARKERS = [];
@@ -9,7 +11,7 @@ export const LARGE_TABLET_BREAKPOINT = 992;
 export const DESKTOP_BREAKPOINT = 1500;
 export const MOBILE_MAX = 462;
 
-export const plotPadding = {
+export const plotPadding: PlotPadding = {
   bottom: 30,
   left: 60,
   right: 10
