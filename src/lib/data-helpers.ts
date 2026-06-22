@@ -60,7 +60,7 @@ type ColumnDataTypeMap = {
   date: Date;
   number: number;
   string: string;
-  boolean: number;
+  boolean: boolean;
 };
 
 /**
@@ -76,7 +76,7 @@ export const coerceToColumnDataType = <T extends keyof ColumnDataTypeMap>(
   if (columnDataType === 'date') return new Date(value) as ColumnDataTypeMap[T];
   if (columnDataType === 'number') return Number(value) as ColumnDataTypeMap[T];
   if (columnDataType === 'string') return String(value) as ColumnDataTypeMap[T];
-  if (columnDataType === 'boolean') return Number(value) as ColumnDataTypeMap[T];
+  if (columnDataType === 'boolean') return Boolean(value) as ColumnDataTypeMap[T];
   throw new Error('Unsupported data type passed.');
 };
 
