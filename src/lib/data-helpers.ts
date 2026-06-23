@@ -80,6 +80,10 @@ export const coerceToColumnDataType = <T extends keyof ColumnDataTypeMap>(
   throw new Error('Unsupported data type passed.');
 };
 
+const coerceToStringOrNumber = (val: string | number | Date | boolean) => {
+  return typeof val === 'string' ? val : +val;
+};
+
 export const getAxisLabelFormatter = (axisOptions: AxisOptionsType, axisDataType: ColumnTypesType) => {
   if (axisDataType === 'date') {
     const formatter = timeFormat(axisOptions.format || defaultAxisLabelFormatStrings.date);
@@ -96,8 +100,18 @@ export const getAxisLabelFormatter = (axisOptions: AxisOptionsType, axisDataType
   // Default to returning coercing to a string for anything else
   return (d: any) => String(d);
 };
+
+/**
+ * LayerCake expects domain arguments to be either number[] or string[] (which translates into either a d3 scale (either linear or
+ * ordinal). d3's linear scales transform the domain into numbers.
+ *
+ * @param axisOptions Axis options defined in the builder
+ * @param data Data to calculate the domain from
+ * @param dataType Expected datatype for elements in the data array (as per config defined in builder)
+ * @param padding
+ */
 export const getDomain = (
-  axisOptions: AxisOptionsType,
+  configDefined: [min: number | string | null | undefined, max: number | string | null | undefined],
   data: (string | number | boolean | Date | null | undefined)[],
   dataType: ColumnTypesType | undefined,
   padding: number = 0.05
@@ -106,26 +120,33 @@ export const getDomain = (
     return undefined;
   }
 
-  // Ensure clean data
-  let filtered = data.flatMap(d => {
-    if (d === undefined) return [];
-    if (d === null) return [];
-    return [d];
-  });
-
   const isDefined = (input: string | number | null | undefined): input is string | number => {
     return !(typeof input === 'undefined' || input === null || (typeof input === 'string' && input.length === 0));
   };
 
-  const hasMin = isDefined(axisOptions.domain.min);
-  const hasMax = isDefined(axisOptions.domain.max);
+  const [configMin, configMax] = configDefined;
+  const hasMin = isDefined(configMin);
+  const hasMax = isDefined(configMax);
 
-  let min = hasMin
-    ? coerceToColumnDataType(axisOptions.domain.min as string | number, dataType)
-    : filtered.reduce((min, val) => (val < min ? val : min), Infinity);
-  let max = hasMax
-    ? coerceToColumnDataType(axisOptions.domain.max as string | number, dataType)
-    : filtered.reduce((max, val) => (val > max ? val : max), -Infinity);
+  // Shortcut if entire domain is defined in config — no need to calculate extents
+  if (hasMin && hasMax) return [configMin, configMax];
+
+  // Ensure clean data
+  let filtered =
+    dataType === 'string'
+      ? data.flatMap(d => (d === undefined || d === null ? [] : [String(d)]))
+      : data.flatMap(d => (d === undefined || d === null ? [] : [+d]));
+
+  if (filtered.length === 0) return undefined;
+
+  const [autoMin, autoMax] = filtered.reduce(
+    ([min, max], d) => {
+      return [typeof d < min ? d : min, typeof d > max ? d : max];
+    },
+    [filtered[0]!, filtered[0]!]
+  );
+
+  let [min, max] = [hasMin ? configMin : autoMin, hasMax ? configMax : autoMax];
 
   // Apply default padding if the domain is auto-calculated and numeric.
   if (dataType === 'number') {
