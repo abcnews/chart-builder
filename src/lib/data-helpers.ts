@@ -63,6 +63,8 @@ type ColumnDataTypeMap = {
   boolean: boolean;
 };
 
+type ColumnDataTypes = Date | number | string | boolean;
+
 /**
  * Convert a value which has been derived from user input in the chart builder (which is only ever string or number) and
  * convert it to a data type compatible with a column from the data.
@@ -80,7 +82,7 @@ export const coerceToColumnDataType = <T extends keyof ColumnDataTypeMap>(
   throw new Error('Unsupported data type passed.');
 };
 
-const coerceToStringOrNumber = (val: string | number | Date | boolean) => {
+const coerceToStringOrNumber = (val: ColumnDataTypes) => {
   return typeof val === 'string' ? val : +val;
 };
 
@@ -112,10 +114,10 @@ export const getAxisLabelFormatter = (axisOptions: AxisOptionsType, axisDataType
  */
 export const getDomain = (
   configDefined: [min: number | string | null | undefined, max: number | string | null | undefined],
-  data: (string | number | boolean | Date | null | undefined)[],
+  data: (ColumnDataTypes | null | undefined)[],
   dataType: ColumnTypesType | undefined,
   padding: number = 0.05
-) => {
+): undefined | string[] | number[] => {
   if (dataType === undefined) {
     return undefined;
   }
@@ -129,7 +131,11 @@ export const getDomain = (
   const hasMax = isDefined(configMax);
 
   // Shortcut if entire domain is defined in config — no need to calculate extents
-  if (hasMin && hasMax) return [configMin, configMax];
+  if (hasMin && hasMax) {
+    return dataType === 'string'
+      ? [String(configMin), String(configMax)]
+      : [+coerceToColumnDataType(configMin, dataType), +coerceToColumnDataType(configMax, dataType)];
+  }
 
   // Ensure clean data
   let filtered =
@@ -146,18 +152,19 @@ export const getDomain = (
     [filtered[0]!, filtered[0]!]
   );
 
-  let [min, max] = [hasMin ? configMin : autoMin, hasMax ? configMax : autoMax];
+  if (dataType === 'string') {
+    return [String(hasMin ? configMin : autoMin), String(hasMax ? configMax : autoMax)];
+  }
+
+  let [min, max] = [+(hasMin ? configMin : autoMin), +(hasMax ? configMax : autoMax)];
 
   // Apply default padding if the domain is auto-calculated and numeric.
-  if (dataType === 'number') {
-    const range = (max as number) - (min as number);
-    const padAmount = range * padding;
-    if (!hasMin) {
-      min = (min as number) - padAmount;
-    }
-    if (!hasMax) {
-      max = (max as number) + padAmount;
-    }
+  const padAmount = (max - min) * padding;
+  if (!hasMin) {
+    min = min - padAmount;
+  }
+  if (!hasMax) {
+    max = max + padAmount;
   }
 
   return [min, max];
