@@ -120,14 +120,14 @@
 
   let xDomain = $derived(
     getDomain(
-      visState.config.axes.x,
+      [visState.config.axes.x.domain.min, visState.config.axes.x.domain.max],
       flatData.map(d => d.x),
       xAxisDataType
     )
   );
   let yDomain = $derived(
     getDomain(
-      visState.config.axes.y,
+      [visState.config.axes.y.domain.min, visState.config.axes.y.domain.max],
       flatData.map(d => d.y),
       yAxisDataType
     )
