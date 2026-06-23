@@ -4,7 +4,6 @@ import { timeFormat } from 'd3-time-format';
 import { format } from 'd3-format';
 import { defaultAxisLabelFormatStrings } from './constants';
 import { getOrdinalCategoricalPalette } from '@abcnews/palette';
-import { fetchOne } from '@abcnews/terminus-fetch';
 import { TIERS } from '@abcnews/env-utils';
 
 /**
@@ -185,6 +184,7 @@ export const getDefaultPalette = (series: SeriesType[]) => {
 };
 
 export const fetchDataUrl = async (urlOrId: string) => {
+  const { fetchOne } = await import('@abcnews/terminus-fetch');
   // If url is parsable as a CMID, get the URL from Terminus
   if (urlOrId.match(/^[0-9]+$/)) {
     const doc = await fetchOne({
