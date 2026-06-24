@@ -85,7 +85,18 @@ export const SeriesLineSchema = object({
   curveType: optional(picklist(curveTypes), 'cardinal')
 });
 
-export const SeriesSchema = variant('type', [SeriesLineSchema]);
+export const SeriesColumnSchema = object({
+  id: string(),
+  type: literal('column'),
+  dataset: optional(string()),
+  x: optional(string()),
+  y: optional(string()),
+  colour: ElementColourSchema,
+  strokeWidth: optional(number(), 0),
+  showLabels: optional(boolean(), false)
+});
+
+export const SeriesSchema = variant('type', [SeriesLineSchema, SeriesColumnSchema]);
 
 export const DataSourceSchema = object({
   label: string(),

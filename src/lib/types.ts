@@ -16,7 +16,7 @@ import type {
   VisualisationSchema
 } from './schemas';
 import type { Readable } from 'svelte/store';
-import type { ScaleBand, ScaleLinear, ScaleOrdinal } from 'd3-scale';
+import type { ScaleBand, ScaleLinear } from 'd3-scale';
 
 export type DataSetType = InferOutput<typeof DataSetSchema>;
 export type DeletableType = InferOutput<typeof DeletableSchema>;
@@ -67,8 +67,8 @@ export type PlotPadding = { top?: number; bottom?: number; left?: number; right?
 export type LayerCakeContextType = {
   width: Readable<number>;
   height: Readable<number>;
-  xScale: Readable<ScaleLinear<number | Date, number>>;
-  yScale: Readable<ScaleLinear<number | Date, number>>;
+  xScale: Readable<ScaleLinear<number, number> | ScaleBand<string>>;
+  yScale: Readable<ScaleLinear<number, number> | ScaleBand<string>>;
   xRange: Readable<[number, number]>;
   yRange: Readable<[number, number]>;
   custom: Readable<CustomLayerCakeContextType>;

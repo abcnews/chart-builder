@@ -9,7 +9,9 @@
   import Annotations from './layercake-components/Annotations.html.svelte';
   import Arrows from './layercake-components/Arrows.svg.svelte';
   import BackgroundHighlight from './layercake-components/BackgroundHighlight.svelte';
+  import Columns from './layercake-components/Columns.svg.svelte';
   import Lines from './layercake-components/Lines.svg.svelte';
+
 
   import type {
     CustomLayerCakeContextType,
@@ -207,6 +209,7 @@
       </Svg>
       <Svg overflow="hidden">
         <Lines />
+        <Columns />
       </Svg>
       <Html>
         <Annotations {annotations} />

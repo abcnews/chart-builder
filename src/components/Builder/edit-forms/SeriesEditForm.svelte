@@ -19,6 +19,13 @@
 
 {#if series}
   <ItemCollectionEditModal title="Edit Series" onClose={() => (series = undefined)}>
+
+    <label for="series-type">Type</label>
+    <select id="series-type" bind:value={series.type}>
+      <option value="line">Line</option>
+      <option value="column">Column</option>
+    </select>
+
     <label for="series-id">ID</label>
     <input id="series-id" type="text" bind:value={series.id} />
     <label for="series-dataset">Dataset</label>
@@ -43,15 +50,17 @@
 
     <ColourField bind:value={series.colour} />
 
-    <label for="dasharray">Dash pattern</label>
-    <input id="dasharray" type="text" bind:value={series.dasharray} placeholder="4, 4 (Default: none)" />
+    {#if series.type === 'line'}
+      <label for="dasharray">Dash pattern</label>
+      <input id="dasharray" type="text" bind:value={series.dasharray} placeholder="4, 4 (Default: none)" />
 
-    <label for="series-curve">Curve type</label>
-    <select id="series-curve" bind:value={series.curveType}>
-      {#each curveTypes as type}
-        <option value={type}>{type}</option>
-      {/each}
-    </select>
+      <label for="series-curve">Curve type</label>
+      <select id="series-curve" bind:value={series.curveType}>
+        {#each curveTypes as type}
+          <option value={type}>{type}</option>
+        {/each}
+      </select>
+    {/if}
     <small>
       See <a href="https://d3js.org/d3-shape/curve" target="_blank">D3 documentation</a> for a deep dive.
     </small>

@@ -62,7 +62,8 @@
   const defaultAnnotation = { label: '', x: '', y: 0, anchor: AnnotationAnchorType.TopLeft, width: 10 };
   const defaultArrow = { from: { x: '', y: 0 }, to: { x: '', y: 0 } };
   const defaultHighlight = { tl: { x: '2019-01-01', y: 10 }, br: { x: '2020-01-01', y: 100 } };
-  const defaultSeries = { id: '', type: 'line' as const, curveType: 'cardinal' as const };
+  const defaultLineSeries = { id: '', type: 'line' as const, curveType: 'cardinal' as const };
+  const defaultColumnSeries = { id: '', type: 'column' as const, strokeWidth: 0, showLabels: false };
   const defaultDataSource = { label: '', url: '' };
 
   let currentDataSet: (DataSetType & DeletableType) | undefined = $state();
@@ -119,7 +120,7 @@
     <ItemCollection
       legend="Series"
       bind:current={currentSeries}
-      template={defaultSeries}
+      template={defaultLineSeries}
       bind:collection={visState.config.series}
       itemLabelGetter={series => series.id}
     >
