@@ -164,7 +164,8 @@
   let customLayerCakeContext: CustomLayerCakeContextType = $derived({ showConstructionMarks });
 
   const xTicksComputed = $derived.by(() => {
-    const ESTIMATED_CHARACTER_WIDTH = 14;
+    const ESTIMATED_CHARACTER_WIDTH = 11;
+    const TICK_LABEL_GAP = 12;
 
     // Custom ticks provided, return directly
     if (xTicks) return xTicks;
@@ -188,7 +189,7 @@
       1
     );
 
-    return Math.floor(chartWidth / (maxLabelLength * ESTIMATED_CHARACTER_WIDTH));
+    return Math.floor(chartWidth / (maxLabelLength * ESTIMATED_CHARACTER_WIDTH + TICK_LABEL_GAP));
   });
 </script>
 
