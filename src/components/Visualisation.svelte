@@ -161,6 +161,7 @@
 
   let customLayerCakeContext: CustomLayerCakeContextType = $derived({ showConstructionMarks });
 
+  /** Number of ticks to show on the x axis */
   const xTicksComputed = $derived.by(() => {
     const ESTIMATED_CHARACTER_WIDTH = 12;
     const TICK_LABEL_GAP = 16;
