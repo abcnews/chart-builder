@@ -162,8 +162,8 @@
   let customLayerCakeContext: CustomLayerCakeContextType = $derived({ showConstructionMarks });
 
   const xTicksComputed = $derived.by(() => {
-    const ESTIMATED_CHARACTER_WIDTH = 11;
-    const TICK_LABEL_GAP = 12;
+    const ESTIMATED_CHARACTER_WIDTH = 12;
+    const TICK_LABEL_GAP = 16;
 
     // Custom ticks provided, return directly
     if (xTicks) return xTicks;
@@ -226,13 +226,13 @@
       <Svg>
         <AxisX
           gridlines={false}
-          ticks={xTicks || Math.floor(chartWidth / 130)}
+          ticks={xTicksComputed}
           format={formatLabelX}
           dy={14}
           baseline={visState.config.axes.x.baseline}
           tickMarks
         />
-        <AxisY ticks={xTicksComputed} />
+        <AxisY ticks={yTicks || 4} format={formatLabelY} />
       </Svg>
       <Svg overflow="hidden">
         <Lines />
