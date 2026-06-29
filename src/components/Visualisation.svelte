@@ -99,8 +99,16 @@
   // TODO: Warn if there are too many categories.
   let seriesColors = $derived(getDefaultPalette(visState.config.series));
 
+  // let annotations = $derived.by(() => {
+  //   return visState.config.annotations.filter(d => {
+  //     console.log(d)
+  //     return !d.deleted;
+  //   });
+  // });
   let annotations = $derived.by(() => {
     return visState.config.annotations.filter(d => {
+      void d.label; // Force tracking of label
+      console.log(d)
       return !d.deleted;
     });
   });
