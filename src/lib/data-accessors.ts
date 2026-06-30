@@ -21,8 +21,14 @@ const replace = (source: {}, target: {}, key: string) => {
 };
 
 const apply = (diff: {}, source: {}, target: {}) => {
+  // This fixes bug when 2 annotations transition to 0 annotations, but I don't know why
+  // TODO: Work out what's actually going on. Something to do with applying diff to arrays perhaps?
+  if (Array.isArray(target) && Array.isArray(source) && source.length < target.length) {
+    target.splice(source.length);
+  }
+
   for (const key in diff) {
-    if (typeof diff[key] === 'object' && typeof target[key] !== 'undefined') {
+    if (typeof diff[key] === 'object' && diff[key] !== null && typeof target[key] !== 'undefined') {
       apply(diff[key], source[key], target[key]);
     } else {
       replace(source, target, key);
