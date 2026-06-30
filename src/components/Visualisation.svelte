@@ -1,7 +1,7 @@
 <script lang="ts">
   import { LayerCake, Svg, Html } from 'layercake';
   import { Tween } from 'svelte/motion';
-  import { scaleOrdinal } from 'd3-scale';
+  import { scaleOrdinal, scaleTime, scaleLinear } from 'd3-scale';
   import { csvParse } from 'd3-dsv';
   import FontProvider from './FontProvider.svelte'; // TODO Swap out for @abcnews/components-storylab version
   import AxisX from './layercake-components/AxisX.svg.svelte';
@@ -160,6 +160,36 @@
   });
 
   let customLayerCakeContext: CustomLayerCakeContextType = $derived({ showConstructionMarks });
+
+  /** Number of ticks to show on the x axis */
+  const xTicksComputed = $derived.by(() => {
+    const ESTIMATED_CHARACTER_WIDTH = 12;
+    const TICK_LABEL_GAP = 16;
+
+    // Custom ticks provided, return directly
+    if (xTicks) return xTicks;
+
+    // Fallback simple chartWidth / 130px calculation
+    if (!xDomain || xAxisDataType === 'string') return Math.floor(chartWidth / 130);
+
+    const tempScale = xAxisDataType === 'date'
+      ? scaleTime().domain(xDomain as unknown as Date[])
+      : scaleLinear().domain(xDomain as unknown as number[]);
+
+    // Generate some temporary ticks
+    const sampleTicks = tempScale.ticks(10);
+
+    // Count the (formatted) string length
+    const maxLabelLength = Math.max(
+      ...sampleTicks.map((t: Date | number) => {
+        const label = formatLabelX ? String(formatLabelX(t as never)) : String(t);
+        return label.length;
+      }),
+      1
+    );
+
+    return Math.floor(chartWidth / (maxLabelLength * ESTIMATED_CHARACTER_WIDTH + TICK_LABEL_GAP));
+  });
 </script>
 
 <FontProvider>
@@ -197,7 +227,7 @@
       <Svg>
         <AxisX
           gridlines={false}
-          ticks={xTicks || Math.floor(chartWidth / 130)}
+          ticks={xTicksComputed}
           format={formatLabelX}
           dy={14}
           baseline={visState.config.axes.x.baseline}
