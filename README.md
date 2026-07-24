@@ -17,6 +17,8 @@ This is an `aunty` project developed and deployed like any other. There are thre
   configuration string supplied as a fragment on the URL.
 - `index.ts` — A scrollyteller script for use in an Odyssey project that can display and transition between visualisations.
 
+A `.env` file is required for the builder to work, otherwise a `TypeError: null is not an object (evaluating 'document.body.appendChild')` error will be thrown. Include `TERMINUS_FETCH_API_KEY=xxxxxxxxxxxxxxxxxx` in the file. Get the key from a workmate.
+
 ## Schema
 
 ### Configuration
