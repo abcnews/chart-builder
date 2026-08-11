@@ -92,6 +92,7 @@
   .tick line {
     stroke: #d6dde4;
     stroke-width: 1px;
+    mix-blend-mode: multiply;
   }
 
   .gridline.zero {

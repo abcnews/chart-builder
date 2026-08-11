@@ -16,7 +16,8 @@
     type DataSourceType,
     type DeletableType,
     type HighlightType,
-    type SeriesType
+    type SeriesType,
+    type DiffAreaType
   } from '../../lib/types';
   import { PROJECT_NAME, SCROLLY_MARK_PREFIX, SCROLLY_OPENER_PREFIX } from '../../lib/constants';
 
@@ -28,6 +29,7 @@
   import DataSetEditForm from './edit-forms/DataSetEditForm.svelte';
   import SeriesEditForm from './edit-forms/SeriesEditForm.svelte';
   import AxisEditButton from './edit-forms/AxisEditButton.svelte';
+  import DiffEditForm from './edit-forms/DiffAreaEditForm.svelte';
 
   const prefixes = {
     'Scrolly mark': SCROLLY_MARK_PREFIX,
@@ -64,6 +66,7 @@
   const defaultHighlight = { tl: { x: '2019-01-01', y: 10 }, br: { x: '2020-01-01', y: 100 } };
   const defaultSeries = { id: '', type: 'line' as const, curveType: 'cardinal' as const };
   const defaultDataSource = { label: '', url: '' };
+  const defaultDiff = { idA: '', idB: '', fill: '#8E0BF9', opacity: 0.3 };
 
   let currentDataSet: (DataSetType & DeletableType) | undefined = $state();
   let currentAnnotation: (AnnotationType & DeletableType) | undefined = $state();
@@ -71,6 +74,7 @@
   let currentHighlight: (HighlightType & DeletableType) | undefined = $state();
   let currentSeries: (SeriesType & DeletableType) | undefined = $state();
   let currentDataSource: (DataSourceType & DeletableType) | undefined = $state();
+  let currentDiff: (DiffAreaType & DeletableType) | undefined = $state();
 
   let showConstructionMarks: boolean = $state(localStorage.getItem('showConstructionMarks') !== null);
 
@@ -90,6 +94,27 @@
 
   let xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
   let yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
+
+  $effect(() => {
+    console.log(JSON.parse(JSON.stringify(visState.config)));
+  });
+
+  let customJsonText = $state(JSON.stringify({}, null, 2));
+  let customJsonError: string | undefined = $state();
+
+  const syncTextareaFromConfig = () => {
+    customJsonText = JSON.stringify(visState.config, null, 2);
+  };
+
+  const applyCustomJson = () => {
+    try {
+      const parsed = JSON.parse(customJsonText);
+      Object.assign(visState.config, parsed);
+      customJsonError = undefined;
+    } catch (e) {
+      customJsonError = e instanceof Error ? e.message : 'Invalid JSON';
+    }
+  };
 </script>
 
 {#snippet Viz()}
@@ -176,6 +201,20 @@
     </ItemCollection>
 
     <ItemCollection
+      legend="Diffs"
+      bind:current={currentDiff}
+      template={defaultDiff}
+      bind:collection={visState.config.diffs}
+      itemLabelGetter={diff => `${diff.idA} → ${diff.idB}`}
+    >
+      {#snippet EditForm()}
+        {#if currentDiff}
+          <DiffEditForm bind:diff={currentDiff} />
+        {/if}
+      {/snippet}
+    </ItemCollection>
+
+    <ItemCollection
       legend="Credited sources of data"
       bind:current={currentDataSource}
       template={defaultDataSource}
@@ -202,6 +241,20 @@
         )}
       {prefixes}
     />
+  </fieldset>
+  <fieldset>
+    <legend>Custom config (experimental)</legend>
+    <textarea
+      id="custom-config-json"
+      rows="12"
+      bind:value={customJsonText}
+      placeholder={`{ "diffs": [{ "idA": "series-1", "idB": "series-2", "fill": "#8E0BF9", "opacity": 0.3 }] }`}
+    ></textarea>
+    {#if customJsonError}
+      <p style:color="red">{customJsonError}</p>
+    {/if}
+    <button type="button" onclick={syncTextareaFromConfig}>Load config to text box</button>
+    <button type="button" onclick={applyCustomJson}>Apply config from text box</button>
   </fieldset>
   <details>
     <summary>Developer tools</summary>

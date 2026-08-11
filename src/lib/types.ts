@@ -13,7 +13,8 @@ import type {
   HighlightSchema,
   SeriesLineSchema,
   SeriesSchema,
-  VisualisationSchema
+  VisualisationSchema,
+  DiffAreaSchema
 } from './schemas';
 import type { Readable } from 'svelte/store';
 import type { ScaleBand, ScaleLinear, ScaleOrdinal } from 'd3-scale';
@@ -29,6 +30,7 @@ export type SeriesType = InferOutput<typeof SeriesSchema>;
 export type DataSourceType = InferInput<typeof DataSourceSchema>;
 
 export type SeriesLineType = InferOutput<typeof SeriesLineSchema>;
+export type DiffAreaType = InferOutput<typeof DiffAreaSchema>;
 export type AxisConfigType = InferOutput<typeof AxisConfigSchema>;
 export type AxisOptionsType = InferOutput<typeof AxisOptionsSchema>;
 export type ColumnTypesType = InferOutput<typeof ColumnTypesSchema>;

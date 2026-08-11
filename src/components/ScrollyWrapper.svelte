@@ -18,6 +18,7 @@
   };
 
   let { panels } = $props();
+
   $effect(() => {
     if (panels[0].data) updateState(panels[0].data);
   });

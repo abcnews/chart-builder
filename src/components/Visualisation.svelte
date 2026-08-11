@@ -3,6 +3,11 @@
   import { Tween } from 'svelte/motion';
   import { scaleOrdinal, scaleTime, scaleLinear } from 'd3-scale';
   import { csvParse } from 'd3-dsv';
+  import { prefersReducedMotion } from '@abcnews/env-utils';
+  import { fade } from 'svelte/transition';
+  import { untrack } from 'svelte';
+  import { cubicInOut } from 'svelte/easing';
+
   import FontProvider from './FontProvider.svelte'; // TODO Swap out for @abcnews/components-storylab version
   import AxisX from './layercake-components/AxisX.svg.svelte';
   import AxisY from './layercake-components/AxisY.svg.svelte';
@@ -10,6 +15,7 @@
   import Arrows from './layercake-components/Arrows.svg.svelte';
   import BackgroundHighlight from './layercake-components/BackgroundHighlight.svelte';
   import Lines from './layercake-components/Lines.svg.svelte';
+  import Difference from './layercake-components/Difference.svg.svelte';
 
   import type {
     CustomLayerCakeContextType,
@@ -29,13 +35,16 @@
 
   import { visState } from '../lib/state.svelte';
   import { plotPadding } from '../lib/constants';
-  import { untrack } from 'svelte';
 
   interface Props {
     showConstructionMarks?: boolean;
   }
 
   let { showConstructionMarks = false }: Props = $props();
+
+  const TWEEN_DURATION = 1800;
+  const TWEEN_DURATION_REDUCED = 100;
+  let tweenDuration = $state(TWEEN_DURATION);
 
   // TODO: Move fetched and parsed data to a central state object from state.svelte.ts
   // A state variable to store the raw data from each of the data sources defined in the config.
@@ -104,6 +113,7 @@
       return !d.deleted;
     });
   });
+
   let arrows = $derived(visState.config.arrows.filter(d => !d.deleted));
   let series = $derived(visState.config.series.filter(d => !d.deleted));
 
@@ -133,17 +143,35 @@
     )
   );
 
+  const tweenConfig = $derived({ duration: tweenDuration, easing: cubicInOut });
+
   let xAxisDomainTween = $derived.by(() => {
     if (flatData.length === 0) return undefined;
-    if (xAxisDataType === 'number') return new Tween(untrack(() => xDomain));
-    if (xAxisDataType === 'date') return new Tween(untrack(() => xDomain));
+    if (xAxisDataType === 'number')
+      return new Tween(
+        untrack(() => xDomain),
+        tweenConfig
+      );
+    if (xAxisDataType === 'date')
+      return new Tween(
+        untrack(() => xDomain),
+        tweenConfig
+      );
     return undefined;
   });
 
   let yAxisDomainTween = $derived.by(() => {
     if (flatData.length === 0) return undefined;
-    if (yAxisDataType === 'number') return new Tween(untrack(() => yDomain));
-    if (yAxisDataType === 'date') return new Tween(untrack(() => yDomain));
+    if (yAxisDataType === 'number')
+      return new Tween(
+        untrack(() => yDomain),
+        tweenConfig
+      );
+    if (yAxisDataType === 'date')
+      return new Tween(
+        untrack(() => yDomain),
+        tweenConfig
+      );
     return undefined;
   });
 
@@ -156,6 +184,14 @@
   $effect(() => {
     if (yDomain && yAxisDomainTween) {
       yAxisDomainTween.target = yDomain;
+    }
+  });
+
+  $effect(() => {
+    if ($prefersReducedMotion) {
+      tweenDuration = TWEEN_DURATION_REDUCED;
+    } else {
+      tweenDuration = TWEEN_DURATION;
     }
   });
 
@@ -172,9 +208,10 @@
     // Fallback simple chartWidth / 130px calculation
     if (!xDomain || xAxisDataType === 'string') return Math.floor(chartWidth / 130);
 
-    const tempScale = xAxisDataType === 'date'
-      ? scaleTime().domain(xDomain as unknown as Date[])
-      : scaleLinear().domain(xDomain as unknown as number[]);
+    const tempScale =
+      xAxisDataType === 'date'
+        ? scaleTime().domain(xDomain as unknown as Date[])
+        : scaleLinear().domain(xDomain as unknown as number[]);
 
     // Generate some temporary ticks
     const sampleTicks = tempScale.ticks(10);
@@ -190,6 +227,8 @@
 
     return Math.floor(chartWidth / (maxLabelLength * ESTIMATED_CHARACTER_WIDTH + TICK_LABEL_GAP));
   });
+
+  let diffs = $derived(visState.config.diffs ?? []);
 </script>
 
 <FontProvider>
@@ -224,6 +263,13 @@
       <Html>
         <BackgroundHighlight />
       </Html>
+      <Svg overflow="hidden">
+        {#each diffs as diff (diff.idA + diff.idB)}
+          <g transition:fade|global={{ duration: 100 }}>
+            <Difference idA={diff.idA} idB={diff.idB} fill={diff.fill} opacity={diff.opacity} />
+          </g>
+        {/each}
+      </Svg>
       <Svg>
         <AxisX
           gridlines={false}
@@ -270,8 +316,15 @@
   .visualisation {
     background: white;
     container-type: inline-size;
+
     /* MOBILE_MAX=462 */
+
+    // Shift a little bit on mobile
+    @media screen and (max-width: 991px) {
+      transform: translateX(-8px);
+    }
   }
+
   div {
     width: 100%;
     height: 100%;
@@ -296,11 +349,23 @@
   .chart-title {
     font-family: var(--sl-font-stack-sans);
     font-size: 18px;
+    color: black;
   }
 
   @container (width > 462px) {
     .chart-title {
       font-size: 20px;
+    }
+  }
+
+  :global {
+    body {
+      overflow-x: clip !important;
+    }
+
+    body[data-newsapp] {
+      overflow: clip;
+      isolation: isolate;
     }
   }
 </style>

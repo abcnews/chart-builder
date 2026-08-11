@@ -22,9 +22,11 @@ module.exports = {
     getLoaderDefinition(config, 'scss', 'sass').options = { sassOptions: { quietDeps: true } };
 
     // Disable svelte warnings when compiling dependencies
-    getLoaderDefinition(config, 'svelte').options.compilerOptions = {
+    const svelteLoaderDef = getLoaderDefinition(config, 'svelte');
+
+    svelteLoaderDef.options.compilerOptions = {
+      dev: process.env.NODE_ENV !== 'production',
       warningFilter: warning => {
-        // console.log(warning);
         for (const pattern of includedDependencies) {
           if (pattern.test(warning.filename)) {
             return false;
@@ -36,6 +38,11 @@ module.exports = {
 
         return true;
       }
+    };
+
+    svelteLoaderDef.options.compilerOptions = {
+      ...svelteLoaderDef.options.compilerOptions,
+      dev: true
     };
 
     // Fix for carbon components import paths

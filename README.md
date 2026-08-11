@@ -1,6 +1,6 @@
-# Charts
+# interactive-illegal-tobacco
 
-A chart builder and display components for standalone iframe embeds and scrollytelling.
+Custom interactive for Story Lab's 2026 Illegal Tobacco story.
 
 The builder provides an authoring environment for generating base 36 encoded JSON configuration blobs that can be used
 by the Visualisation component to display a chart. Updating the configuration string will dynamically update the chart.

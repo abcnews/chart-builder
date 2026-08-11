@@ -107,6 +107,13 @@ export const AxisConfigSchema = object({
   y: AxisOptionsSchema
 });
 
+export const DiffAreaSchema = object({
+  idA: string(), // id of the first series
+  idB: string(), // id of the second series
+  fill: ElementColourSchema,
+  opacity: optional(number(), 0.3)
+});
+
 /**
  * Over time, the goal is to move toward following the [Vega schema](https://vega.github.io/vega/docs/). It is a minumum viable
  * interpretation for this specific visualisation with the idea that it might be used as a starting point for expansion
@@ -122,6 +129,7 @@ export const VisualisationSchema = object({
   arrows: optional(array(intersect([ArrowSchema, DeletableSchema])), []),
   highlights: optional(array(intersect([HighlightSchema, DeletableSchema])), []),
   series: optional(array(intersect([SeriesSchema, DeletableSchema])), []),
+  diffs: optional(array(intersect([DiffAreaSchema, DeletableSchema])), []),
   data: optional(array(intersect([DataSetSchema, DeletableSchema])), []),
   sources: optional(array(intersect([DataSourceSchema, DeletableSchema])), []),
   axes: optional(AxisConfigSchema, { x: { domain: {} }, y: { domain: {} } })

@@ -23,6 +23,7 @@
   .highlight {
     position: absolute;
     background: var(--highlight-color, rgba(0, 0, 0, 0.2));
-    border-radius: 4px;
+    border-radius: 0px;
+    /*mix-blend-mode: multiply;*/
   }
 </style>
