@@ -296,6 +296,7 @@
   .chart-title {
     font-family: var(--sl-font-stack-sans);
     font-size: 18px;
+    color: black;
   }
 
   @container (width > 462px) {
