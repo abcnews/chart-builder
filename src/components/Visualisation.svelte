@@ -39,7 +39,7 @@
     tweenDuration?: number;
   }
 
-  let { showConstructionMarks = false, tweenDuration = 1200 }: Props = $props();
+  let { showConstructionMarks = false, tweenDuration = 1000 }: Props = $props();
 
   // Purposely non-zero, otherwise the transitions occur immediately
   // and are difficult to parse that a change has occurred.
@@ -314,7 +314,7 @@
   .chart-title {
     font-family: var(--sl-font-stack-sans);
     font-size: 18px;
-    color: black;
+    color: var(--od-colour-text-primary, black);
   }
 
   @container (width > 462px) {
