@@ -3,6 +3,9 @@
   import { Tween } from 'svelte/motion';
   import { scaleOrdinal, scaleTime, scaleLinear } from 'd3-scale';
   import { csvParse } from 'd3-dsv';
+  import { prefersReducedMotion } from '@abcnews/env-utils';
+  import { cubicInOut } from 'svelte/easing';
+
   import FontProvider from './FontProvider.svelte'; // TODO Swap out for @abcnews/components-storylab version
   import AxisX from './layercake-components/AxisX.svg.svelte';
   import AxisY from './layercake-components/AxisY.svg.svelte';
@@ -33,9 +36,17 @@
 
   interface Props {
     showConstructionMarks?: boolean;
+    tweenDuration?: number;
   }
 
-  let { showConstructionMarks = false }: Props = $props();
+  let { showConstructionMarks = false, tweenDuration = 1000 }: Props = $props();
+
+  // Purposely non-zero, otherwise the transitions occur immediately
+  // and are difficult to parse that a change has occurred.
+  const TWEEN_DURATION_REDUCED = 100;
+
+  const tweenDurationFinal = $derived(prefersReducedMotion ? TWEEN_DURATION_REDUCED : tweenDuration);
+  const tweenConfig = $derived({ duration: tweenDurationFinal, easing: cubicInOut });
 
   // TODO: Move fetched and parsed data to a central state object from state.svelte.ts
   // A state variable to store the raw data from each of the data sources defined in the config.
@@ -135,15 +146,21 @@
 
   let xAxisDomainTween = $derived.by(() => {
     if (flatData.length === 0) return undefined;
-    if (xAxisDataType === 'number') return new Tween(untrack(() => xDomain));
-    if (xAxisDataType === 'date') return new Tween(untrack(() => xDomain));
+    if (xAxisDataType === 'number' || xAxisDataType === 'date')
+      return new Tween(
+        untrack(() => xDomain),
+        tweenConfig
+      );
     return undefined;
   });
 
   let yAxisDomainTween = $derived.by(() => {
     if (flatData.length === 0) return undefined;
-    if (yAxisDataType === 'number') return new Tween(untrack(() => yDomain));
-    if (yAxisDataType === 'date') return new Tween(untrack(() => yDomain));
+    if (yAxisDataType === 'number' || yAxisDataType === 'date')
+      return new Tween(
+        untrack(() => yDomain),
+        tweenConfig
+      );
     return undefined;
   });
 
@@ -172,9 +189,10 @@
     // Fallback simple chartWidth / 130px calculation
     if (!xDomain || xAxisDataType === 'string') return Math.floor(chartWidth / 130);
 
-    const tempScale = xAxisDataType === 'date'
-      ? scaleTime().domain(xDomain as unknown as Date[])
-      : scaleLinear().domain(xDomain as unknown as number[]);
+    const tempScale =
+      xAxisDataType === 'date'
+        ? scaleTime().domain(xDomain as unknown as Date[])
+        : scaleLinear().domain(xDomain as unknown as number[]);
 
     // Generate some temporary ticks
     const sampleTicks = tempScale.ticks(10);
@@ -296,6 +314,7 @@
   .chart-title {
     font-family: var(--sl-font-stack-sans);
     font-size: 18px;
+    color: var(--od-colour-text-primary, black);
   }
 
   @container (width > 462px) {
