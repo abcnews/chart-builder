@@ -30,7 +30,7 @@ export type SeriesType = InferOutput<typeof SeriesSchema>;
 export type DataSourceType = InferInput<typeof DataSourceSchema>;
 
 export type SeriesLineType = InferOutput<typeof SeriesLineSchema>;
-export type DiffAreaType = InferOutput<typeof AreaSchema>;
+export type AreaType = InferOutput<typeof AreaSchema>;
 export type AxisConfigType = InferOutput<typeof AxisConfigSchema>;
 export type AxisOptionsType = InferOutput<typeof AxisOptionsSchema>;
 export type ColumnTypesType = InferOutput<typeof ColumnTypesSchema>;
