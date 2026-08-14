@@ -94,21 +94,6 @@
 
   let xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
   let yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
-
-  let customJsonText = $state(JSON.stringify({}, null, 2));
-  let customJsonError: string | undefined = $state();
-  const syncTextareaFromConfig = () => {
-    customJsonText = JSON.stringify(visState.config, null, 2);
-  };
-  const applyCustomJson = () => {
-    try {
-      const parsed = JSON.parse(customJsonText);
-      Object.assign(visState.config, parsed);
-      customJsonError = undefined;
-    } catch (e) {
-      customJsonError = e instanceof Error ? e.message : 'Invalid JSON';
-    }
-  };
 </script>
 
 {#snippet Viz()}
