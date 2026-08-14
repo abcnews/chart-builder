@@ -45,3 +45,9 @@
     {/snippet}
   </ItemCollectionEditModal>
 {/if}
+
+<style lang="scss">
+  input[type='range'] {
+    padding: 0; // Remove space from ends of slider
+  }
+</style>

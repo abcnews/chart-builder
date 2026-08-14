@@ -8,4 +8,9 @@
 </script>
 
 <label for="colour">Colour</label>
-<input type="text" id="colour" bind:value placeholder={defaultValue ? `Default: ${defaultValue}` : ''} />
+<input
+  type="text"
+  id="colour"
+  bind:value
+  placeholder={defaultValue ? `Default: ${defaultValue}` : 'eg. #000 or transparent'}
+/>

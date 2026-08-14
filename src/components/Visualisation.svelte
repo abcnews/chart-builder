@@ -3,6 +3,8 @@
   import { Tween } from 'svelte/motion';
   import { scaleOrdinal, scaleTime, scaleLinear } from 'd3-scale';
   import { csvParse } from 'd3-dsv';
+  import { fade } from 'svelte/transition';
+
   import FontProvider from './FontProvider.svelte'; // TODO Swap out for @abcnews/components-storylab version
   import AxisX from './layercake-components/AxisX.svg.svelte';
   import AxisY from './layercake-components/AxisY.svg.svelte';
@@ -10,6 +12,7 @@
   import Arrows from './layercake-components/Arrows.svg.svelte';
   import BackgroundHighlight from './layercake-components/BackgroundHighlight.svelte';
   import Lines from './layercake-components/Lines.svg.svelte';
+  import Area from './layercake-components/Area.svg.svelte';
 
   import type {
     CustomLayerCakeContextType,
@@ -106,6 +109,7 @@
   });
   let arrows = $derived(visState.config.arrows.filter(d => !d.deleted));
   let series = $derived(visState.config.series.filter(d => !d.deleted));
+  let areas = $derived(visState.config.areas.filter(d => !d.deleted));
 
   let xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
   let yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
@@ -172,9 +176,10 @@
     // Fallback simple chartWidth / 130px calculation
     if (!xDomain || xAxisDataType === 'string') return Math.floor(chartWidth / 130);
 
-    const tempScale = xAxisDataType === 'date'
-      ? scaleTime().domain(xDomain as unknown as Date[])
-      : scaleLinear().domain(xDomain as unknown as number[]);
+    const tempScale =
+      xAxisDataType === 'date'
+        ? scaleTime().domain(xDomain as unknown as Date[])
+        : scaleLinear().domain(xDomain as unknown as number[]);
 
     // Generate some temporary ticks
     const sampleTicks = tempScale.ticks(10);
@@ -224,6 +229,13 @@
       <Html>
         <BackgroundHighlight />
       </Html>
+      <Svg overflow="hidden">
+        {#each areas as area (area.idA + area.idB)}
+          <g transition:fade|global={{ duration: 100 }}>
+            <Area idA={area.idA} idB={area.idB} fill={area.fill} opacity={area.opacity} />
+          </g>
+        {/each}
+      </Svg>
       <Svg>
         <AxisX
           gridlines={false}

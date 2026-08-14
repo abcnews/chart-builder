@@ -16,7 +16,8 @@
     type DataSourceType,
     type DeletableType,
     type HighlightType,
-    type SeriesType
+    type SeriesType,
+    type AreaType
   } from '../../lib/types';
   import { PROJECT_NAME, SCROLLY_MARK_PREFIX, SCROLLY_OPENER_PREFIX } from '../../lib/constants';
 
@@ -28,6 +29,7 @@
   import DataSetEditForm from './edit-forms/DataSetEditForm.svelte';
   import SeriesEditForm from './edit-forms/SeriesEditForm.svelte';
   import AxisEditButton from './edit-forms/AxisEditButton.svelte';
+  import AreaEditForm from './edit-forms/AreaEditForm.svelte';
 
   const prefixes = {
     'Scrolly mark': SCROLLY_MARK_PREFIX,
@@ -64,6 +66,7 @@
   const defaultHighlight = { tl: { x: '2019-01-01', y: 10 }, br: { x: '2020-01-01', y: 100 } };
   const defaultSeries = { id: '', type: 'line' as const, curveType: 'cardinal' as const };
   const defaultDataSource = { label: '', url: '' };
+  const defaultArea = { idA: '', idB: '', fill: '#8E0BF9', opacity: 0.3 };
 
   let currentDataSet: (DataSetType & DeletableType) | undefined = $state();
   let currentAnnotation: (AnnotationType & DeletableType) | undefined = $state();
@@ -71,6 +74,7 @@
   let currentHighlight: (HighlightType & DeletableType) | undefined = $state();
   let currentSeries: (SeriesType & DeletableType) | undefined = $state();
   let currentDataSource: (DataSourceType & DeletableType) | undefined = $state();
+  let currentArea: (AreaType & DeletableType) | undefined = $state();
 
   let showConstructionMarks: boolean = $state(localStorage.getItem('showConstructionMarks') !== null);
 
@@ -90,6 +94,21 @@
 
   let xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
   let yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
+
+  let customJsonText = $state(JSON.stringify({}, null, 2));
+  let customJsonError: string | undefined = $state();
+  const syncTextareaFromConfig = () => {
+    customJsonText = JSON.stringify(visState.config, null, 2);
+  };
+  const applyCustomJson = () => {
+    try {
+      const parsed = JSON.parse(customJsonText);
+      Object.assign(visState.config, parsed);
+      customJsonError = undefined;
+    } catch (e) {
+      customJsonError = e instanceof Error ? e.message : 'Invalid JSON';
+    }
+  };
 </script>
 
 {#snippet Viz()}
@@ -172,6 +191,20 @@
     >
       {#snippet EditForm()}
         <HighlightEditForm bind:highlight={currentHighlight} />
+      {/snippet}
+    </ItemCollection>
+
+    <ItemCollection
+      legend="Areas"
+      bind:current={currentArea}
+      template={defaultArea}
+      bind:collection={visState.config.areas}
+      itemLabelGetter={area => `${area.idA} → ${area.idB}`}
+    >
+      {#snippet EditForm()}
+        {#if currentArea}
+          <AreaEditForm bind:area={currentArea} />
+        {/if}
       {/snippet}
     </ItemCollection>
 
