@@ -197,7 +197,10 @@ export const fetchDataUrl = async (urlOrId: string) => {
     const doc = await fetchOne({
       id: urlOrId,
       type: 'DownloadObject',
-      force: window.location.hostname.includes('aus.aunty.abc') ? TIERS.PREVIEW : undefined
+      force:
+        window.location.hostname.includes('aus.aunty.abc') || window.location.pathname.includes('/news-projects/')
+          ? TIERS.PREVIEW
+          : undefined
     });
     // @ts-expect-error Until terminus-fetch gets better types, this will be an error
     if (doc.downloadURL) urlOrId = doc.downloadURL;
