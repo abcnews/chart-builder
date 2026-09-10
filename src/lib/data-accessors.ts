@@ -5,13 +5,15 @@ import { VisualisationSchema } from './schemas';
 import type { VisualisationType } from './types';
 import { diff } from 'deep-object-diff';
 
-const replace = (source: {}, target: {}, key: string) => {
+const replace = (source: {} & { __removalCount?: number }, target: {}, key: string) => {
   if (source[key] === undefined) {
     // Arrays need special handling.
     // This is something to do with the way Svelte signals are implemented. If the key is deleted as if it's a regular
     // object svelte attempts to access a non-existent key.
     if (Array.isArray(target) && typeof +key === 'number' && +key === +key) {
-      target.splice(+key, 1);
+      source.__removalCount = source.__removalCount || 0;
+      target.splice(+key - source.__removalCount, 1);
+      source.__removalCount++;
     } else {
       delete target[key];
     }
