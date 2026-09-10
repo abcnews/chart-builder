@@ -14,7 +14,7 @@
 		"postinstall": "patch-package"
 	},
 	"devDependencies": {
-		"@abcnews/aunty": "^16.0.0",
+		"@abcnews/aunty": "^16.0.2",
 		"@testing-library/svelte": "^5.2.7",
 		"@types/d3-dsv": "^3.0.7",
 		"@types/d3-scale": "^4.0.9",

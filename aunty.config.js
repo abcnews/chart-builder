@@ -41,13 +41,6 @@ module.exports = {
     // Fix for carbon components import paths
     config.module.rules[0].resolve = { fullySpecified: false };
 
-    // Fixing a bug in aunty for *.svelte.ts files
-    config.module.rules[7].use = [
-      config.module.rules[7].use[0],
-      config.module.rules[7].use[2],
-      config.module.rules[7].use[1]
-    ];
-
     // Enable source maps
     config.devtool = 'source-map';
 
