@@ -198,7 +198,8 @@ export const fetchDataUrl = async (urlOrId: string) => {
       id: urlOrId,
       type: 'DownloadObject',
       force:
-        window.location.hostname.includes('aus.aunty.abc') || window.location.pathname.includes('/news-projects/')
+        window.location.hostname.includes('aus.aunty.abc') ||
+        (window.location.pathname.includes('/news-projects/') && !window.location.pathname.includes('/iframe'))
           ? TIERS.PREVIEW
           : undefined
     });
