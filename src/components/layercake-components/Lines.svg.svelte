@@ -42,7 +42,9 @@
 <g class="line-group">
   {#each renderedLines as line (line.id || line)}
     <g class="line" style:--line-dasharray={line.dasharray ? line.dasharray : undefined}>
-      <path class="path-line outline" d={line.d}></path>
+      {#if line.stroke !== 'transparent'}
+        <path class="path-line outline" d={line.d}></path>
+      {/if}
       <path class="path-line" d={line.d} stroke={line.stroke}></path>
     </g>
   {/each}
@@ -53,11 +55,11 @@
     fill: none;
     stroke-linejoin: round;
     stroke-linecap: round;
-    stroke-width: 2px;
+    stroke-width: 3px;
     stroke-dasharray: var(--line-dasharray, none);
 
     &.outline {
-      stroke-width: 3px;
+      stroke-width: 3.5px;
       stroke: #fff;
     }
   }
