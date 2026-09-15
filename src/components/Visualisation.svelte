@@ -172,9 +172,10 @@
     // Fallback simple chartWidth / 130px calculation
     if (!xDomain || xAxisDataType === 'string') return Math.floor(chartWidth / 130);
 
-    const tempScale = xAxisDataType === 'date'
-      ? scaleTime().domain(xDomain as unknown as Date[])
-      : scaleLinear().domain(xDomain as unknown as number[]);
+    const tempScale =
+      xAxisDataType === 'date'
+        ? scaleTime().domain(xDomain as unknown as Date[])
+        : scaleLinear().domain(xDomain as unknown as number[]);
 
     // Generate some temporary ticks
     const sampleTicks = tempScale.ticks(10);
@@ -221,7 +222,7 @@
       data={groupedData}
       custom={customLayerCakeContext}
     >
-      <Html>
+      <Html overflow="hidden">
         <BackgroundHighlight />
       </Html>
       <Svg>
@@ -270,6 +271,7 @@
   .visualisation {
     background: white;
     container-type: inline-size;
+    overflow: hidden;
     /* MOBILE_MAX=462 */
   }
   div {
