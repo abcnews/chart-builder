@@ -1,11 +1,21 @@
-import type { DSVRowString } from 'd3-dsv';
-import type { AxisOptionsType, ColumnDefinitionType, ColumnTypesType, SeriesType } from './types';
+import { csvParse, type DSVRowString } from 'd3-dsv';
+import type {
+  AxisOptionsType,
+  ColumnDefinitionType,
+  ColumnTypesType,
+  DataSetType,
+  LayerCakeGroupedDataGroupValuesType,
+  LayerCakeGroupedDataType,
+  SeriesType,
+  VisualisationStateType
+} from './types';
 import { timeFormat } from 'd3-time-format';
 import { format } from 'd3-format';
 import { defaultAxisLabelFormatStrings } from './constants';
 import { getOrdinalCategoricalPalette } from '@abcnews/palette';
 import { fetchOne } from '@abcnews/terminus-fetch';
 import { TIERS } from '@abcnews/env-utils';
+import { visState } from './state.svelte';
 
 /**
  * This is a modified version of the d3 autotype function
@@ -210,4 +220,70 @@ export const fetchDataUrl = async (urlOrId: string) => {
     if (doc.downloadURL) urlOrId = doc.downloadURL;
   }
   return await fetch(urlOrId).then(res => res.text());
+};
+
+export const updateData = (data: DataSetType[]) => {
+  data.forEach(async ({ name, url, columns }) => {
+    // TODO: It would make sense to cache these locally, but for now rely on HTTP caching
+    const raw = await fetchDataUrl(url);
+    const parsed = csvParse(raw, rowParser(columns));
+    visState.data[name] = {
+      id: name,
+      name,
+      raw,
+      columns: parsed.columns,
+      rows: parsed
+    };
+  });
+};
+
+const getSeriesWithData = (state: VisualisationStateType) => {
+  return state.config.series.flatMap(series => {
+    if (series.deleted) return [];
+
+    // Try to find the dataset for this series
+    const dataset = state.config.data.find(data => data.name === series.dataset);
+
+    // If dataset for this series is undefined, exclude it.
+    if (typeof dataset === 'undefined') return [];
+
+    // Try to find the parsed data associated with this series
+    const data = state.data[dataset.name];
+
+    // If the data doesn't exist for this series, exclude it.
+    if (typeof data === 'undefined') return [];
+
+    return [{ config: series, columns: dataset.columns, data }];
+  });
+};
+
+export const getFlatData = (state: VisualisationStateType): LayerCakeGroupedDataGroupValuesType[] => {
+  return getSeriesWithData(state).flatMap(({ config, data }) => {
+    const { x, y, id } = config;
+    if (typeof x === 'undefined' || typeof y === 'undefined') {
+      console.warn(`Missing x or y column for series ${id}`);
+      return [];
+    }
+    return data.rows.map(d => {
+      return { x: d[x], y: d[y], z: id, row: d };
+    });
+  });
+};
+
+export const getGroupedData = (state: VisualisationStateType): LayerCakeGroupedDataType => {
+  const data = getSeriesWithData(state).flatMap(({ config, data }) => {
+    const { x, y, id } = config;
+    if (typeof x === 'undefined' || typeof y === 'undefined') {
+      console.warn(`Missing x or y column for series ${config.id}`);
+      return [];
+    }
+    return [
+      {
+        group: config.id,
+        values: data.rows.map(d => ({ x: d[x], y: d[y], z: id, row: d })),
+        config: config
+      }
+    ];
+  });
+  return data;
 };

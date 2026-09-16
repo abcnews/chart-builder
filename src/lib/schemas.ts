@@ -1,6 +1,7 @@
 import {
   array,
   boolean,
+  date,
   enum_,
   intersect,
   literal,
@@ -127,6 +128,18 @@ export const VisualisationSchema = object({
   axes: optional(AxisConfigSchema, { x: { domain: {} }, y: { domain: {} } })
 });
 
+export const DataRecordsSchema = record(
+  string(),
+  object({
+    id: string(),
+    name: string(),
+    columns: array(string()),
+    raw: string(),
+    rows: array(record(string(), nullable(union([string(), number(), date(), boolean()]))))
+  })
+);
+
 export const VisualisationStateSchema = object({
-  config: VisualisationSchema
+  config: VisualisationSchema,
+  data: DataRecordsSchema
 });
