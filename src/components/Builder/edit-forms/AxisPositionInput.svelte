@@ -8,9 +8,6 @@
     columnType: ColumnTypesType;
   }
   let { id, value = $bindable(), columnType, label }: Props = $props();
-  $effect(() => {
-    console.log('typeof value :>> ', typeof value, value);
-  });
 </script>
 
 {#if label}<label for={id}>{label}</label>{/if}

@@ -122,11 +122,14 @@ export const getDomain = (
     return undefined;
   }
 
-  const isDefined = (input: string | number | null | undefined): input is string | number => {
+  const isDefined = (input: string | number | Date | boolean | null | undefined): input is string | number => {
     return !(typeof input === 'undefined' || input === null || (typeof input === 'string' && input.length === 0));
   };
 
-  const [configMin, configMax] = configDefined;
+  const [configMin, configMax] = configDefined.map(d => {
+    if (d === null || typeof d === 'undefined' || d === '') return null;
+    return coerceToColumnDataType(d, dataType);
+  });
   const hasMin = isDefined(configMin);
   const hasMax = isDefined(configMax);
 
@@ -141,13 +144,13 @@ export const getDomain = (
   let filtered =
     dataType === 'string'
       ? data.flatMap(d => (d === undefined || d === null ? [] : [String(d)]))
-      : data.flatMap(d => (d === undefined || d === null ? [] : [+d]));
+      : data.flatMap(d => (d === undefined || d === null || d === '' ? [] : [+d]));
 
   if (filtered.length === 0) return undefined;
 
   const [autoMin, autoMax] = filtered.reduce(
     ([min, max], d) => {
-      return [typeof d < min ? d : min, typeof d > max ? d : max];
+      return [d < min ? d : min, d > max ? d : max];
     },
     [filtered[0]!, filtered[0]!]
   );
