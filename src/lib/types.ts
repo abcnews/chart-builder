@@ -13,7 +13,8 @@ import type {
   HighlightSchema,
   SeriesLineSchema,
   SeriesSchema,
-  VisualisationSchema
+  VisualisationSchema,
+  VisualisationStateSchema
 } from './schemas';
 import type { Readable } from 'svelte/store';
 import type { ScaleBand, ScaleLinear, ScaleOrdinal } from 'd3-scale';
@@ -21,6 +22,7 @@ import type { ScaleBand, ScaleLinear, ScaleOrdinal } from 'd3-scale';
 export type DataSetType = InferOutput<typeof DataSetSchema>;
 export type DeletableType = InferOutput<typeof DeletableSchema>;
 export type VisualisationType = InferOutput<typeof VisualisationSchema>;
+export type VisualisationStateType = InferOutput<typeof VisualisationStateSchema>;
 export type VisualisationInputType = InferInput<typeof VisualisationSchema>;
 export type AnnotationType = InferInput<typeof AnnotationSchema>;
 export type ArrowType = InferOutput<typeof ArrowSchema>;
