@@ -4,7 +4,7 @@
   import Visualisation from '../Visualisation.svelte';
   import { visState } from '../../lib/state.svelte';
   import { onMount } from 'svelte';
-  import { getAxisDataType, loadMarkerConfig } from '../../lib/data-accessors';
+  import { getAxisDataType } from '../../lib/state-accessors';
   import { isValiError } from 'valibot';
   import ScreenshotTool from './ScreenshotTool/ScreenshotTool.svelte';
 
@@ -28,6 +28,7 @@
   import DataSetEditForm from './edit-forms/DataSetEditForm.svelte';
   import SeriesEditForm from './edit-forms/SeriesEditForm.svelte';
   import AxisEditButton from './edit-forms/AxisEditButton.svelte';
+  import { loadMarkerConfig } from '../../lib/state-management';
 
   const prefixes = {
     'Scrolly mark': SCROLLY_MARK_PREFIX,

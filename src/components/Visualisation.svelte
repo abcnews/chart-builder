@@ -13,27 +13,26 @@
 
   import type { CustomLayerCakeContextType } from '../lib/types';
 
+  import { parseManualTicks } from '../lib/data-helpers';
   import {
-    getAxisLabelFormatter,
-    getDefaultPalette,
-    getDomain,
     getFlatData,
     getGroupedData,
-    parseManualTicks,
-    updateData
-  } from '../lib/data-helpers';
-  import { getAxisDataType } from '../lib/data-accessors';
+    getDefaultPalette,
+    getAxisLabelFormatter,
+    getDomain,
+    getAxisDataType
+  } from '../lib/state-accessors';
 
   import { visState } from '../lib/state.svelte';
   import { plotPadding } from '../lib/constants';
   import { untrack } from 'svelte';
+  import { updateData } from '../lib/state-management';
 
   interface Props {
     showConstructionMarks?: boolean;
   }
 
   let { showConstructionMarks = false }: Props = $props();
-
 
   // Load these into state via an effect to avoid use of #await. If the config changes so a new data needs to be fetched
   // we don't want the UI to change to an awaiting state while it's loading.
@@ -115,7 +114,7 @@
     if (xTicks) return xTicks;
 
     // Fallback simple chartWidth / 130px calculation
-    if (!xDomain || xAxisDataType === 'string') return Math.floor(chartWidth / 130);
+    if (!xDomain) return Math.floor(chartWidth / 130);
 
     const tempScale =
       xAxisDataType === 'date'

@@ -4,7 +4,7 @@
   import FormActions from './FormActions.svelte';
   import { Loader } from '@abcnews/components-builder';
   import ItemCollectionEditModal from '../ItemCollectionEditModal.svelte';
-  import { fetchDataUrl } from '../../../lib/data-helpers';
+  import { fetchDataUrl } from '../../../lib/state-management';
 
   interface Props {
     set: (DataSetType & DeletableType) | undefined;

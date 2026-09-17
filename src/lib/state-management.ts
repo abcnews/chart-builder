@@ -2,8 +2,12 @@ import { safeParse } from 'valibot';
 import { decode } from '@abcnews/base-36-props';
 import { visState } from './state.svelte';
 import { VisualisationSchema } from './schemas';
-import type { VisualisationType } from './types';
 import { diff } from 'deep-object-diff';
+import { fetchOne } from '@abcnews/terminus-fetch';
+import { TIERS } from '@abcnews/env-utils';
+import type { DataSetType } from './types';
+import { rowParser } from './data-helpers';
+import { csvParse } from 'd3-dsv';
 
 const replace = (source: {} & { __removalCount?: number }, target: {}, key: string) => {
   if (source[key] === undefined) {
@@ -45,10 +49,35 @@ export const loadMarkerConfig = (data: string | Record<string, unknown>) => {
   }
 };
 
-export const getAxisDataType = (config: VisualisationType, axis: 'x' | 'y') => {
-  const series = config.series.filter(d => !d.deleted)[0];
-  if (!series || !series[axis]) return undefined;
-  const dataset = config.data.find(d => d.name === series.dataset);
-  if (!dataset) return undefined;
-  return dataset.columns[series[axis]];
+export const fetchDataUrl = async (urlOrId: string) => {
+  // If url is parsable as a CMID, get the URL from Terminus
+  if (urlOrId.match(/^[0-9]+$/)) {
+    const doc = await fetchOne({
+      id: urlOrId,
+      type: 'DownloadObject',
+      force:
+        window.location.hostname.includes('aus.aunty.abc') ||
+        (window.location.pathname.includes('/news-projects/') && !window.location.pathname.includes('/iframe'))
+          ? TIERS.PREVIEW
+          : undefined
+    });
+    // @ts-expect-error Until terminus-fetch gets better types, this will be an error
+    if (doc.downloadURL) urlOrId = doc.downloadURL;
+  }
+  return await fetch(urlOrId).then(res => res.text());
+};
+
+export const updateData = (data: DataSetType[]) => {
+  data.forEach(async ({ name, url, columns }) => {
+    // TODO: It would make sense to cache these locally, but for now rely on HTTP caching
+    const raw = await fetchDataUrl(url);
+    const parsed = csvParse(raw, rowParser(columns));
+    visState.data[name] = {
+      id: name,
+      name,
+      raw,
+      columns: parsed.columns,
+      rows: parsed
+    };
+  });
 };

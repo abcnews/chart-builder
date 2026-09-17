@@ -1,6 +1,6 @@
 import { proxy } from '@abcnews/dev-proxy';
 import { PROJECT_NAME } from './lib/constants';
-import { loadMarkerConfig } from './lib/data-accessors';
+import { loadMarkerConfig } from './lib/state-management';
 import { mount } from 'svelte';
 import IframeWrapper from './components/IframeWrapper.svelte';
 

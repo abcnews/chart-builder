@@ -1,5 +1,6 @@
 <script lang="ts">
   let { children } = $props();
+  // TODO: replace this with TypographyProvider from components-storylab
 </script>
 
 <div>{@render children()}</div>

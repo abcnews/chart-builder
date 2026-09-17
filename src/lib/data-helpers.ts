@@ -1,21 +1,9 @@
-import { csvParse, type DSVRowString } from 'd3-dsv';
-import type {
-  AxisOptionsType,
-  ColumnDefinitionType,
-  ColumnTypesType,
-  DataSetType,
-  LayerCakeGroupedDataGroupValuesType,
-  LayerCakeGroupedDataType,
-  SeriesType,
-  VisualisationStateType
-} from './types';
-import { timeFormat } from 'd3-time-format';
-import { format } from 'd3-format';
-import { defaultAxisLabelFormatStrings } from './constants';
-import { getOrdinalCategoricalPalette } from '@abcnews/palette';
-import { fetchOne } from '@abcnews/terminus-fetch';
-import { TIERS } from '@abcnews/env-utils';
-import { visState } from './state.svelte';
+/**
+ * Various helper functions for data manipulation
+ */
+
+import { type DSVRowString } from 'd3-dsv';
+import type { ColumnDataTypeMap, ColumnDefinitionType, ColumnTypesType } from './types';
 
 /**
  * This is a modified version of the d3 autotype function
@@ -66,15 +54,6 @@ export const rowParser = (columnDefinitions: ColumnDefinitionType) => (row: DSVR
 // https://github.com/d3/d3-dsv/issues/45
 const fixtz = new Date('2019-01-01T00:00').getHours() || new Date('2019-07-01T00:00').getHours();
 
-type ColumnDataTypeMap = {
-  date: Date;
-  number: number;
-  string: string;
-  boolean: boolean;
-};
-
-type ColumnDataTypes = Date | number | string | boolean;
-
 /**
  * Convert a value which has been derived from user input in the chart builder (which is only ever string or number) and
  * convert it to a data type compatible with a column from the data.
@@ -92,97 +71,6 @@ export const coerceToColumnDataType = <T extends keyof ColumnDataTypeMap>(
   throw new Error('Unsupported data type passed.');
 };
 
-const coerceToStringOrNumber = (val: ColumnDataTypes) => {
-  return typeof val === 'string' ? val : +val;
-};
-
-export const getAxisLabelFormatter = (axisOptions: AxisOptionsType, axisDataType: ColumnTypesType) => {
-  if (axisDataType === 'date') {
-    const formatter = timeFormat(axisOptions.format || defaultAxisLabelFormatStrings.date);
-    return formatter;
-  }
-  if (axisDataType === 'number') {
-    try {
-      return format(axisOptions.format || defaultAxisLabelFormatStrings.number);
-    } catch (e) {
-      return format(defaultAxisLabelFormatStrings.number);
-    }
-  }
-
-  // Default to returning coercing to a string for anything else
-  return (d: any) => String(d);
-};
-
-/**
- * LayerCake expects domain arguments to be either number[] or string[] (which translates into either a d3 scale (either linear or
- * ordinal). d3's linear scales transform the domain into numbers.
- *
- * @param axisOptions Axis options defined in the builder
- * @param data Data to calculate the domain from
- * @param dataType Expected datatype for elements in the data array (as per config defined in builder)
- * @param padding
- */
-export const getDomain = (
-  configDefined: [min: number | string | null | undefined, max: number | string | null | undefined],
-  data: (ColumnDataTypes | null | undefined)[],
-  dataType: ColumnTypesType | undefined,
-  padding: number = 0.05
-): undefined | string[] | number[] => {
-  if (dataType === undefined) {
-    return undefined;
-  }
-
-  const isDefined = (input: string | number | Date | boolean | null | undefined): input is string | number => {
-    return !(typeof input === 'undefined' || input === null || (typeof input === 'string' && input.length === 0));
-  };
-
-  const [configMin, configMax] = configDefined.map(d => {
-    if (d === null || typeof d === 'undefined' || d === '') return null;
-    return coerceToColumnDataType(d, dataType);
-  });
-  const hasMin = isDefined(configMin);
-  const hasMax = isDefined(configMax);
-
-  // Shortcut if entire domain is defined in config — no need to calculate extents
-  if (hasMin && hasMax) {
-    return dataType === 'string'
-      ? [String(configMin), String(configMax)]
-      : [+coerceToColumnDataType(configMin, dataType), +coerceToColumnDataType(configMax, dataType)];
-  }
-
-  // Ensure clean data
-  let filtered =
-    dataType === 'string'
-      ? data.flatMap(d => (d === undefined || d === null ? [] : [String(d)]))
-      : data.flatMap(d => (d === undefined || d === null || d === '' ? [] : [+d]));
-
-  if (filtered.length === 0) return undefined;
-
-  const [autoMin, autoMax] = filtered.reduce(
-    ([min, max], d) => {
-      return [d < min ? d : min, d > max ? d : max];
-    },
-    [filtered[0]!, filtered[0]!]
-  );
-
-  if (dataType === 'string') {
-    return [String(hasMin ? configMin : autoMin), String(hasMax ? configMax : autoMax)];
-  }
-
-  let [min, max] = [+(hasMin ? configMin : autoMin), +(hasMax ? configMax : autoMax)];
-
-  // Apply default padding if the domain is auto-calculated and numeric.
-  const padAmount = (max - min) * padding;
-  if (!hasMin) {
-    min = min - padAmount;
-  }
-  if (!hasMax) {
-    max = max + padAmount;
-  }
-
-  return [min, max];
-};
-
 /**
  * Parse a comma-separated string of ticks and coerce them to the axis data type.
  * @param ticksString Comma-separated string of ticks
@@ -198,92 +86,4 @@ export const parseManualTicks = (ticksString: string | undefined, dataType: Colu
     .map(s => coerceToColumnDataType(s, dataType));
 
   return ticks.length > 0 ? ticks : undefined;
-};
-
-export const getDefaultPalette = (series: SeriesType[]) => {
-  return getOrdinalCategoricalPalette(Math.min(5, Math.max(2, series.length)));
-};
-
-export const fetchDataUrl = async (urlOrId: string) => {
-  // If url is parsable as a CMID, get the URL from Terminus
-  if (urlOrId.match(/^[0-9]+$/)) {
-    const doc = await fetchOne({
-      id: urlOrId,
-      type: 'DownloadObject',
-      force:
-        window.location.hostname.includes('aus.aunty.abc') ||
-        (window.location.pathname.includes('/news-projects/') && !window.location.pathname.includes('/iframe'))
-          ? TIERS.PREVIEW
-          : undefined
-    });
-    // @ts-expect-error Until terminus-fetch gets better types, this will be an error
-    if (doc.downloadURL) urlOrId = doc.downloadURL;
-  }
-  return await fetch(urlOrId).then(res => res.text());
-};
-
-export const updateData = (data: DataSetType[]) => {
-  data.forEach(async ({ name, url, columns }) => {
-    // TODO: It would make sense to cache these locally, but for now rely on HTTP caching
-    const raw = await fetchDataUrl(url);
-    const parsed = csvParse(raw, rowParser(columns));
-    visState.data[name] = {
-      id: name,
-      name,
-      raw,
-      columns: parsed.columns,
-      rows: parsed
-    };
-  });
-};
-
-const getSeriesWithData = (state: VisualisationStateType) => {
-  return state.config.series.flatMap(series => {
-    if (series.deleted) return [];
-
-    // Try to find the dataset for this series
-    const dataset = state.config.data.find(data => data.name === series.dataset);
-
-    // If dataset for this series is undefined, exclude it.
-    if (typeof dataset === 'undefined') return [];
-
-    // Try to find the parsed data associated with this series
-    const data = state.data[dataset.name];
-
-    // If the data doesn't exist for this series, exclude it.
-    if (typeof data === 'undefined') return [];
-
-    return [{ config: series, columns: dataset.columns, data }];
-  });
-};
-
-export const getFlatData = (state: VisualisationStateType): LayerCakeGroupedDataGroupValuesType[] => {
-  return getSeriesWithData(state).flatMap(({ config, data }) => {
-    const { x, y, id } = config;
-    if (typeof x === 'undefined' || typeof y === 'undefined') {
-      console.warn(`Missing x or y column for series ${id}`);
-      return [];
-    }
-    return data.rows.map(d => {
-      return { x: d[x], y: d[y], z: id, row: d };
-    });
-  });
-};
-
-export const getGroupedData = (state: VisualisationStateType): LayerCakeGroupedDataType => {
-  const data = getSeriesWithData(state).flatMap(({ config, data }) => {
-    const { x, y, id } = config;
-    if (typeof x === 'undefined' || typeof y === 'undefined') {
-      console.warn(`Missing x or y column for series ${config.id}`);
-      return [];
-    }
-    return [
-      {
-        group: config.id,
-        values: data.rows.map(d => ({ x: d[x], y: d[y], z: id, row: d })),
-        config: config
-      }
-    ];
-  });
-  return data;
 };

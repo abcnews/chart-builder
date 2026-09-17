@@ -81,3 +81,11 @@ export type LayerCakeContextType = {
   yGet: Readable<(d: LayerCakeGroupedDataGroupValuesType) => number>;
   zGet: Readable<(d: LayerCakeGroupedDataGroupValuesType) => string>;
 };
+
+export type ColumnDataTypes = Date | number | string | boolean;
+export type ColumnDataTypeMap = {
+  date: Date;
+  number: number;
+  string: string;
+  boolean: boolean;
+};
