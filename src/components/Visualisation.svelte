@@ -2,7 +2,7 @@
   import { LayerCake, Svg, Html } from 'layercake';
   import { Tween } from 'svelte/motion';
   import { scaleOrdinal, scaleTime, scaleLinear } from 'd3-scale';
-  import { csvParse } from 'd3-dsv';
+
   import FontProvider from './FontProvider.svelte'; // TODO Swap out for @abcnews/components-storylab version
   import AxisX from './layercake-components/AxisX.svg.svelte';
   import AxisY from './layercake-components/AxisY.svg.svelte';
@@ -11,25 +11,22 @@
   import BackgroundHighlight from './layercake-components/BackgroundHighlight.svelte';
   import Lines from './layercake-components/Lines.svg.svelte';
 
-  import type {
-    CustomLayerCakeContextType,
-    LayerCakeGroupedDataGroupValuesType,
-    LayerCakeGroupedDataType
-  } from '../lib/types';
+  import type { CustomLayerCakeContextType } from '../lib/types';
 
+  import { parseManualTicks } from '../lib/data-helpers';
   import {
-    fetchDataUrl,
-    getAxisLabelFormatter,
+    getFlatData,
+    getGroupedData,
     getDefaultPalette,
+    getAxisLabelFormatter,
     getDomain,
-    parseManualTicks,
-    rowParser
-  } from '../lib/data-helpers';
-  import { getAxisDataType } from '../lib/data-accessors';
+    getAxisDataType
+  } from '../lib/state-accessors';
 
   import { visState } from '../lib/state.svelte';
   import { plotPadding } from '../lib/constants';
   import { untrack } from 'svelte';
+  import { updateData } from '../lib/state-management';
 
   interface Props {
     showConstructionMarks?: boolean;
@@ -37,64 +34,12 @@
 
   let { showConstructionMarks = false }: Props = $props();
 
-  // TODO: Move fetched and parsed data to a central state object from state.svelte.ts
-  // A state variable to store the raw data from each of the data sources defined in the config.
-  // Object key is the name given to the dataset in the builder UI
-  const rawData: Record<string, string> = $state({});
-
   // Load these into state via an effect to avoid use of #await. If the config changes so a new data needs to be fetched
   // we don't want the UI to change to an awaiting state while it's loading.
-  $effect(() => {
-    visState.config.data.forEach(async ({ name, url }) => {
-      // TODO: It would make sense to cache these locally, but for now rely on HTTP caching
-      const raw = await fetchDataUrl(url);
-      rawData[name] = raw;
-    });
-  });
+  $effect(() => updateData(visState.config.data));
 
-  let seriesWithData = $derived.by(() => {
-    return visState.config.series.flatMap(series => {
-      if (series.deleted) return [];
-      const dataset = visState.config.data.find(data => data.name === series.dataset);
-      if (typeof dataset === 'undefined') return [];
-      // TODO: I think there's a potential race condition here if this runs before the fetch in the above effect has finished.
-      const raw = rawData[dataset.name];
-      if (typeof raw === 'undefined') return [];
-      const data = csvParse(raw, rowParser(dataset.columns));
-      return [{ config: series, columns: dataset.columns, data }];
-    });
-  });
-
-  let flatData: LayerCakeGroupedDataGroupValuesType[] = $derived.by(() => {
-    return seriesWithData.flatMap(({ config, data }) => {
-      const { x, y, id } = config;
-      if (typeof x === 'undefined' || typeof y === 'undefined') {
-        console.warn(`Missing x or y column for series ${id}`);
-        return [];
-      }
-      return data.map(d => {
-        return { x: d[x], y: d[y], z: id, row: d };
-      });
-    });
-  });
-
-  let groupedData: LayerCakeGroupedDataType = $derived.by(() => {
-    const data = seriesWithData.flatMap(({ config, data }) => {
-      const { x, y, id } = config;
-      if (typeof x === 'undefined' || typeof y === 'undefined') {
-        console.warn(`Missing x or y column for series ${config.id}`);
-        return [];
-      }
-      return [
-        {
-          group: config.id,
-          values: data.map(d => ({ x: d[x], y: d[y], z: id, row: d })),
-          config: config
-        }
-      ];
-    });
-    return data;
-  });
+  let flatData = $derived(getFlatData(visState.config.series, visState.config.data, visState.data));
+  let groupedData = $derived(getGroupedData(visState.config.series, visState.config.data, visState.data));
 
   // TODO: Warn if there are too many categories.
   let seriesColors = $derived(getDefaultPalette(visState.config.series));
@@ -105,7 +50,6 @@
     });
   });
   let arrows = $derived(visState.config.arrows.filter(d => !d.deleted));
-  let series = $derived(visState.config.series.filter(d => !d.deleted));
 
   let xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
   let yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
@@ -170,7 +114,7 @@
     if (xTicks) return xTicks;
 
     // Fallback simple chartWidth / 130px calculation
-    if (!xDomain || xAxisDataType === 'string') return Math.floor(chartWidth / 130);
+    if (!xDomain) return Math.floor(chartWidth / 130);
 
     const tempScale =
       xAxisDataType === 'date'

@@ -2,7 +2,7 @@
   import Scrollyteller from '@abcnews/svelte-scrollyteller';
   import Visualisation from './Visualisation.svelte';
 
-  import { loadMarkerConfig } from '../lib/data-accessors';
+  import { loadMarkerConfig } from '../lib/state-management';
 
   let latestConfig: string = '';
 

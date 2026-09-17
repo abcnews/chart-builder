@@ -8,7 +8,7 @@
     type LayerCakeContextType
   } from '../../lib/types';
   import { fade } from 'svelte/transition';
-  import { getAxisDataType } from '../../lib/data-accessors';
+  import { getAxisDataType } from '../../lib/state-accessors';
   import { visState } from '../../lib/state.svelte';
   import { coerceToColumnDataType } from '../../lib/data-helpers';
 

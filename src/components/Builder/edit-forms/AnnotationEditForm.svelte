@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getAxisDataType } from '../../../lib/data-accessors';
+  import { getAxisDataType } from '../../../lib/state-accessors';
   import { visState } from '../../../lib/state.svelte';
   import type { AnnotationType, DeletableType } from '../../../lib/types';
   import AnchorPointSelector from '../AnchorPointSelector.svelte';
