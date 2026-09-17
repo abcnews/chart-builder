@@ -5,14 +5,14 @@
     BuilderFrame,
     MarkerAdmin,
     UpdateChecker,
-    ItemCollection
+    ItemCollection,
+    ScreenshotTool
   } from '@abcnews/components-builder';
   import Visualisation from '../Visualisation.svelte';
   import { builderState, visState } from '../../lib/state.svelte';
   import { onMount } from 'svelte';
   import { getAxisDataType } from '../../lib/state-accessors';
   import { isValiError } from 'valibot';
-  import ScreenshotTool from './ScreenshotTool/ScreenshotTool.svelte';
 
   import {
     AnnotationAnchorType,
