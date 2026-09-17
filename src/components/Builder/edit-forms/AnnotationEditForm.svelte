@@ -3,10 +3,10 @@
   import { visState } from '../../../lib/state.svelte';
   import type { AnnotationType, DeletableType } from '../../../lib/types';
   import AnchorPointSelector from '../AnchorPointSelector.svelte';
-  import ChartPositionInput from './ChartPositionInput.svelte';
-  import ColourField from './ColourField.svelte';
+  import ChartPositionInput from '../form-inputs/ChartPositionInput.svelte';
+  import ColourField from '../form-inputs/ColourField.svelte';
 
-  import FormActions from './FormActions.svelte';
+  import FormActions from '../form-inputs/FormActions.svelte';
   import ItemCollectionEditModal from '../ItemCollectionEditModal.svelte';
 
   interface Props {

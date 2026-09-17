@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { DataSetType, DeletableType } from '../../../lib/types';
   import { csvParse } from 'd3-dsv';
-  import FormActions from './FormActions.svelte';
+  import FormActions from '../form-inputs/FormActions.svelte';
   import { Loader } from '@abcnews/components-builder';
   import ItemCollectionEditModal from '../ItemCollectionEditModal.svelte';
   import { fetchDataUrl } from '../../../lib/state-management';

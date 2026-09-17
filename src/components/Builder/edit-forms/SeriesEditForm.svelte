@@ -1,8 +1,8 @@
 <script lang="ts">
   import { visState } from '../../../lib/state.svelte';
   import type { DeletableType, SeriesType } from '../../../lib/types';
-  import ColourField from './ColourField.svelte';
-  import FormActions from './FormActions.svelte';
+  import ColourField from '../form-inputs/ColourField.svelte';
+  import FormActions from '../form-inputs/FormActions.svelte';
   import ItemCollectionEditModal from '../ItemCollectionEditModal.svelte';
   import { curveTypes } from '../../../lib/curves';
 

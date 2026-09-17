@@ -32,7 +32,7 @@
   import DataSourceEditForm from './edit-forms/DataSourceEditForm.svelte';
   import DataSetEditForm from './edit-forms/DataSetEditForm.svelte';
   import SeriesEditForm from './edit-forms/SeriesEditForm.svelte';
-  import AxisEditButton from './edit-forms/AxisEditButton.svelte';
+  import AxisEditButton from './form-inputs/AxisEditButton.svelte';
   import { loadMarkerConfig } from '../../lib/state-management';
 
   const prefixes = {

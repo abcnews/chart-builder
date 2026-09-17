@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { DataSourceType, DeletableType } from '../../../lib/types';
-  import FormActions from './FormActions.svelte';
+  import FormActions from '../form-inputs/FormActions.svelte';
   import ItemCollectionEditModal from '../ItemCollectionEditModal.svelte';
 
   interface Props {
