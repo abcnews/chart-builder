@@ -5,7 +5,7 @@ import { VisualisationSchema } from './schemas';
 import { diff } from 'deep-object-diff';
 import { fetchOne } from '@abcnews/terminus-fetch';
 import { TIERS } from '@abcnews/env-utils';
-import type { DataSetType } from './types';
+import type { DataSetType, VisualisationType } from './types';
 import { rowParser } from './data-helpers';
 import { csvParse } from 'd3-dsv';
 
@@ -36,6 +36,32 @@ const apply = (diff: {}, source: {}, target: {}) => {
   }
 };
 
+/**
+ * The axis data types used to be defined by the first series defined for the chart and the dataset and column specified for
+ * that series. This allows us to continue doing that for old configs.
+ */
+const inferAxisDataTypeFromFirstSeries = (config: VisualisationType, axis: 'x' | 'y') => {
+  // Find the first series
+  const series = config.series.filter(d => !d.deleted)[0];
+
+  // If there are no series, we don't know the axis data type
+  if (!series || !series[axis]) return undefined;
+
+  // Find the dataset associated with the first series
+  const dataset = config.data.find(d => d.name === series.dataset);
+
+  // If there's no dataset, we don't konw the axis data type
+  if (!dataset) return undefined;
+
+  const type = dataset.columns[series[axis]];
+
+  // Return undefined if the specified column has a type that's incompatible with an axis.
+  if (type !== 'date' && type !== 'number') return undefined;
+
+  // Return the column data type for the dataset column specified for the first series
+  return type;
+};
+
 export const loadMarkerConfig = (data: string | Record<string, unknown>) => {
   const obj = typeof data === 'string' ? decode(data) : data;
 
@@ -43,6 +69,12 @@ export const loadMarkerConfig = (data: string | Record<string, unknown>) => {
 
   const result = safeParse(VisualisationSchema, obj);
   if (result.success) {
+    // Previously we inferred axis data types from the first defined series. This made a few things more complicated
+    // than necessary, so now the axes are defined (including data types) specifically.
+    // This takes care of old configs. Where there is a series defined but no axis data type, we infer it on load.
+    result.output.axes.x.type = result.output.axes.x.type || inferAxisDataTypeFromFirstSeries(result.output, 'x');
+    result.output.axes.y.type = result.output.axes.y.type || inferAxisDataTypeFromFirstSeries(result.output, 'y');
+
     apply(diff(visState.config, result.output), result.output, visState.config);
   } else {
     console.error(result.issues);

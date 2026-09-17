@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { getAxisDataType } from '../../../lib/state-accessors';
   import { visState } from '../../../lib/state.svelte';
   import type { AnnotationType, DeletableType } from '../../../lib/types';
   import AnchorPointSelector from '../AnchorPointSelector.svelte';
@@ -14,23 +13,20 @@
   }
 
   let { annotation = $bindable() }: Props = $props();
-
-  const xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
-  const yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
 </script>
 
 {#if annotation}
   <ItemCollectionEditModal title="Edit Annotation" onClose={() => (annotation = undefined)}>
     <label for="annotation-text">Label</label>
     <input id="annotation-text" type="text" bind:value={annotation.label} />
-    {#if xAxisDataType === undefined || yAxisDataType === undefined}
-      <p>You must add a series before annotations can be positioned.</p>
+    {#if visState.config.axes.x.type === undefined || visState.config.axes.y.type === undefined}
+      <p>You must setup the axes before annotations can be positioned.</p>
     {:else}
       <ChartPositionInput
         label="Position"
         bind:value={annotation}
         id="anchor-position"
-        columnTypes={{ x: xAxisDataType, y: yAxisDataType }}
+        types={{ x: visState.config.axes.x.type, y: visState.config.axes.y.type }}
       />
       <span>Anchor position</span>
       <AnchorPointSelector bind:value={annotation.anchor} />

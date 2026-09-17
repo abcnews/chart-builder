@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { getAxisDataType } from '../../../lib/state-accessors';
   import { visState } from '../../../lib/state.svelte';
   import type { DeletableType, HighlightType } from '../../../lib/types';
   import ChartPositionInput from '../form-inputs/ChartPositionInput.svelte';
@@ -12,8 +11,8 @@
   }
 
   let { highlight = $bindable() }: Props = $props();
-  const xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
-  const yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
+  const xAxisDataType = $derived(visState.config.axes.x.type);
+  const yAxisDataType = $derived(visState.config.axes.y.type);
 </script>
 
 {#if highlight}
@@ -25,13 +24,13 @@
         id="highlight-top-left"
         label="Top left"
         bind:value={highlight.tl}
-        columnTypes={{ x: xAxisDataType, y: yAxisDataType }}
+        types={{ x: xAxisDataType, y: yAxisDataType }}
       />
       <ChartPositionInput
         id="highlight-bottom-right"
         label="Bottom right"
         bind:value={highlight.br}
-        columnTypes={{ x: xAxisDataType, y: yAxisDataType }}
+        types={{ x: xAxisDataType, y: yAxisDataType }}
       />
       <ColourField bind:value={highlight.colour} />
     {/if}

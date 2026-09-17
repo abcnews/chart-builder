@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { AxisOptionsSchema } from '../../../lib/schemas';
-  import type { ColumnTypesType } from '../../../lib/types';
   import { defaultAxisLabelFormatStrings } from '../../../lib/constants';
   import FieldGroup from './FieldGroup.svelte';
   import AxisPositionInput from './AxisPositionInput.svelte';
@@ -11,10 +10,9 @@
   interface Props {
     axis: InferOutput<typeof AxisOptionsSchema>;
     label: string;
-    columnType: ColumnTypesType | undefined;
   }
 
-  let { axis = $bindable(), label, columnType }: Props = $props();
+  let { axis = $bindable(), label }: Props = $props();
 
   let isEditing = $state(false);
 </script>
@@ -25,7 +23,7 @@
   {:else if label === 'Y'}
     <ArrowsVertical />
   {/if}
-  {label} Axis ({columnType || 'undefined'})
+  {label} Axis ({axis.type})
 </button>
 
 {#if isEditing}
@@ -38,48 +36,57 @@
       {/if}
     {/snippet}
     <FieldGroup>
-      <label for="{label.toLowerCase()}-axis-ticks">Labels</label>
-      <input
-        id="{label.toLowerCase()}-axis-ticks"
-        type="text"
-        bind:value={axis.ticks}
-        placeholder="e.g. 1980, 1985, 1990"
-      />
-      <label for="{label.toLowerCase()}-axis-format">Format</label>
-      <input
-        id="{label.toLowerCase()}-axis-format"
-        type="text"
-        bind:value={axis.format}
-        placeholder={`Default: ${defaultAxisLabelFormatStrings[columnType || ''] || ''}`}
-      />
-      {#if label === 'X'}
-        <label for="x-axis-baseline">
-          <input id="x-axis-baseline" type="checkbox" bind:checked={axis.baseline} />
-          Show axis line
-        </label>
-      {/if}
+      <label for="{label.toLowerCase()}-axis-data-type">Type</label>
+      <select id="{label.toLowerCase()}-axis-data-type" bind:value={axis.type}>
+        <option value="number">Number</option>
+        <option value="date">Date</option>
+      </select>
     </FieldGroup>
-    <small>
-      Formatting uses d3's formatting functions (<a href="https://d3js.org/d3-format#locale_format">numbers</a>,
-      <a href="https://d3js.org/d3-time-format#locale_format">dates</a>).
-    </small>
+    {#if axis.type}
+      <FieldGroup>
+        <label for="{label.toLowerCase()}-axis-ticks">Labels</label>
+        <input
+          id="{label.toLowerCase()}-axis-ticks"
+          type="text"
+          bind:value={axis.ticks}
+          placeholder="e.g. 1980, 1985, 1990"
+        />
+        <label for="{label.toLowerCase()}-axis-format">Format</label>
+        <input
+          id="{label.toLowerCase()}-axis-format"
+          type="text"
+          bind:value={axis.format}
+          placeholder={`Default: ${defaultAxisLabelFormatStrings[axis.type]}`}
+        />
+        {#if label === 'X'}
+          <label for="x-axis-baseline">
+            <input id="x-axis-baseline" type="checkbox" bind:checked={axis.baseline} />
+            Show axis line
+          </label>
+        {/if}
+      </FieldGroup>
+      <small>
+        Formatting uses d3's formatting functions (<a href="https://d3js.org/d3-format#locale_format">numbers</a>,
+        <a href="https://d3js.org/d3-time-format#locale_format">dates</a>).
+      </small>
 
-    <hr />
+      <hr />
 
-    <FieldGroup label="Chart extent">
-      <AxisPositionInput
-        label="Min"
-        id="{label.toLowerCase()}-axis-domain-min"
-        bind:value={axis.domain.min}
-        columnType={columnType as ColumnTypesType}
-      />
-      <AxisPositionInput
-        label="Max"
-        id="{label.toLowerCase()}-axis-domain-max"
-        bind:value={axis.domain.max}
-        columnType={columnType as ColumnTypesType}
-      />
-    </FieldGroup>
+      <FieldGroup label="Chart extent">
+        <AxisPositionInput
+          label="Min"
+          id="{label.toLowerCase()}-axis-domain-min"
+          bind:value={axis.domain.min}
+          type={axis.type}
+        />
+        <AxisPositionInput
+          label="Max"
+          id="{label.toLowerCase()}-axis-domain-max"
+          bind:value={axis.domain.max}
+          type={axis.type}
+        />
+      </FieldGroup>
+    {/if}
   </ItemCollectionEditModal>
 {/if}
 

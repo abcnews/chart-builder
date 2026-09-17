@@ -43,8 +43,8 @@
   });
   let arrows = $derived(visState.config.arrows.filter(d => !d.deleted));
 
-  let xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
-  let yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
+  let xAxisDataType = $derived(visState.config.axes.x.type);
+  let yAxisDataType = $derived(visState.config.axes.y.type);
 
   let formatLabelX = $derived(xAxisDataType && getAxisLabelFormatterGeneric(visState.config.axes.x, xAxisDataType));
   let formatLabelY = $derived(yAxisDataType && getAxisLabelFormatterGeneric(visState.config.axes.y, yAxisDataType));

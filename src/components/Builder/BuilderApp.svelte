@@ -11,7 +11,7 @@
   import Visualisation from '../Visualisation.svelte';
   import { builderState, visState } from '../../lib/state.svelte';
   import { onMount } from 'svelte';
-  import { getAxisDataType } from '../../lib/state-accessors';
+
   import { isValiError } from 'valibot';
 
   import {
@@ -94,8 +94,8 @@
     history.replaceState(undefined, document.title, url.toString());
   });
 
-  let xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
-  let yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
+  let xAxisDataType = $derived(visState.config.axes.x.type);
+  let yAxisDataType = $derived(visState.config.axes.y.type);
 </script>
 
 {#snippet Viz()}
@@ -121,6 +121,15 @@
     <input id="chart-title" type="text" bind:value={visState.config.title} />
     <label class="item" for="chart-description">Description</label>
     <textarea id="chart-description" bind:value={visState.config.description}></textarea>
+    <fieldset>
+      <legend>Axes</legend>
+      {#if !xAxisDataType || !yAxisDataType}
+        <p>At least one series must be defined before axis options can be set.</p>
+      {:else}
+        <AxisEditButton bind:axis={visState.config.axes.x} label="X" />
+        <AxisEditButton bind:axis={visState.config.axes.y} label="Y" />
+      {/if}
+    </fieldset>
     <hr />
     <ItemCollection
       legend="Series"
@@ -134,15 +143,6 @@
         <SeriesEditForm bind:series={currentSeries} />
       {/snippet}
     </ItemCollection>
-    <fieldset>
-      <legend>Axes</legend>
-      {#if !xAxisDataType || !yAxisDataType}
-        <p>At least one series must be defined before axis options can be set.</p>
-      {:else}
-        <AxisEditButton bind:axis={visState.config.axes.x} label="X" columnType={xAxisDataType} />
-        <AxisEditButton bind:axis={visState.config.axes.y} label="Y" columnType={yAxisDataType} />
-      {/if}
-    </fieldset>
     <ItemCollection
       legend="Annotations"
       bind:current={currentAnnotation}

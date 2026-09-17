@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { getAxisDataType } from '../../../lib/state-accessors';
   import { visState } from '../../../lib/state.svelte';
   import type { ArrowType, DeletableType } from '../../../lib/types';
   import ChartPositionInput from '../form-inputs/ChartPositionInput.svelte';
@@ -12,8 +11,8 @@
   }
 
   let { arrow = $bindable() }: Props = $props();
-  const xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
-  const yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
+  const xAxisDataType = $derived(visState.config.axes.x.type);
+  const yAxisDataType = $derived(visState.config.axes.x.type);
 </script>
 
 {#if arrow}
@@ -25,13 +24,13 @@
         label="From"
         id="arrow-start"
         bind:value={arrow.from}
-        columnTypes={{ x: xAxisDataType, y: yAxisDataType }}
+        types={{ x: xAxisDataType, y: yAxisDataType }}
       />
       <ChartPositionInput
         label="To"
         id="arrow-end"
         bind:value={arrow.to}
-        columnTypes={{ x: xAxisDataType, y: yAxisDataType }}
+        types={{ x: xAxisDataType, y: yAxisDataType }}
       />
       <ColourField bind:value={arrow.colour} defaultValue="#000000" />
     {/if}
