@@ -38,8 +38,8 @@
   // we don't want the UI to change to an awaiting state while it's loading.
   $effect(() => updateData(visState.config.data));
 
-  let flatData = $derived(getFlatData(visState));
-  let groupedData = $derived(getGroupedData(visState));
+  let flatData = $derived(getFlatData(visState.config.series, visState.config.data, visState.data));
+  let groupedData = $derived(getGroupedData(visState.config.series, visState.config.data, visState.data));
 
   // TODO: Warn if there are too many categories.
   let seriesColors = $derived(getDefaultPalette(visState.config.series));

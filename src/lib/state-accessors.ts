@@ -8,6 +8,9 @@ import type {
   AxisOptionsType,
   ColumnDataTypes,
   ColumnTypesType,
+  DataRecordsType,
+  DataSetType,
+  DeletableType,
   LayerCakeGroupedDataGroupValuesType,
   LayerCakeGroupedDataType,
   SeriesType,
@@ -139,29 +142,40 @@ export const getDefaultPalette = (series: SeriesType[]) => {
   return getOrdinalCategoricalPalette(Math.min(5, Math.max(2, series.length)));
 };
 
-const getSeriesWithData = (state: VisualisationStateType) => {
-  return state.config.series.flatMap(series => {
-    if (series.deleted) return [];
+const getSeriesWithData = (
+  seriesConfigs: (SeriesType & DeletableType)[],
+  datasetConfigs: DataSetType[],
+  dataRecords: DataRecordsType
+) => {
+  return seriesConfigs.flatMap(seriesConfig => {
+    if (seriesConfig.deleted) return [];
 
     // Try to find the dataset for this series
-    const dataset = state.config.data.find(data => data.name === series.dataset);
+    const datasetConfig = datasetConfigs.find(data => data.name === seriesConfig.dataset);
 
     // If dataset for this series is undefined, exclude it.
-    if (typeof dataset === 'undefined') return [];
+    if (typeof datasetConfig === 'undefined') return [];
 
     // Try to find the parsed data associated with this series
-    const data = state.data[dataset.name];
+    const data = dataRecords[datasetConfig.name];
 
     // If the data doesn't exist for this series, exclude it.
     if (typeof data === 'undefined') return [];
 
-    return [{ config: series, columns: dataset.columns, data }];
+    return [{ seriesConfig, datasetConfig, data }];
   });
 };
 
-export const getFlatData = (state: VisualisationStateType): LayerCakeGroupedDataGroupValuesType[] => {
-  return getSeriesWithData(state).flatMap(({ config, data }) => {
-    const { x, y, id } = config;
+export const getFlatData = (
+  seriesConfigs: (SeriesType & DeletableType)[],
+  datasetConfigs: DataSetType[],
+  dataRecords: DataRecordsType
+): LayerCakeGroupedDataGroupValuesType[] => {
+  return getSeriesWithData(seriesConfigs, datasetConfigs, dataRecords).flatMap(seriesWithData => {
+    const {
+      seriesConfig: { x, y, id },
+      data
+    } = seriesWithData;
     if (typeof x === 'undefined' || typeof y === 'undefined') {
       console.warn(`Missing x or y column for series ${id}`);
       return [];
@@ -172,18 +186,23 @@ export const getFlatData = (state: VisualisationStateType): LayerCakeGroupedData
   });
 };
 
-export const getGroupedData = (state: VisualisationStateType): LayerCakeGroupedDataType => {
-  const data = getSeriesWithData(state).flatMap(({ config, data }) => {
-    const { x, y, id } = config;
+export const getGroupedData = (
+  seriesConfigs: (SeriesType & DeletableType)[],
+  datasetConfigs: DataSetType[],
+  dataRecords: DataRecordsType
+): LayerCakeGroupedDataType => {
+  const data = getSeriesWithData(seriesConfigs, datasetConfigs, dataRecords).flatMap(seriesWithData => {
+    const { seriesConfig, data } = seriesWithData;
+    const { x, y, id } = seriesConfig;
     if (typeof x === 'undefined' || typeof y === 'undefined') {
-      console.warn(`Missing x or y column for series ${config.id}`);
+      console.warn(`Missing x or y column for series ${id}`);
       return [];
     }
     return [
       {
-        group: config.id,
+        group: id,
         values: data.rows.map(d => ({ x: d[x], y: d[y], z: id, row: d })),
-        config: config
+        config: seriesConfig
       }
     ];
   });
