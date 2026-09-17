@@ -1,6 +1,12 @@
 <script lang="ts">
   import { encode } from '@abcnews/base-36-props';
-  import { BuilderStyleRoot, BuilderFrame, MarkerAdmin, UpdateChecker } from '@abcnews/components-builder';
+  import {
+    BuilderStyleRoot,
+    BuilderFrame,
+    MarkerAdmin,
+    UpdateChecker,
+    ItemCollection
+  } from '@abcnews/components-builder';
   import Visualisation from '../Visualisation.svelte';
   import { visState } from '../../lib/state.svelte';
   import { onMount } from 'svelte';
@@ -23,7 +29,6 @@
   import AnnotationEditForm from './edit-forms/AnnotationEditForm.svelte';
   import ArrowEditForm from './edit-forms/ArrowEditForm.svelte';
   import HighlightEditForm from './edit-forms/HighlightEditForm.svelte';
-  import ItemCollection from './ItemCollection.svelte';
   import DataSourceEditForm from './edit-forms/DataSourceEditForm.svelte';
   import DataSetEditForm from './edit-forms/DataSetEditForm.svelte';
   import SeriesEditForm from './edit-forms/SeriesEditForm.svelte';
@@ -123,9 +128,10 @@
       template={defaultSeries}
       bind:collection={visState.config.series}
       itemLabelGetter={series => series.id}
+      reorderable={true}
     >
-      {#snippet EditForm(index)}
-        <SeriesEditForm {index} bind:series={currentSeries} />
+      {#snippet EditForm()}
+        <SeriesEditForm bind:series={currentSeries} />
       {/snippet}
     </ItemCollection>
     <fieldset>
@@ -143,6 +149,7 @@
       template={defaultAnnotation}
       bind:collection={visState.config.annotations}
       itemLabelGetter={annotation => annotation.label}
+      reorderable={true}
     >
       {#snippet EditForm()}
         <AnnotationEditForm bind:annotation={currentAnnotation} />
@@ -155,6 +162,7 @@
       template={defaultArrow}
       bind:collection={visState.config.arrows}
       itemLabelGetter={arrow => `${Object.values(arrow.from).join(', ')} → ${Object.values(arrow.to).join(', ')}`}
+      reorderable={true}
     >
       {#snippet EditForm()}
         {#if currentArrow}
@@ -170,6 +178,7 @@
       bind:collection={visState.config.highlights}
       itemLabelGetter={highlight =>
         `${Object.values(highlight.tl).join(', ')} → ${Object.values(highlight.br).join(', ')}`}
+      reorderable={true}
     >
       {#snippet EditForm()}
         <HighlightEditForm bind:highlight={currentHighlight} />
@@ -182,6 +191,7 @@
       template={defaultDataSource}
       bind:collection={visState.config.sources}
       itemLabelGetter={source => source.label}
+      reorderable={true}
     >
       {#snippet EditForm()}
         <DataSourceEditForm bind:source={currentDataSource} />

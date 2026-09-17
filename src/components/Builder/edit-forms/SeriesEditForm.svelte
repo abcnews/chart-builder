@@ -8,7 +8,6 @@
 
   interface Props {
     series: (SeriesType & DeletableType) | undefined;
-    index: number; // The index of this item in its collection
   }
 
   let { series = $bindable() }: Props = $props();

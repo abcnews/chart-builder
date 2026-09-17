@@ -3,7 +3,6 @@
   import { Tween } from 'svelte/motion';
   import { scaleOrdinal, scaleTime, scaleLinear } from 'd3-scale';
 
-  import FontProvider from './FontProvider.svelte'; // TODO Swap out for @abcnews/components-storylab version
   import AxisX from './layercake-components/AxisX.svg.svelte';
   import AxisY from './layercake-components/AxisY.svg.svelte';
   import Annotations from './layercake-components/Annotations.html.svelte';
@@ -27,6 +26,7 @@
   import { plotPadding } from '../lib/constants';
   import { untrack } from 'svelte';
   import { updateData } from '../lib/state-management';
+  import { TypographyProvider } from '@abcnews/components-storylab';
 
   interface Props {
     showConstructionMarks?: boolean;
@@ -137,7 +137,7 @@
   });
 </script>
 
-<FontProvider>
+<TypographyProvider>
   <div
     class="visualisation"
     bind:clientWidth={chartWidth}
@@ -208,7 +208,7 @@
       </footer>
     {/if}
   </div>
-</FontProvider>
+</TypographyProvider>
 
 <style lang="scss">
   // TODO: Dark mode not supported yet.
