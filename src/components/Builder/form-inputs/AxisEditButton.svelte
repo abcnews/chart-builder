@@ -43,14 +43,19 @@
       </select>
     </FieldGroup>
     {#if axis.type}
-      <FieldGroup>
-        <label for="{label.toLowerCase()}-axis-ticks">Labels</label>
+      <div>
+        <label for="{label.toLowerCase()}-axis-ticks">Axis ticks</label>
         <input
           id="{label.toLowerCase()}-axis-ticks"
           type="text"
           bind:value={axis.ticks}
           placeholder="e.g. 1980, 1985, 1990"
         />
+        <small
+          >Enter values to specify which specific values on the axis get labelled ticks. Leave blank for auto placement.</small
+        >
+      </div>
+      <div>
         <label for="{label.toLowerCase()}-axis-format">Format</label>
         <input
           id="{label.toLowerCase()}-axis-format"
@@ -58,17 +63,18 @@
           bind:value={axis.format}
           placeholder={`Default: ${defaultAxisLabelFormatStrings[axis.type]}`}
         />
-        {#if label === 'X'}
-          <label for="x-axis-baseline">
-            <input id="x-axis-baseline" type="checkbox" bind:checked={axis.baseline} />
-            Show axis line
-          </label>
-        {/if}
-      </FieldGroup>
-      <small>
-        Formatting uses d3's formatting functions (<a href="https://d3js.org/d3-format#locale_format">numbers</a>,
-        <a href="https://d3js.org/d3-time-format#locale_format">dates</a>).
-      </small>
+        <small>
+          Formatting uses d3's formatting functions (<a href="https://d3js.org/d3-format#locale_format">numbers</a>,
+          <a href="https://d3js.org/d3-time-format#locale_format">dates</a>).
+        </small>
+      </div>
+
+      {#if label === 'X'}
+        <label for="x-axis-baseline">
+          <input id="x-axis-baseline" type="checkbox" bind:checked={axis.baseline} />
+          Show axis line
+        </label>
+      {/if}
 
       <hr />
 
@@ -79,6 +85,7 @@
           bind:value={axis.domain.min}
           type={axis.type}
         />
+
         <AxisPositionInput
           label="Max"
           id="{label.toLowerCase()}-axis-domain-max"
@@ -86,6 +93,7 @@
           type={axis.type}
         />
       </FieldGroup>
+      <small>If not specified the chart extent is defined by the data being displayed.</small>
     {/if}
   </ItemCollectionEditModal>
 {/if}

@@ -20,19 +20,25 @@
     {#if !xAxisDataType || !yAxisDataType}
       <p>Define at least one series before adding highlights.</p>
     {:else}
-      <ChartPositionInput
-        id="highlight-top-left"
-        label="Top left"
-        bind:value={highlight.tl}
-        types={{ x: xAxisDataType, y: yAxisDataType }}
-      />
-      <ChartPositionInput
-        id="highlight-bottom-right"
-        label="Bottom right"
-        bind:value={highlight.br}
-        types={{ x: xAxisDataType, y: yAxisDataType }}
-      />
-      <ColourField bind:value={highlight.colour} />
+      <div>
+        <ChartPositionInput
+          id="highlight-top-left"
+          label="Top left"
+          bind:value={highlight.tl}
+          types={{ x: xAxisDataType, y: yAxisDataType }}
+        />
+      </div>
+      <div>
+        <ChartPositionInput
+          id="highlight-bottom-right"
+          label="Bottom right"
+          bind:value={highlight.br}
+          types={{ x: xAxisDataType, y: yAxisDataType }}
+        />
+      </div>
+      <div>
+        <ColourField bind:value={highlight.colour} />
+      </div>
     {/if}
 
     {#snippet footer()}

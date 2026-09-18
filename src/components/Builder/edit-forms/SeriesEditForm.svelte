@@ -18,47 +18,56 @@
 
 {#if series}
   <ItemCollectionEditModal title="Edit Series" onClose={() => (series = undefined)}>
-    <label for="series-id">ID</label>
-    <input id="series-id" type="text" bind:value={series.id} />
-    <label for="series-dataset">Dataset</label>
-    <select id="series-dataset" bind:value={series.dataset}>
-      {#each visState.config.data as dataset}
-        <option id={dataset.name}>{dataset.name}</option>
-      {/each}
-    </select>
-
+    <div>
+      <label for="series-id">ID</label>
+      <input id="series-id" type="text" bind:value={series.id} />
+    </div>
+    <div>
+      <label for="series-dataset">Dataset</label>
+      <select id="series-dataset" bind:value={series.dataset}>
+        {#each visState.config.data as dataset}
+          <option id={dataset.name}>{dataset.name}</option>
+        {/each}
+      </select>
+    </div>
     {#if series.dataset}
-      <label for="series-x">x</label>
-      <select id="series-x" bind:value={series.x}>
-        {#each Object.entries(dataset?.columns || []) as [name, type], i}
-          {#if visState.data[series.dataset]?.columns.includes(name)}
+      <div>
+        <label for="series-x">X-axis values</label>
+        <select id="series-x" bind:value={series.x}>
+          {#each Object.entries(dataset?.columns || []) as [name, type], i}
+            {#if visState.data[series.dataset]?.columns.includes(name)}
+              <option value={name}>{name} ({type})</option>
+            {/if}
+          {/each}
+        </select>
+      </div>
+      <div>
+        <label for="series-y">Y-axis values</label>
+        <select id="series-y" bind:value={series.y}>
+          {#each Object.entries(dataset?.columns || []) as [name, type], i}
             <option value={name}>{name} ({type})</option>
-          {/if}
-        {/each}
-      </select>
-      <label for="series-y">y</label>
-      <select id="series-y" bind:value={series.y}>
-        {#each Object.entries(dataset?.columns || []) as [name, type], i}
-          <option value={name}>{name} ({type})</option>
-        {/each}
-      </select>
+          {/each}
+        </select>
+      </div>
     {/if}
-
-    <ColourField bind:value={series.colour} />
-
-    <label for="dasharray">Dash pattern</label>
-    <input id="dasharray" type="text" bind:value={series.dasharray} placeholder="4, 4 (Default: none)" />
-
-    <label for="series-curve">Curve type</label>
-    <select id="series-curve" bind:value={series.curveType}>
-      {#each curveTypes as type}
-        <option value={type}>{type}</option>
-      {/each}
-    </select>
-    <small>
-      See <a href="https://d3js.org/d3-shape/curve" target="_blank">D3 documentation</a> for a deep dive.
-    </small>
-
+    <div>
+      <ColourField bind:value={series.colour} />
+    </div>
+    <div>
+      <label for="dasharray">Dash pattern</label>
+      <input id="dasharray" type="text" bind:value={series.dasharray} placeholder="4, 4 (Default: none)" />
+    </div>
+    <div>
+      <label for="series-curve">Curve type</label>
+      <select id="series-curve" bind:value={series.curveType}>
+        {#each curveTypes as type}
+          <option value={type}>{type}</option>
+        {/each}
+      </select>
+      <small>
+        See <a href="https://d3js.org/d3-shape/curve" target="_blank">D3 documentation</a> for a deep dive.
+      </small>
+    </div>
     {#snippet footer()}
       <FormActions bind:item={series} />
     {/snippet}

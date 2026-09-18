@@ -2,9 +2,11 @@
   let { children, columns = 2, label = '' } = $props();
 </script>
 
-{#if label}<span>{label}</span>{/if}
-<div class={`columns-${columns}`}>
-  {@render children()}
+<div>
+  {#if label}<span>{label}</span>{/if}
+  <div class={`columns-${columns}`}>
+    {@render children()}
+  </div>
 </div>
 
 <style>

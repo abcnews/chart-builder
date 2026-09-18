@@ -117,10 +117,14 @@
 
   <fieldset>
     <legend>Chart options</legend>
-    <label class="item" for="chart-title">Title</label>
-    <input id="chart-title" type="text" bind:value={visState.config.title} />
-    <label class="item" for="chart-description">Description</label>
-    <textarea id="chart-description" bind:value={visState.config.description}></textarea>
+    <div>
+      <label class="item" for="chart-title">Title</label>
+      <input id="chart-title" type="text" bind:value={visState.config.title} />
+    </div>
+    <div>
+      <label class="item" for="chart-description">Description</label>
+      <textarea id="chart-description" bind:value={visState.config.description}></textarea>
+    </div>
     <fieldset>
       <legend>Axes</legend>
       {#if !xAxisDataType || !yAxisDataType}

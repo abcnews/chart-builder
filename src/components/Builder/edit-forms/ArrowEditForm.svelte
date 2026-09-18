@@ -12,7 +12,7 @@
 
   let { arrow = $bindable() }: Props = $props();
   const xAxisDataType = $derived(visState.config.axes.x.type);
-  const yAxisDataType = $derived(visState.config.axes.x.type);
+  const yAxisDataType = $derived(visState.config.axes.y.type);
 </script>
 
 {#if arrow}
@@ -20,19 +20,25 @@
     {#if typeof xAxisDataType === 'undefined' || typeof yAxisDataType === 'undefined'}
       <p>You must add a series before arrows can be positioned.</p>
     {:else}
-      <ChartPositionInput
-        label="From"
-        id="arrow-start"
-        bind:value={arrow.from}
-        types={{ x: xAxisDataType, y: yAxisDataType }}
-      />
-      <ChartPositionInput
-        label="To"
-        id="arrow-end"
-        bind:value={arrow.to}
-        types={{ x: xAxisDataType, y: yAxisDataType }}
-      />
-      <ColourField bind:value={arrow.colour} defaultValue="#000000" />
+      <div>
+        <ChartPositionInput
+          label="From"
+          id="arrow-start"
+          bind:value={arrow.from}
+          types={{ x: xAxisDataType, y: yAxisDataType }}
+        />
+      </div>
+      <div>
+        <ChartPositionInput
+          label="To"
+          id="arrow-end"
+          bind:value={arrow.to}
+          types={{ x: xAxisDataType, y: yAxisDataType }}
+        />
+      </div>
+      <div>
+        <ColourField bind:value={arrow.colour} defaultValue="#000000" />
+      </div>
     {/if}
 
     {#snippet footer()}
