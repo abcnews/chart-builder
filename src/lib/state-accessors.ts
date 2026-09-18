@@ -6,6 +6,7 @@
 import { timeFormat } from 'd3-time-format';
 import type {
   AxisOptionsType,
+  ColumnDataTypeMap,
   ColumnDataTypes,
   ColumnTypesType,
   DataRecordsType,
@@ -14,7 +15,6 @@ import type {
   LayerCakeGroupedDataGroupValuesType,
   LayerCakeGroupedDataType,
   SeriesType,
-  VisualisationStateType,
   VisualisationType
 } from './types';
 import { defaultAxisLabelFormatStrings } from './constants';
@@ -51,22 +51,43 @@ export const getAxisDataType = (config: VisualisationType, axis: 'x' | 'y') => {
   return type;
 };
 
-export const getAxisLabelFormatter = (axisOptions: AxisOptionsType, axisDataType: ColumnTypesType) => {
-  if (axisDataType === 'date') {
-    const formatter = timeFormat(axisOptions.format || defaultAxisLabelFormatStrings.date);
-    return formatter;
-  }
-  if (axisDataType === 'number') {
-    try {
-      return format(axisOptions.format || defaultAxisLabelFormatStrings.number);
-    } catch (e) {
-      return format(defaultAxisLabelFormatStrings.number);
-    }
-  }
+type FormatNumberFn = (n: number | { valueOf(): number }) => string;
+type FormatDateFn = (d: Date) => string;
+type FormatStringFn = (d: string | boolean) => string;
+type FormatterFor<T extends keyof ColumnDataTypeMap> = T extends 'number'
+  ? (n: number | { valueOf(): number }) => string
+  : T extends 'date'
+  ? (d: Date) => string
+  : (d: string | boolean) => string;
 
-  // Default to returning coercing to a string for anything else
-  return (d: any) => String(d);
-};
+// Overload signatures — this is what callers see
+export function getAxisLabelFormatter(axisOptions: AxisOptionsType, axisDataType: 'number'): FormatNumberFn;
+export function getAxisLabelFormatter(axisOptions: AxisOptionsType, axisDataType: 'date'): FormatDateFn;
+export function getAxisLabelFormatter(
+  axisOptions: AxisOptionsType,
+  axisDataType: Exclude<keyof ColumnDataTypeMap, 'number' | 'date'>
+): FormatStringFn;
+
+// Implementation signature — not visible to callers, just needs to be broad enough
+export function getAxisLabelFormatter(
+  axisOptions: AxisOptionsType,
+  axisDataType: keyof ColumnDataTypeMap
+): FormatNumberFn | FormatDateFn | FormatStringFn {
+  if (axisDataType === 'number') {
+    return format(axisOptions.format || defaultAxisLabelFormatStrings.number);
+  }
+  if (axisDataType === 'date') {
+    return timeFormat(axisOptions.format || defaultAxisLabelFormatStrings.date);
+  }
+  return (d: string | boolean) => String(d);
+}
+
+export function getAxisLabelFormatterGeneric<T extends keyof ColumnDataTypeMap>(
+  axisOptions: AxisOptionsType,
+  axisDataType: T
+): FormatterFor<T> {
+  return getAxisLabelFormatter(axisOptions, axisDataType as any) as FormatterFor<T>;
+}
 
 /**
  * LayerCake expects domain arguments to be either number[] or string[] (which translates into either a d3 scale (either linear or

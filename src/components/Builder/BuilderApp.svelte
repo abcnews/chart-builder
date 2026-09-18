@@ -8,7 +8,7 @@
     ItemCollection
   } from '@abcnews/components-builder';
   import Visualisation from '../Visualisation.svelte';
-  import { visState } from '../../lib/state.svelte';
+  import { builderState, visState } from '../../lib/state.svelte';
   import { onMount } from 'svelte';
   import { getAxisDataType } from '../../lib/state-accessors';
   import { isValiError } from 'valibot';
@@ -78,10 +78,10 @@
   let currentSeries: (SeriesType & DeletableType) | undefined = $state();
   let currentDataSource: (DataSourceType & DeletableType) | undefined = $state();
 
-  let showConstructionMarks: boolean = $state(localStorage.getItem('showConstructionMarks') !== null);
+  builderState.showConstructionMarks = localStorage.getItem('showConstructionMarks') !== null;
 
   $effect(() => {
-    if (showConstructionMarks) {
+    if (builderState.showConstructionMarks) {
       localStorage.setItem('showConstructionMarks', 'true');
     } else {
       localStorage.removeItem('showConstructionMarks');
@@ -99,7 +99,7 @@
 </script>
 
 {#snippet Viz()}
-  <Visualisation {showConstructionMarks} />
+  <Visualisation />
 {/snippet}
 
 {#snippet Sidebar()}
@@ -218,7 +218,8 @@
     <summary>Developer tools</summary>
     <fieldset>
       <label for="show-construction-marks"
-        ><input id="show-construction-marks" type="checkbox" bind:checked={showConstructionMarks} /> Show construction marks</label
+        ><input id="show-construction-marks" type="checkbox" bind:checked={builderState.showConstructionMarks} /> Show construction
+        marks</label
       >
     </fieldset>
   </details>
