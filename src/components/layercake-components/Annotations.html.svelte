@@ -24,7 +24,7 @@
 </script>
 
 {#if xAxisDataType && yAxisDataType}
-  {#each annotations.filter(d => !d.deleted) as annotation (annotation)}
+  {#each annotations.filter(d => !d.deleted) as annotation (annotation.label)}
     <span
       class="annotations__annotation"
       transition:fade

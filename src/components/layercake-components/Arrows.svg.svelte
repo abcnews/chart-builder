@@ -19,7 +19,7 @@
 </script>
 
 {#if xAxisDataType && yAxisDataType}
-  {#each arrows as arrow}
+  {#each arrows as arrow (`${arrow.from.x}${arrow.from.y}${arrow.to.x}${arrow.to.y}`)}
     <Arrow
       lineWidth={1}
       colour={arrow.colour || 'black'}
