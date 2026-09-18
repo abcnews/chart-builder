@@ -81,6 +81,10 @@ export const loadMarkerConfig = (data: string | Record<string, unknown>) => {
   }
 };
 
+const isErrorResponse = (obj: any) => {
+  return obj.code && obj.error;
+};
+
 export const fetchDataUrl = async (urlOrId: string) => {
   // If url is parsable as a CMID, get the URL from Terminus
   if (urlOrId.match(/^[0-9]+$/)) {
@@ -93,17 +97,50 @@ export const fetchDataUrl = async (urlOrId: string) => {
           ? TIERS.PREVIEW
           : undefined
     });
+
+    if (isErrorResponse(doc)) {
+      return undefined;
+    }
+
     // @ts-expect-error Until terminus-fetch gets better types, this will be an error
-    if (doc.downloadURL) urlOrId = doc.downloadURL;
+    if (doc.downloadURL && doc.docType === 'DownloadObject') urlOrId = doc.downloadURL;
   }
-  return await fetch(urlOrId).then(res => res.text());
+
+  // Is it parsable as a URL and fetched successfully?
+  try {
+    return await fetch(new URL(urlOrId)).then(res => {
+      return res.ok ? res.text() : undefined;
+    });
+  } catch (e) {}
 };
 
 export const updateData = (data: DataSetType[]) => {
   data.forEach(async ({ name, url, columns }) => {
-    // TODO: It would make sense to cache these locally, but for now rely on HTTP caching
+    if (!url) return;
+
     const raw = await fetchDataUrl(url);
+
+    if (raw === undefined) return;
+
     const parsed = csvParse(raw, rowParser(columns));
+
+    // Set column data type based on returned and parsed data (if it's not already set)
+    for (let column of parsed.columns) {
+      const data = parsed[0]?.[column];
+      if (columns[column] === undefined) {
+        if (typeof data === 'number') {
+          columns[column] = 'number';
+        } else if (typeof data === 'boolean') {
+          columns[column] = 'boolean';
+        } else if (data instanceof Date) {
+          columns[column] = 'date';
+        } else {
+          columns[column] = 'string';
+        }
+      }
+    }
+
+    // Save the data to state
     visState.data[name] = {
       id: name,
       name,

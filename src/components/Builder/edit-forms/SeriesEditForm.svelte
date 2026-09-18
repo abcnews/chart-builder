@@ -27,18 +27,22 @@
       {/each}
     </select>
 
-    <label for="series-x">x</label>
-    <select id="series-x" bind:value={series.x}>
-      {#each Object.entries(dataset?.columns || []) as [name, type], i}
-        <option value={name}>{name} ({type})</option>
-      {/each}
-    </select>
-    <label for="series-y">y</label>
-    <select id="series-y" bind:value={series.y}>
-      {#each Object.entries(dataset?.columns || []) as [name, type], i}
-        <option value={name}>{name} ({type})</option>
-      {/each}
-    </select>
+    {#if series.dataset}
+      <label for="series-x">x</label>
+      <select id="series-x" bind:value={series.x}>
+        {#each Object.entries(dataset?.columns || []) as [name, type], i}
+          {#if visState.data[series.dataset]?.columns.includes(name)}
+            <option value={name}>{name} ({type})</option>
+          {/if}
+        {/each}
+      </select>
+      <label for="series-y">y</label>
+      <select id="series-y" bind:value={series.y}>
+        {#each Object.entries(dataset?.columns || []) as [name, type], i}
+          <option value={name}>{name} ({type})</option>
+        {/each}
+      </select>
+    {/if}
 
     <ColourField bind:value={series.colour} />
 
