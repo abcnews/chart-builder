@@ -1,23 +1,35 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
   import { visState } from '../../lib/state.svelte';
   import { fade } from 'svelte/transition';
-  import type { LayerCakeContextType } from '../../lib/types';
+  import type { LayerCakeGroupedDataType, LayerCakeScalesTypes } from '../../lib/types';
+  import { getLayerCakeContext } from 'layercake';
+  import { getAxisDataType } from '../../lib/state-accessors';
+  import { coerceToColumnDataType } from '../../lib/data-helpers';
 
-  const { xScale, yScale } = getContext<LayerCakeContextType>('LayerCake');
+  const k = getLayerCakeContext<LayerCakeScalesTypes, LayerCakeGroupedDataType>();
+  let xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
+  let yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
 </script>
 
-{#each visState.config.highlights.filter(d => !d.deleted) as highlight}
-  <div
-    class="highlight"
-    transition:fade
-    style:--highlight-color={highlight.colour && highlight.colour.length > 2 ? highlight.colour : undefined}
-    style:left={`${$xScale(new Date(highlight.tl.x))}px`}
-    style:top={`${$yScale(highlight.tl.y)}px`}
-    style:width={`${$xScale(new Date(highlight.br.x)) - $xScale(new Date(highlight.tl.x))}px`}
-    style:height={`${$yScale(highlight.br.y) - $yScale(highlight.tl.y)}px`}
-  ></div>
-{/each}
+{#if xAxisDataType && yAxisDataType}
+  {#each visState.config.highlights.filter(d => !d.deleted) as highlight}
+    <div
+      class="highlight"
+      transition:fade
+      style:--highlight-color={highlight.colour && highlight.colour.length > 2 ? highlight.colour : undefined}
+      style:left={`${k.xScale(coerceToColumnDataType(highlight.tl.x, xAxisDataType))}px`}
+      style:top={`${k.yScale(coerceToColumnDataType(highlight.tl.y, yAxisDataType))}px`}
+      style:width={`${
+        k.xScale(coerceToColumnDataType(highlight.br.x, xAxisDataType)) -
+        k.xScale(coerceToColumnDataType(highlight.tl.x, xAxisDataType))
+      }px`}
+      style:height={`${
+        k.yScale(coerceToColumnDataType(highlight.br.y, yAxisDataType)) -
+        k.yScale(coerceToColumnDataType(highlight.tl.y, yAxisDataType))
+      }px`}
+    ></div>
+  {/each}
+{/if}
 
 <style>
   .highlight {

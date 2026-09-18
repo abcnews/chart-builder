@@ -1,21 +1,40 @@
-<script>
-  import { getContext } from 'svelte';
+<script lang="ts">
   import { visState } from '../../lib/state.svelte';
-  import Html from '../primatives/Html.svelte';
-  import Arrow from '../primatives/Arrow.svg.svelte';
-  import { Svg } from 'layercake';
+  import { getLayerCakeContext, Svg } from 'layercake';
+  import type { LayerCakeGroupedDataType, LayerCakeScalesTypes } from '../../lib/types';
+  import { getAxisDataType } from '../../lib/state-accessors';
+  import { coerceToColumnDataType } from '../../lib/data-helpers';
 
-  const { width, height, xScale, yScale } = getContext('LayerCake');
+  const k = getLayerCakeContext<LayerCakeScalesTypes, LayerCakeGroupedDataType>();
+  let xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
+  let yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
   const offset = 2;
   const clipPath = $derived.by(() => {
-    return `M-${offset},-${offset} h${$width + offset * 2} v${$height + offset * 2} h-${$width + offset * 2} Z ${visState.config.highlights
+    // Can't render anything if we don't know the axis data types
+    if (!(xAxisDataType && yAxisDataType)) {
+      return undefined;
+    }
+
+    return `M-${offset},-${offset} h${k.width + offset * 2} v${k.height + offset * 2} h-${k.width + offset * 2} Z ${visState.config.highlights
       .filter(h => !h.deleted)
       .map(h => {
         const coords = [
-          [Math.max(0, $xScale(new Date(h.tl.x))), Math.max(0, $yScale(h.tl.y))],
-          [Math.min($width, $xScale(new Date(h.br.x))), Math.max(0, $yScale(h.tl.y))],
-          [Math.min($width, $xScale(new Date(h.br.x))), Math.min($height, $yScale(h.br.y))],
-          [Math.max(0, $xScale(new Date(h.tl.x))), Math.min($height, $yScale(h.br.y))]
+          [
+            Math.max(0, k.xScale(coerceToColumnDataType(h.tl.x, xAxisDataType))),
+            Math.max(0, k.yScale(coerceToColumnDataType(h.tl.y, yAxisDataType)))
+          ],
+          [
+            Math.min(k.width, k.xScale(coerceToColumnDataType(h.br.x, xAxisDataType))),
+            Math.max(0, k.yScale(coerceToColumnDataType(h.tl.y, yAxisDataType)))
+          ],
+          [
+            Math.min(k.width, k.xScale(coerceToColumnDataType(h.br.x, xAxisDataType))),
+            Math.min(k.height, k.yScale(coerceToColumnDataType(h.br.y, yAxisDataType)))
+          ],
+          [
+            Math.max(0, k.xScale(coerceToColumnDataType(h.tl.x, xAxisDataType))),
+            Math.min(k.height, k.yScale(coerceToColumnDataType(h.br.y, yAxisDataType)))
+          ]
         ];
         return `M ${coords.map(d => d.join(',')).join(' ')} Z`;
       })
@@ -29,8 +48,8 @@
       class="shroud"
       x={-offset}
       y={-offset}
-      width={$width + offset * 2}
-      height={$height + offset * 2}
+      width={k.width + offset * 2}
+      height={k.height + offset * 2}
       style:clip-path={`path("${clipPath}") view-box`}
       style:clip-rule="evenodd"
     />

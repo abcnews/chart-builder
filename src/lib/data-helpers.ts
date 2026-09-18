@@ -76,7 +76,10 @@ export const coerceToColumnDataType = <T extends keyof ColumnDataTypeMap>(
  * @param ticksString Comma-separated string of ticks
  * @param dataType Column data type for coercion
  */
-export const parseManualTicks = (ticksString: string | undefined, dataType: ColumnTypesType | undefined) => {
+export const parseManualTicks = <T extends keyof ColumnDataTypeMap>(
+  ticksString: string | undefined,
+  dataType: T | undefined
+): ColumnDataTypeMap[T][] | undefined => {
   if (!ticksString || !dataType) return undefined;
 
   const ticks = ticksString

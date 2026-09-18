@@ -1,22 +1,36 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
   import Arrow from '../primatives/Arrow.svg.svelte';
-  import type { LayerCakeContextType, ArrowType, DeletableType } from '../../lib/types';
+  import type { ArrowType, DeletableType, LayerCakeScalesTypes, LayerCakeGroupedDataType } from '../../lib/types';
+  import { getLayerCakeContext } from 'layercake';
+  import { getAxisDataType } from '../../lib/state-accessors';
+  import { visState } from '../../lib/state.svelte';
+  import { coerceToColumnDataType } from '../../lib/data-helpers';
 
   interface Props {
     arrows: (ArrowType & DeletableType)[];
   }
 
-  const { xScale, yScale } = getContext<LayerCakeContextType>('LayerCake');
+  const k = getLayerCakeContext<LayerCakeScalesTypes, LayerCakeGroupedDataType>();
 
   let { arrows }: Props = $props();
+
+  let xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
+  let yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
 </script>
 
-{#each arrows as arrow}
-  <Arrow
-    lineWidth={1}
-    colour={arrow.colour || 'black'}
-    from={{ x: $xScale(new Date(arrow.from.x)), y: $yScale(arrow.from.y) }}
-    to={{ x: $xScale(new Date(arrow.to.x)), y: $yScale(arrow.to.y) }}
-  />
-{/each}
+{#if xAxisDataType && yAxisDataType}
+  {#each arrows as arrow}
+    <Arrow
+      lineWidth={1}
+      colour={arrow.colour || 'black'}
+      from={{
+        x: k.xScale(coerceToColumnDataType(arrow.from.x, xAxisDataType)),
+        y: k.yScale(coerceToColumnDataType(arrow.from.y, yAxisDataType))
+      }}
+      to={{
+        x: k.xScale(coerceToColumnDataType(arrow.to.x, xAxisDataType)),
+        y: k.yScale(coerceToColumnDataType(arrow.to.y, yAxisDataType))
+      }}
+    />
+  {/each}
+{/if}

@@ -1,10 +1,13 @@
 <script lang="ts">
   import type { format as d3Format } from 'd3-format';
   import type { timeFormat as d3TimeFormat } from 'd3-time-format';
-  import { getContext } from 'svelte';
-  import { type LayerCakeContextType } from '../../lib/types';
+  import { type LayerCakeGroupedDataType, type LayerCakeScalesTypes } from '../../lib/types';
+  import { getLayerCakeContext } from 'layercake';
+  import { getAxisDataType } from '../../lib/state-accessors';
+  import { visState } from '../../lib/state.svelte';
 
-  const { width, height, xScale, yRange } = getContext<LayerCakeContextType>('LayerCake');
+  const k = getLayerCakeContext<LayerCakeScalesTypes, LayerCakeGroupedDataType>();
+  let xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
 
   interface Props {
     tickMarks?: boolean;
@@ -13,7 +16,7 @@
     baseline?: boolean;
     snapLabels?: boolean;
     format?: ReturnType<typeof d3Format> | ReturnType<typeof d3TimeFormat>;
-    ticks?: number | Array<any> | Function;
+    ticks?: number | (number | Date)[];
     tickGutter?: number;
     dx?: number;
     dy?: number;
@@ -46,39 +49,32 @@
 
   let tickLen = $derived(tickMarks === true ? (tickMarkLength ?? 6) : 0);
 
-  let isBandwidth = $derived(typeof $xScale.bandwidth === 'function');
-
-  /** @type {Array<any>} */
-  let tickVals = $derived(
-    Array.isArray(ticks)
-      ? ticks
-      : isBandwidth
-        ? $xScale.domain()
-        : typeof ticks === 'function'
-          ? ticks($xScale.ticks())
-          : $xScale.ticks(ticks)
-  );
-
-  let halfBand = $derived(isBandwidth ? $xScale.bandwidth() / 2 : 0);
+  let tickVals = $derived(Array.isArray(ticks) ? ticks : k.xScale.ticks(ticks));
 </script>
 
-<g class="axis x-axis" class:snapLabels>
-  {#if baseline === true}
-    <line class="baseline" y1={$height} y2={$height} x1="0" x2={$width} />
-  {/if}
-  {#each tickVals as tick, i (tick)}
-    <g class="tick tick-{i}" transform="translate({$xScale(tick)},{Math.max(...$yRange)})">
-      {#if gridlines === true}
-        <line class="gridline" x1={halfBand} x2={halfBand} y1={-$height} y2="0" />
-      {/if}
-      {#if tickMarks === true}
-        <line class="tick-mark" x1={halfBand} x2={halfBand} y1={tickGutter} y2={tickGutter + tickLen} />
-      {/if}
-      <text x={halfBand} y={tickGutter + tickLen} {dx} {dy} text-anchor={textAnchor(i, snapLabels)}>{format(tick)}</text
-      >
-    </g>
-  {/each}
-</g>
+{#if xAxisDataType}
+  <g class="axis x-axis" class:snapLabels>
+    {#if baseline === true}
+      <line class="baseline" y1={k.height} y2={k.height} x1="0" x2={k.width} />
+    {/if}
+    {#each tickVals as tick, i (tick)}
+      <g class="tick tick-{i}" transform="translate({k.xScale(tick)},{Math.max(...k.yRange)})">
+        {#if gridlines === true}
+          <line class="gridline" x1={0} x2={0} y1={-k.height} y2="0" />
+        {/if}
+        {#if tickMarks === true}
+          <line class="tick-mark" x1={0} x2={0} y1={tickGutter} y2={tickGutter + tickLen} />
+        {/if}
+        <text x={0} y={tickGutter + tickLen} {dx} {dy} text-anchor={textAnchor(i, snapLabels)}
+          >{format(
+            /* @ts-expect-error There is a long and complicated explanation for this error related to "union subtype reduction" */
+            tick
+          )}</text
+        >
+      </g>
+    {/each}
+  </g>
+{/if}
 
 <style>
   .tick {
