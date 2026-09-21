@@ -5,6 +5,7 @@
   import { getAxisDataType } from '../../lib/state-accessors';
   import { visState } from '../../lib/state.svelte';
   import { coerceToColumnDataType } from '../../lib/data-helpers';
+  import { fade } from 'svelte/transition';
 
   interface Props {
     arrows: (ArrowType & DeletableType)[];
@@ -20,17 +21,19 @@
 
 {#if xAxisDataType && yAxisDataType}
   {#each arrows as arrow (`${arrow.from.x}${arrow.from.y}${arrow.to.x}${arrow.to.y}`)}
-    <Arrow
-      lineWidth={1}
-      colour={arrow.colour || 'black'}
-      from={{
-        x: k.xScale(coerceToColumnDataType(arrow.from.x, xAxisDataType)),
-        y: k.yScale(coerceToColumnDataType(arrow.from.y, yAxisDataType))
-      }}
-      to={{
-        x: k.xScale(coerceToColumnDataType(arrow.to.x, xAxisDataType)),
-        y: k.yScale(coerceToColumnDataType(arrow.to.y, yAxisDataType))
-      }}
-    />
+    <g transition:fade>
+      <Arrow
+        lineWidth={1}
+        colour={arrow.colour || 'black'}
+        from={{
+          x: k.xScale(coerceToColumnDataType(arrow.from.x, xAxisDataType)),
+          y: k.yScale(coerceToColumnDataType(arrow.from.y, yAxisDataType))
+        }}
+        to={{
+          x: k.xScale(coerceToColumnDataType(arrow.to.x, xAxisDataType)),
+          y: k.yScale(coerceToColumnDataType(arrow.to.y, yAxisDataType))
+        }}
+      />
+    </g>
   {/each}
 {/if}
