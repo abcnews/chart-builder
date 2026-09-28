@@ -28,7 +28,3 @@ Promise.all([whenOdysseyLoaded, proxy(PROJECT_NAME)]).then(() => {
     }
   });
 });
-
-if (process.env.NODE_ENV === 'development') {
-  console.debug(`[${PROJECT_NAME}] public path: ${__webpack_public_path__}`);
-}
