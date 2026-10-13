@@ -200,7 +200,7 @@
 </TypographyProvider>
 
 <style lang="scss">
-  // TODO: Dark mode not supported yet.
+  /* TODO: Dark mode not supported yet. */
   .visualisation {
     background: white;
     container-type: inline-size;
@@ -210,7 +210,6 @@
   div {
     width: 100%;
     height: 100%;
-    // padding: 1em 10px 35px 30px;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
