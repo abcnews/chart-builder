@@ -1,7 +1,7 @@
 {
-  "extends": "@abcnews/aunty/ts/config.json",
-  "include": ["src/**/*", "node_modules/@abcnews/aunty/ts/*"],
-  "compilerOptions": {
-    "noUncheckedIndexedAccess": true
-  }
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
 }
