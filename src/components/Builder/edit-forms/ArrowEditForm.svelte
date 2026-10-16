@@ -1,10 +1,9 @@
 <script lang="ts">
-  import { getAxisDataType } from '../../../lib/state-accessors';
   import { visState } from '../../../lib/state.svelte';
   import type { ArrowType, DeletableType } from '../../../lib/types';
-  import ChartPositionInput from './ChartPositionInput.svelte';
-  import ColourField from './ColourField.svelte';
-  import FormActions from './FormActions.svelte';
+  import ChartPositionInput from '../form-inputs/ChartPositionInput.svelte';
+  import ColourField from '../form-inputs/ColourField.svelte';
+  import FormActions from '../form-inputs/FormActions.svelte';
   import ItemCollectionEditModal from '../ItemCollectionEditModal.svelte';
 
   interface Props {
@@ -12,8 +11,8 @@
   }
 
   let { arrow = $bindable() }: Props = $props();
-  const xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
-  const yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
+  const xAxisDataType = $derived(visState.config.axes.x.type);
+  const yAxisDataType = $derived(visState.config.axes.y.type);
 </script>
 
 {#if arrow}
@@ -21,19 +20,25 @@
     {#if typeof xAxisDataType === 'undefined' || typeof yAxisDataType === 'undefined'}
       <p>You must add a series before arrows can be positioned.</p>
     {:else}
-      <ChartPositionInput
-        label="From"
-        id="arrow-start"
-        bind:value={arrow.from}
-        columnTypes={{ x: xAxisDataType, y: yAxisDataType }}
-      />
-      <ChartPositionInput
-        label="To"
-        id="arrow-end"
-        bind:value={arrow.to}
-        columnTypes={{ x: xAxisDataType, y: yAxisDataType }}
-      />
-      <ColourField bind:value={arrow.colour} defaultValue="#000000" />
+      <div>
+        <ChartPositionInput
+          label="From"
+          id="arrow-start"
+          bind:value={arrow.from}
+          types={{ x: xAxisDataType, y: yAxisDataType }}
+        />
+      </div>
+      <div>
+        <ChartPositionInput
+          label="To"
+          id="arrow-end"
+          bind:value={arrow.to}
+          types={{ x: xAxisDataType, y: yAxisDataType }}
+        />
+      </div>
+      <div>
+        <ColourField bind:value={arrow.colour} defaultValue="#000000" />
+      </div>
     {/if}
 
     {#snippet footer()}

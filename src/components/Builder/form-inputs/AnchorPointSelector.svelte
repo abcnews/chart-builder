@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { AnnotationAnchorType } from '../../lib/types';
+  import { AnnotationAnchorType } from '../../../lib/types';
 
   let { value = $bindable(AnnotationAnchorType.TopLeft) }: { value: AnnotationAnchorType | undefined } = $props();
 </script>

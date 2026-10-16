@@ -7,7 +7,6 @@
     type LayerCakeScalesTypes
   } from '../../lib/types';
   import { fade } from 'svelte/transition';
-  import { getAxisDataType } from '../../lib/state-accessors';
   import { builderState, visState } from '../../lib/state.svelte';
   import { coerceToColumnDataType } from '../../lib/data-helpers';
   import { getLayerCakeContext } from 'layercake';
@@ -19,12 +18,12 @@
   const { annotations }: Props = $props();
 
   const k = getLayerCakeContext<LayerCakeScalesTypes, LayerCakeGroupedDataType>();
-  let xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
-  let yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
+  let xAxisDataType = $derived(visState.config.axes.x.type);
+  let yAxisDataType = $derived(visState.config.axes.y.type);
 </script>
 
 {#if xAxisDataType && yAxisDataType}
-  {#each annotations.filter(d => !d.deleted) as annotation (annotation)}
+  {#each annotations.filter(d => !d.deleted) as annotation (annotation.label)}
     <span
       class="annotations__annotation"
       transition:fade

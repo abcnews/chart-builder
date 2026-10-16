@@ -5,14 +5,14 @@
     BuilderFrame,
     MarkerAdmin,
     UpdateChecker,
-    ItemCollection
+    ItemCollection,
+    ScreenshotTool
   } from '@abcnews/components-builder';
   import Visualisation from '../Visualisation.svelte';
   import { builderState, visState } from '../../lib/state.svelte';
   import { onMount } from 'svelte';
-  import { getAxisDataType } from '../../lib/state-accessors';
+
   import { isValiError } from 'valibot';
-  import ScreenshotTool from './ScreenshotTool/ScreenshotTool.svelte';
 
   import {
     AnnotationAnchorType,
@@ -32,7 +32,7 @@
   import DataSourceEditForm from './edit-forms/DataSourceEditForm.svelte';
   import DataSetEditForm from './edit-forms/DataSetEditForm.svelte';
   import SeriesEditForm from './edit-forms/SeriesEditForm.svelte';
-  import AxisEditButton from './edit-forms/AxisEditButton.svelte';
+  import AxisEditButton from './form-inputs/AxisEditButton.svelte';
   import { loadMarkerConfig } from '../../lib/state-management';
 
   const prefixes = {
@@ -94,8 +94,8 @@
     history.replaceState(undefined, document.title, url.toString());
   });
 
-  let xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
-  let yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
+  let xAxisDataType = $derived(visState.config.axes.x.type);
+  let yAxisDataType = $derived(visState.config.axes.y.type);
 </script>
 
 {#snippet Viz()}
@@ -117,10 +117,23 @@
 
   <fieldset>
     <legend>Chart options</legend>
-    <label class="item" for="chart-title">Title</label>
-    <input id="chart-title" type="text" bind:value={visState.config.title} />
-    <label class="item" for="chart-description">Description</label>
-    <textarea id="chart-description" bind:value={visState.config.description}></textarea>
+    <div>
+      <label class="item" for="chart-title">Title</label>
+      <input id="chart-title" type="text" bind:value={visState.config.title} />
+    </div>
+    <div>
+      <label class="item" for="chart-description">Description</label>
+      <textarea id="chart-description" bind:value={visState.config.description}></textarea>
+    </div>
+    <fieldset>
+      <legend>Axes</legend>
+      {#if !xAxisDataType || !yAxisDataType}
+        <p>At least one series must be defined before axis options can be set.</p>
+      {:else}
+        <AxisEditButton bind:axis={visState.config.axes.x} label="X" />
+        <AxisEditButton bind:axis={visState.config.axes.y} label="Y" />
+      {/if}
+    </fieldset>
     <hr />
     <ItemCollection
       legend="Series"
@@ -134,15 +147,6 @@
         <SeriesEditForm bind:series={currentSeries} />
       {/snippet}
     </ItemCollection>
-    <fieldset>
-      <legend>Axes</legend>
-      {#if !xAxisDataType || !yAxisDataType}
-        <p>At least one series must be defined before axis options can be set.</p>
-      {:else}
-        <AxisEditButton bind:axis={visState.config.axes.x} label="X" columnType={xAxisDataType} />
-        <AxisEditButton bind:axis={visState.config.axes.y} label="Y" columnType={yAxisDataType} />
-      {/if}
-    </fieldset>
     <ItemCollection
       legend="Annotations"
       bind:current={currentAnnotation}
