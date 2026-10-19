@@ -2,6 +2,8 @@
   import { LayerCake, Svg, Html } from 'layercake';
   import { Tween } from 'svelte/motion';
   import { scaleOrdinal, scaleTime, scaleLinear } from 'd3-scale';
+  import { prefersReducedMotion } from '@abcnews/env-utils';
+  import { cubicInOut } from 'svelte/easing';
 
   import AxisX from './layercake-components/AxisX.svg.svelte';
   import AxisY from './layercake-components/AxisY.svg.svelte';
@@ -16,15 +18,22 @@
     getGroupedData,
     getDefaultPalette,
     getDomain,
-    getAxisDataType,
     getAxisLabelFormatterGeneric
   } from '../lib/state-accessors';
 
   import { visState } from '../lib/state.svelte';
   import { plotPadding } from '../lib/constants';
   import { untrack } from 'svelte';
+
   import { updateData } from '../lib/state-management';
   import { TypographyProvider } from '@abcnews/components-storylab';
+
+  const tweenConfig = $derived({
+    // Reduced motion timing is purposely non-zero, otherwise the transitions occur immediately
+    // and are difficult to parse that a change has occurred.
+    duration: $prefersReducedMotion ? 100 : 1000,
+    easing: cubicInOut
+  });
 
   // Load these into state via an effect to avoid use of #await. If the config changes so a new data needs to be fetched
   // we don't want the UI to change to an awaiting state while it's loading.
@@ -71,15 +80,21 @@
 
   let xAxisDomainTween = $derived.by(() => {
     if (flatData.length === 0) return undefined;
-    if (xAxisDataType === 'number') return new Tween(untrack(() => xDomain));
-    if (xAxisDataType === 'date') return new Tween(untrack(() => xDomain));
+    if (xAxisDataType === 'number' || xAxisDataType === 'date')
+      return new Tween(
+        untrack(() => xDomain),
+        tweenConfig
+      );
     return undefined;
   });
 
   let yAxisDomainTween = $derived.by(() => {
     if (flatData.length === 0) return undefined;
-    if (yAxisDataType === 'number') return new Tween(untrack(() => yDomain));
-    if (yAxisDataType === 'date') return new Tween(untrack(() => yDomain));
+    if (yAxisDataType === 'number' || yAxisDataType === 'date')
+      return new Tween(
+        untrack(() => yDomain),
+        tweenConfig
+      );
     return undefined;
   });
 
@@ -230,6 +245,7 @@
   .chart-title {
     font-family: var(--sl-font-stack-sans);
     font-size: 18px;
+    color: var(--od-colour-text-primary, black);
   }
 
   @container (width > 462px) {
