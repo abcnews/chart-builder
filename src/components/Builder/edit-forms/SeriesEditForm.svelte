@@ -34,7 +34,7 @@
       <div>
         <label for="series-x">X-axis values</label>
         <select id="series-x" bind:value={series.x}>
-          {#each Object.entries(dataset?.columns || []) as [name, type], i}
+          {#each Object.entries(dataset?.columns || []) as [name, type]}
             {#if visState.data[series.dataset]?.columns.includes(name)}
               <option value={name}>{name} ({type})</option>
             {/if}
@@ -44,8 +44,10 @@
       <div>
         <label for="series-y">Y-axis values</label>
         <select id="series-y" bind:value={series.y}>
-          {#each Object.entries(dataset?.columns || []) as [name, type], i}
-            <option value={name}>{name} ({type})</option>
+          {#each Object.entries(dataset?.columns || []) as [name, type]}
+            {#if visState.data[series.dataset]?.columns.includes(name)}
+              <option value={name}>{name} ({type})</option>
+            {/if}
           {/each}
         </select>
       </div>
