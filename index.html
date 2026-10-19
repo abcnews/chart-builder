@@ -4,7 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Chart Builder</title>
-    <script src="builder.js"></script>
+    <script type="module" src="/src/index.ts"></script>
+    <script>
+      window.location = `${window.location.origin}/builder/${window.location.hash}`;
+    </script>
   </head>
   <body>
     <div data-mount id="chart"></div>

@@ -1,36 +1,36 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-
   import {
     AnnotationAnchorType,
     type AnnotationType,
     type DeletableType,
-    type LayerCakeContextType
+    type LayerCakeGroupedDataType,
+    type LayerCakeScalesTypes
   } from '../../lib/types';
   import { fade } from 'svelte/transition';
-  import { getAxisDataType } from '../../lib/data-accessors';
-  import { visState } from '../../lib/state.svelte';
+  import { builderState, visState } from '../../lib/state.svelte';
   import { coerceToColumnDataType } from '../../lib/data-helpers';
+  import { getLayerCakeContext } from 'layercake';
 
   interface Props {
     annotations: (AnnotationType & DeletableType)[];
   }
 
   const { annotations }: Props = $props();
-  const { xScale, yScale, custom } = getContext<LayerCakeContextType>('LayerCake');
-  let xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
-  let yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
+
+  const k = getLayerCakeContext<LayerCakeScalesTypes, LayerCakeGroupedDataType>();
+  let xAxisDataType = $derived(visState.config.axes.x.type);
+  let yAxisDataType = $derived(visState.config.axes.y.type);
 </script>
 
 {#if xAxisDataType && yAxisDataType}
-  {#each annotations.filter(d => !d.deleted) as annotation}
+  {#each annotations.filter(d => !d.deleted) as annotation (annotation.label)}
     <span
       class="annotations__annotation"
       transition:fade
       style:--annotation-color={annotation.colour && annotation.colour.length > 3 ? annotation.colour : undefined}
-      class:show-construction-marks={$custom.showConstructionMarks}
-      style:left={`${$xScale(coerceToColumnDataType(annotation.x, xAxisDataType))}px`}
-      style:top={`${$yScale(coerceToColumnDataType(annotation.y, yAxisDataType))}px`}
+      class:show-construction-marks={builderState.showConstructionMarks}
+      style:left={`${k.xScale(coerceToColumnDataType(annotation.x, xAxisDataType))}px`}
+      style:top={`${k.yScale(coerceToColumnDataType(annotation.y, yAxisDataType))}px`}
       style:width={`${annotation.width}em`}
       class:middle={annotation.anchor === AnnotationAnchorType.Middle}
       class:top-left={annotation.anchor === AnnotationAnchorType.TopLeft}
@@ -108,7 +108,7 @@
   }
 
   .show-construction-marks {
-    border: 1px solid black;
+    box-shadow: 0px 0px 0px 1px #000;
   }
 
   .show-construction-marks::after {

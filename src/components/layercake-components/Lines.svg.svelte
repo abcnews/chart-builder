@@ -1,18 +1,22 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
   import { line, curveCardinal, type CurveFactory } from 'd3-shape';
-  import { type LayerCakeContextType, type LayerCakeGroupedDataGroupValuesType } from '../../lib/types';
+  import {
+    type LayerCakeGroupedDataGroupValuesType,
+    type LayerCakeGroupedDataType,
+    type LayerCakeScalesTypes
+  } from '../../lib/types';
   import { curveMap } from '../../lib/curves';
+  import { getLayerCakeContext } from 'layercake';
 
   interface Props {
     curve?: CurveFactory;
   }
-  const { data, xGet, yGet, zGet } = getContext<LayerCakeContextType>('LayerCake');
+  const k = getLayerCakeContext<LayerCakeScalesTypes, LayerCakeGroupedDataType>();
 
   let { curve }: Props = $props();
 
   const renderedLines = $derived(
-    $data.flatMap(({ values, config }) => {
+    k.data.flatMap(({ values, config }) => {
       // Only lines
       if (config.type !== 'line') return [];
 
@@ -28,10 +32,10 @@
       return [
         {
           id: config.id,
-          d: line<LayerCakeGroupedDataGroupValuesType>($xGet, $yGet).curve(
+          d: line<LayerCakeGroupedDataGroupValuesType>(k.xGet, k.yGet).curve(
             curve || (config.curveType && curveMap[config.curveType]) || curveCardinal
           )(vals),
-          stroke: config.colour || (vals[0] ? $zGet(vals[0]) : '#000'),
+          stroke: config.colour || (vals[0] ? k.zGet(vals[0]) : '#000'),
           dasharray: config.dasharray
         }
       ];

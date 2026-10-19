@@ -1,12 +1,18 @@
 <script lang="ts">
   import { encode } from '@abcnews/base-36-props';
-  import { BuilderStyleRoot, BuilderFrame, MarkerAdmin, UpdateChecker } from '@abcnews/components-builder';
+  import {
+    BuilderStyleRoot,
+    BuilderFrame,
+    MarkerAdmin,
+    UpdateChecker,
+    ItemCollection,
+    ScreenshotTool
+  } from '@abcnews/components-builder';
   import Visualisation from '../Visualisation.svelte';
-  import { visState } from '../../lib/state.svelte';
+  import { builderState, visState } from '../../lib/state.svelte';
   import { onMount } from 'svelte';
-  import { getAxisDataType, loadMarkerConfig } from '../../lib/data-accessors';
+
   import { isValiError } from 'valibot';
-  import ScreenshotTool from './ScreenshotTool/ScreenshotTool.svelte';
 
   import {
     AnnotationAnchorType,
@@ -23,11 +29,11 @@
   import AnnotationEditForm from './edit-forms/AnnotationEditForm.svelte';
   import ArrowEditForm from './edit-forms/ArrowEditForm.svelte';
   import HighlightEditForm from './edit-forms/HighlightEditForm.svelte';
-  import ItemCollection from './ItemCollection.svelte';
   import DataSourceEditForm from './edit-forms/DataSourceEditForm.svelte';
   import DataSetEditForm from './edit-forms/DataSetEditForm.svelte';
   import SeriesEditForm from './edit-forms/SeriesEditForm.svelte';
-  import AxisEditButton from './edit-forms/AxisEditButton.svelte';
+  import AxisEditButton from './form-inputs/AxisEditButton.svelte';
+  import { loadMarkerConfig } from '../../lib/state-management';
 
   const prefixes = {
     'Scrolly mark': SCROLLY_MARK_PREFIX,
@@ -72,10 +78,10 @@
   let currentSeries: (SeriesType & DeletableType) | undefined = $state();
   let currentDataSource: (DataSourceType & DeletableType) | undefined = $state();
 
-  let showConstructionMarks: boolean = $state(localStorage.getItem('showConstructionMarks') !== null);
+  builderState.showConstructionMarks = localStorage.getItem('showConstructionMarks') !== null;
 
   $effect(() => {
-    if (showConstructionMarks) {
+    if (builderState.showConstructionMarks) {
       localStorage.setItem('showConstructionMarks', 'true');
     } else {
       localStorage.removeItem('showConstructionMarks');
@@ -88,12 +94,12 @@
     history.replaceState(undefined, document.title, url.toString());
   });
 
-  let xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
-  let yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
+  let xAxisDataType = $derived(visState.config.axes.x.type);
+  let yAxisDataType = $derived(visState.config.axes.y.type);
 </script>
 
 {#snippet Viz()}
-  <Visualisation {showConstructionMarks} />
+  <Visualisation />
 {/snippet}
 
 {#snippet Sidebar()}
@@ -111,10 +117,23 @@
 
   <fieldset>
     <legend>Chart options</legend>
-    <label class="item" for="chart-title">Title</label>
-    <input id="chart-title" type="text" bind:value={visState.config.title} />
-    <label class="item" for="chart-description">Description</label>
-    <textarea id="chart-description" bind:value={visState.config.description}></textarea>
+    <div>
+      <label class="item" for="chart-title">Title</label>
+      <input id="chart-title" type="text" bind:value={visState.config.title} />
+    </div>
+    <div>
+      <label class="item" for="chart-description">Description</label>
+      <textarea id="chart-description" bind:value={visState.config.description}></textarea>
+    </div>
+    <fieldset>
+      <legend>Axes</legend>
+      {#if !xAxisDataType || !yAxisDataType}
+        <p>At least one series must be defined before axis options can be set.</p>
+      {:else}
+        <AxisEditButton bind:axis={visState.config.axes.x} label="X" />
+        <AxisEditButton bind:axis={visState.config.axes.y} label="Y" />
+      {/if}
+    </fieldset>
     <hr />
     <ItemCollection
       legend="Series"
@@ -122,26 +141,19 @@
       template={defaultSeries}
       bind:collection={visState.config.series}
       itemLabelGetter={series => series.id}
+      reorderable={true}
     >
-      {#snippet EditForm(index)}
-        <SeriesEditForm {index} bind:series={currentSeries} />
+      {#snippet EditForm()}
+        <SeriesEditForm bind:series={currentSeries} />
       {/snippet}
     </ItemCollection>
-    <fieldset>
-      <legend>Axes</legend>
-      {#if !xAxisDataType || !yAxisDataType}
-        <p>At least one series must be defined before axis options can be set.</p>
-      {:else}
-        <AxisEditButton bind:axis={visState.config.axes.x} label="X" columnType={xAxisDataType} />
-        <AxisEditButton bind:axis={visState.config.axes.y} label="Y" columnType={yAxisDataType} />
-      {/if}
-    </fieldset>
     <ItemCollection
       legend="Annotations"
       bind:current={currentAnnotation}
       template={defaultAnnotation}
       bind:collection={visState.config.annotations}
       itemLabelGetter={annotation => annotation.label}
+      reorderable={true}
     >
       {#snippet EditForm()}
         <AnnotationEditForm bind:annotation={currentAnnotation} />
@@ -154,6 +166,7 @@
       template={defaultArrow}
       bind:collection={visState.config.arrows}
       itemLabelGetter={arrow => `${Object.values(arrow.from).join(', ')} → ${Object.values(arrow.to).join(', ')}`}
+      reorderable={true}
     >
       {#snippet EditForm()}
         {#if currentArrow}
@@ -169,6 +182,7 @@
       bind:collection={visState.config.highlights}
       itemLabelGetter={highlight =>
         `${Object.values(highlight.tl).join(', ')} → ${Object.values(highlight.br).join(', ')}`}
+      reorderable={true}
     >
       {#snippet EditForm()}
         <HighlightEditForm bind:highlight={currentHighlight} />
@@ -181,6 +195,7 @@
       template={defaultDataSource}
       bind:collection={visState.config.sources}
       itemLabelGetter={source => source.label}
+      reorderable={true}
     >
       {#snippet EditForm()}
         <DataSourceEditForm bind:source={currentDataSource} />
@@ -207,7 +222,8 @@
     <summary>Developer tools</summary>
     <fieldset>
       <label for="show-construction-marks"
-        ><input id="show-construction-marks" type="checkbox" bind:checked={showConstructionMarks} /> Show construction marks</label
+        ><input id="show-construction-marks" type="checkbox" bind:checked={builderState.showConstructionMarks} /> Show construction
+        marks</label
       >
     </fieldset>
   </details>

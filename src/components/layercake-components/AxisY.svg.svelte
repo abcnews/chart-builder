@@ -1,10 +1,10 @@
 <script lang="ts">
   import { type format as d3Format } from 'd3-format';
   import type { timeFormat as d3TimeFormat } from 'd3-time-format';
-  import { getContext } from 'svelte';
-  import { type LayerCakeContextType } from '../../lib/types';
+  import { type LayerCakeGroupedDataType, type LayerCakeScalesTypes } from '../../lib/types';
+  import { getLayerCakeContext } from 'layercake';
 
-  const { xRange, yScale, width } = getContext<LayerCakeContextType>('LayerCake');
+  const k = getLayerCakeContext<LayerCakeScalesTypes, LayerCakeGroupedDataType>();
 
   interface Props {
     tickMarks?: boolean;
@@ -39,35 +39,27 @@
     return sum + charPixelWidth;
   }
 
-  let isBandwidth = $derived(typeof $yScale.bandwidth === 'function');
-
-  /** @type {Array<any>} */
-  let tickVals = $derived(
-    Array.isArray(ticks)
-      ? ticks
-      : isBandwidth
-        ? $yScale.domain()
-        : typeof ticks === 'function'
-          ? ticks($yScale.ticks())
-          : $yScale.ticks(ticks)
+  let tickVals: (number | Date)[] = $derived(
+    Array.isArray(ticks) ? ticks : typeof ticks === 'function' ? ticks(k.yScale.ticks()) : k.yScale.ticks(ticks)
   );
   let widestTickLen = $derived(
+    /* @ts-expect-error There is a long and complicated explanation for this error related to "union subtype reduction" */
     Math.max(10, Math.max(...tickVals.map(d => format(d).toString().split('').reduce(calcStringLength, 0))))
   );
   let tickLen = $derived(
     tickMarks === true ? (labelPosition === 'above' ? (tickMarkLength ?? widestTickLen) : (tickMarkLength ?? 6)) : 0
   );
   let x1 = $derived(-tickGutter - (labelPosition === 'above' ? widestTickLen : tickLen));
-  let y = $derived(isBandwidth ? $yScale.bandwidth() / 2 : 0);
-  let maxTickValPx = $derived(Math.max(...tickVals.map($yScale)));
+  let y = 0;
+  let maxTickValPx = $derived(Math.max(...tickVals.map(k.yScale)));
 </script>
 
 <g class="axis y-axis">
   {#each tickVals as tick (tick)}
-    {@const tickValPx = $yScale(tick)}
-    <g class="tick tick-{tick}" transform="translate({$xRange[0]}, {tickValPx})">
+    {@const tickValPx = k.yScale(tick)}
+    <g class="tick tick-{tick}" transform="translate({k.xRange[0]}, {tickValPx})">
       {#if gridlines === true}
-        <line class="gridline" class:zero={tick === 0} {x1} x2={$width} y1={y} y2={y}></line>
+        <line class="gridline" class:zero={tick === 0} {x1} x2={k.width} y1={y} y2={y}></line>
       {/if}
       {#if tickMarks === true}
         <line class="tick-mark" {x1} x2={x1 + tickLen} y1={y} y2={y}></line>
@@ -78,7 +70,10 @@
         dx={dx + (labelPosition === 'even' ? -3 : 0)}
         text-anchor={labelPosition === 'above' ? 'start' : 'end'}
         dy={dy + (labelPosition === 'above' || (snapBaselineLabel === true && tickValPx === maxTickValPx) ? -3 : 4)}
-        >{format(tick)}</text
+        >{format(
+          /* @ts-expect-error There is a long and complicated explanation for this error related to "union subtype reduction" */
+          tick
+        )}</text
       >
     </g>
   {/each}

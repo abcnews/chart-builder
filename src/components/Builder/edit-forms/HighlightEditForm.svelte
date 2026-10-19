@@ -1,10 +1,9 @@
 <script lang="ts">
-  import { getAxisDataType } from '../../../lib/data-accessors';
   import { visState } from '../../../lib/state.svelte';
   import type { DeletableType, HighlightType } from '../../../lib/types';
-  import ChartPositionInput from './ChartPositionInput.svelte';
-  import ColourField from './ColourField.svelte';
-  import FormActions from './FormActions.svelte';
+  import ChartPositionInput from '../form-inputs/ChartPositionInput.svelte';
+  import ColourField from '../form-inputs/ColourField.svelte';
+  import FormActions from '../form-inputs/FormActions.svelte';
   import ItemCollectionEditModal from '../ItemCollectionEditModal.svelte';
 
   interface Props {
@@ -12,8 +11,8 @@
   }
 
   let { highlight = $bindable() }: Props = $props();
-  const xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
-  const yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
+  const xAxisDataType = $derived(visState.config.axes.x.type);
+  const yAxisDataType = $derived(visState.config.axes.y.type);
 </script>
 
 {#if highlight}
@@ -21,19 +20,25 @@
     {#if !xAxisDataType || !yAxisDataType}
       <p>Define at least one series before adding highlights.</p>
     {:else}
-      <ChartPositionInput
-        id="highlight-top-left"
-        label="Top left"
-        bind:value={highlight.tl}
-        columnTypes={{ x: xAxisDataType, y: yAxisDataType }}
-      />
-      <ChartPositionInput
-        id="highlight-bottom-right"
-        label="Bottom right"
-        bind:value={highlight.br}
-        columnTypes={{ x: xAxisDataType, y: yAxisDataType }}
-      />
-      <ColourField bind:value={highlight.colour} />
+      <div>
+        <ChartPositionInput
+          id="highlight-top-left"
+          label="Top left"
+          bind:value={highlight.tl}
+          types={{ x: xAxisDataType, y: yAxisDataType }}
+        />
+      </div>
+      <div>
+        <ChartPositionInput
+          id="highlight-bottom-right"
+          label="Bottom right"
+          bind:value={highlight.br}
+          types={{ x: xAxisDataType, y: yAxisDataType }}
+        />
+      </div>
+      <div>
+        <ColourField bind:value={highlight.colour} />
+      </div>
     {/if}
 
     {#snippet footer()}

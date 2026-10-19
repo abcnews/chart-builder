@@ -7,20 +7,24 @@ import type {
   ChartPositionSchema,
   ColumnDefinitionSchema,
   ColumnTypesSchema,
+  DataRecordsSchema,
   DataSetSchema,
   DataSourceSchema,
   DeletableSchema,
   HighlightSchema,
   SeriesLineSchema,
   SeriesSchema,
-  VisualisationSchema
+  VisualisationSchema,
+  VisualisationStateSchema
 } from './schemas';
-import type { Readable } from 'svelte/store';
-import type { ScaleBand, ScaleLinear, ScaleOrdinal } from 'd3-scale';
 
+import type { ScaleLinear } from 'd3-scale';
+
+export type DataRecordsType = InferOutput<typeof DataRecordsSchema>;
 export type DataSetType = InferOutput<typeof DataSetSchema>;
 export type DeletableType = InferOutput<typeof DeletableSchema>;
 export type VisualisationType = InferOutput<typeof VisualisationSchema>;
+export type VisualisationStateType = InferOutput<typeof VisualisationStateSchema>;
 export type VisualisationInputType = InferInput<typeof VisualisationSchema>;
 export type AnnotationType = InferInput<typeof AnnotationSchema>;
 export type ArrowType = InferOutput<typeof ArrowSchema>;
@@ -47,8 +51,6 @@ export enum AnnotationAnchorType {
   Middle = 'MIDDLE'
 }
 
-export type CustomLayerCakeContextType = { showConstructionMarks: boolean };
-
 export type LayerCakeGroupedDataType = LayerCakeGroupedDataGroupType[];
 export type LayerCakeGroupedDataGroupType = {
   group: string;
@@ -64,16 +66,17 @@ export type LayerCakeGroupedDataGroupValuesType = {
 
 export type PlotPadding = { top?: number; bottom?: number; left?: number; right?: number };
 
-export type LayerCakeContextType = {
-  width: Readable<number>;
-  height: Readable<number>;
-  xScale: Readable<ScaleLinear<number | Date, number>>;
-  yScale: Readable<ScaleLinear<number | Date, number>>;
-  xRange: Readable<[number, number]>;
-  yRange: Readable<[number, number]>;
-  custom: Readable<CustomLayerCakeContextType>;
-  data: Readable<LayerCakeGroupedDataType>;
-  xGet: Readable<(d: LayerCakeGroupedDataGroupValuesType) => number>;
-  yGet: Readable<(d: LayerCakeGroupedDataGroupValuesType) => number>;
-  zGet: Readable<(d: LayerCakeGroupedDataGroupValuesType) => string>;
+export type LayerCakeScalesTypes = {
+  x: ScaleLinear<number | Date, number>;
+  y: ScaleLinear<number | Date, number>;
+};
+
+// export type LayerCakeContextType = LayerCakeContext<LayerCakeScalesTypes, LayerCakeGroupedDataType>;
+
+export type ColumnDataTypes = Date | number | string | boolean;
+export type ColumnDataTypeMap = {
+  date: Date;
+  number: number;
+  string: string;
+  boolean: boolean;
 };

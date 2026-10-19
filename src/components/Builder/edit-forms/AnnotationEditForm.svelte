@@ -1,12 +1,11 @@
 <script lang="ts">
-  import { getAxisDataType } from '../../../lib/data-accessors';
   import { visState } from '../../../lib/state.svelte';
   import type { AnnotationType, DeletableType } from '../../../lib/types';
-  import AnchorPointSelector from '../AnchorPointSelector.svelte';
-  import ChartPositionInput from './ChartPositionInput.svelte';
-  import ColourField from './ColourField.svelte';
+  import AnchorPointSelector from '../form-inputs/AnchorPointSelector.svelte';
+  import ChartPositionInput from '../form-inputs/ChartPositionInput.svelte';
+  import ColourField from '../form-inputs/ColourField.svelte';
 
-  import FormActions from './FormActions.svelte';
+  import FormActions from '../form-inputs/FormActions.svelte';
   import ItemCollectionEditModal from '../ItemCollectionEditModal.svelte';
 
   interface Props {
@@ -14,31 +13,37 @@
   }
 
   let { annotation = $bindable() }: Props = $props();
-
-  const xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
-  const yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
 </script>
 
 {#if annotation}
   <ItemCollectionEditModal title="Edit Annotation" onClose={() => (annotation = undefined)}>
-    <label for="annotation-text">Label</label>
-    <input id="annotation-text" type="text" bind:value={annotation.label} />
-    {#if xAxisDataType === undefined || yAxisDataType === undefined}
-      <p>You must add a series before annotations can be positioned.</p>
+    <div>
+      <label for="annotation-text">Label</label>
+      <input id="annotation-text" type="text" bind:value={annotation.label} />
+    </div>
+    {#if visState.config.axes.x.type === undefined || visState.config.axes.y.type === undefined}
+      <p>You must setup the axes before annotations can be positioned.</p>
     {:else}
-      <ChartPositionInput
-        label="Position"
-        bind:value={annotation}
-        id="anchor-position"
-        columnTypes={{ x: xAxisDataType, y: yAxisDataType }}
-      />
-      <span>Anchor position</span>
-      <AnchorPointSelector bind:value={annotation.anchor} />
-      <label for="label-width">Width</label>
-      <input id="label-width" type="number" min="5" max="100" bind:value={annotation.width} />
+      <div>
+        <ChartPositionInput
+          label="Position"
+          bind:value={annotation}
+          id="anchor-position"
+          types={{ x: visState.config.axes.x.type, y: visState.config.axes.y.type }}
+        />
+      </div>
+      <div>
+        <span>Anchor position</span>
+        <AnchorPointSelector bind:value={annotation.anchor} />
+      </div>
+      <div>
+        <label for="label-width">Width</label>
+        <input id="label-width" type="number" min="5" max="100" bind:value={annotation.width} />
+      </div>
     {/if}
-    <ColourField bind:value={annotation.colour} defaultValue="#00000" />
-
+    <div>
+      <ColourField bind:value={annotation.colour} defaultValue="#00000" />
+    </div>
     {#snippet footer()}
       <FormActions bind:item={annotation} />
     {/snippet}

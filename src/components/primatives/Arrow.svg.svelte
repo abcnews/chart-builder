@@ -1,10 +1,7 @@
 <script lang="ts">
-  import { fade } from 'svelte/transition';
   import { distance, generateArrowPath, unitVector } from '../../lib/trig';
 
   type Coordinate = { x: number; y: number };
-
-  // TODO : Make fade into a prop
 
   let {
     from,
@@ -26,7 +23,6 @@
 </script>
 
 <path
-  transition:fade
   d={path}
   transform-origin="left middle"
   style:stroke={colour}

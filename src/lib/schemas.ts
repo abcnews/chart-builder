@@ -1,6 +1,7 @@
 import {
   array,
   boolean,
+  date,
   enum_,
   intersect,
   literal,
@@ -92,7 +93,10 @@ export const DataSourceSchema = object({
   url: optional(string())
 });
 
+const AxisTypeSchema = optional(union([literal('number'), literal('date')]));
+
 export const AxisOptionsSchema = object({
+  type: AxisTypeSchema,
   format: optional(string()),
   ticks: optional(string()),
   baseline: optional(boolean(), true),
@@ -124,9 +128,21 @@ export const VisualisationSchema = object({
   series: optional(array(intersect([SeriesSchema, DeletableSchema])), []),
   data: optional(array(intersect([DataSetSchema, DeletableSchema])), []),
   sources: optional(array(intersect([DataSourceSchema, DeletableSchema])), []),
-  axes: optional(AxisConfigSchema, { x: { domain: {} }, y: { domain: {} } })
+  axes: optional(AxisConfigSchema, { x: { domain: {}, type: 'number' }, y: { domain: {}, type: 'number' } })
 });
 
+export const DataRecordsSchema = record(
+  string(),
+  object({
+    id: string(),
+    name: string(),
+    columns: array(string()),
+    raw: string(),
+    rows: array(record(string(), nullable(union([string(), number(), date(), boolean()]))))
+  })
+);
+
 export const VisualisationStateSchema = object({
-  config: VisualisationSchema
+  config: VisualisationSchema,
+  data: DataRecordsSchema
 });
