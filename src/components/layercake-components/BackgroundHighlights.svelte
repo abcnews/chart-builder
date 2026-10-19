@@ -7,12 +7,13 @@
   import { coerceToColumnDataType } from '../../lib/data-helpers';
 
   const k = getLayerCakeContext<LayerCakeScalesTypes, LayerCakeGroupedDataType>();
+  let highlights = $derived(visState.config.highlights.filter(d => !d.deleted));
   let xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
   let yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
 </script>
 
 {#if xAxisDataType && yAxisDataType}
-  {#each visState.config.highlights.filter(d => !d.deleted) as highlight}
+  {#each highlights as highlight}
     <div
       class="highlight"
       transition:fade

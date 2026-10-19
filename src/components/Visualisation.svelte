@@ -9,7 +9,7 @@
   import AxisY from './layercake-components/AxisY.svg.svelte';
   import Annotations from './layercake-components/Annotations.html.svelte';
   import Arrows from './layercake-components/Arrows.svg.svelte';
-  import BackgroundHighlight from './layercake-components/BackgroundHighlight.svelte';
+  import BackgroundHighlights from './layercake-components/BackgroundHighlights.svelte';
   import Lines from './layercake-components/Lines.svg.svelte';
   import type { Snippet } from 'svelte';
 
@@ -52,13 +52,6 @@
   // TODO: Warn if there are too many categories.
   let seriesColors = $derived(getDefaultPalette(visState.config.series));
 
-  let annotations = $derived.by(() => {
-    return visState.config.annotations.filter(d => {
-      return !d.deleted;
-    });
-  });
-  let arrows = $derived(visState.config.arrows.filter(d => !d.deleted));
-
   let xAxisDataType = $derived(visState.config.axes.x.type);
   let yAxisDataType = $derived(visState.config.axes.y.type);
 
@@ -69,8 +62,6 @@
   let yTicks = $derived(parseManualTicks(visState.config.axes.y.ticks, yAxisDataType));
 
   let chartWidth: number = $state(0);
-
-  let { showConstructionMarks = false, editorLayer }: Props = $props();
 
   let xDomain = $derived(
     getDomain(
@@ -180,7 +171,7 @@
       data={groupedData}
     >
       <Html overflow="hidden">
-        <BackgroundHighlight />
+        <BackgroundHighlights />
       </Html>
       <Svg>
         <AxisX
@@ -197,10 +188,10 @@
         <Lines />
       </Svg>
       <Html>
-        <Annotations {annotations} />
+        <Annotations />
       </Html>
       <Svg>
-        <Arrows {arrows} />
+        <Arrows />
       </Svg>
       {@render editorLayer?.()}
     </LayerCake>

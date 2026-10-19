@@ -8,17 +8,12 @@
     ItemCollection,
     ScreenshotTool
   } from '@abcnews/components-builder';
-  import { BuilderStyleRoot, BuilderFrame, MarkerAdmin, UpdateChecker } from '@abcnews/components-builder';
   import { Html, Svg } from 'layercake';
   import Visualisation from '../Visualisation.svelte';
   import { builderState, visState } from '../../lib/state.svelte';
   import { onMount } from 'svelte';
-  import AnnotationDragHandler from './drag-handlers/AnnotationDragHandler.svelte';
-  import ArrowDragHandler from './drag-handlers/ArrowDragHandler.svelte';
-  import BuilderArrowHandles from './BuilderArrowHandles.svg.svelte';
-  import { getAxisDataType, loadMarkerConfig } from '../../lib/data-accessors';
+  import ArrowsHandles from './wysiwyg-overlay/ArrowsHandles.svg.svelte';
   import { isValiError } from 'valibot';
-
   import {
     AnnotationAnchorType,
     type AnnotationType,
@@ -39,6 +34,8 @@
   import SeriesEditForm from './edit-forms/SeriesEditForm.svelte';
   import AxisEditButton from './form-inputs/AxisEditButton.svelte';
   import { loadMarkerConfig } from '../../lib/state-management';
+  import AnnotationsHandles from './wysiwyg-overlay/AnnotationsHandles.html.svelte';
+  import BackgroundHighlightsHandles from './wysiwyg-overlay/BackgroundHighlightsHandles.svg.svelte';
 
   const prefixes = {
     'Scrolly mark': SCROLLY_MARK_PREFIX,
@@ -67,6 +64,11 @@
     return () => {
       window.removeEventListener('hashchange', loadConfigFromUrl);
     };
+  });
+
+  // let midpoints = $derived(getAxisMidPoints(visState));
+  $effect(() => {
+    // console.log('midpoint :>> ', midpoints);
   });
 
   const defaultDataSet = { name: '', url: '', columns: {} };
@@ -109,11 +111,11 @@
 
 {#snippet editorLayer()}
   <Html>
-    <AnnotationDragHandler />
-    <ArrowDragHandler />
+    <AnnotationsHandles />
   </Html>
   <Svg>
-    <BuilderArrowHandles />
+    <ArrowsHandles />
+    <BackgroundHighlightsHandles />
   </Svg>
 {/snippet}
 
