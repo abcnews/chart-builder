@@ -28,7 +28,7 @@
     tickMarkLength = 5,
     baseline = false,
     snapLabels = false,
-    format = d => String(d),
+    format = (d: number | Date) => String(d),
     ticks = undefined,
     tickGutter = 0,
     dx = 0,

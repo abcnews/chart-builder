@@ -26,7 +26,7 @@
     snapBaselineLabel = false,
     gridlines = true,
     tickMarkLength = undefined,
-    format = d => String(d),
+    format = (d: number | Date) => String(d),
     ticks = 4,
     tickGutter = 0,
     dx = 0,

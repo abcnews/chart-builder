@@ -16,7 +16,6 @@
     getGroupedData,
     getDefaultPalette,
     getDomain,
-    getAxisDataType,
     getAxisLabelFormatterGeneric
   } from '../lib/state-accessors';
 
