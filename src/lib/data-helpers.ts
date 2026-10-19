@@ -72,6 +72,22 @@ export const coerceToColumnDataType = <T extends keyof ColumnDataTypeMap>(
 };
 
 /**
+ * Get the column data type associated with the JS data type of a given value.
+ * @param value A value from which to infer
+ */
+export const inferColumnDataType = (value: unknown): ColumnTypesType => {
+  if (typeof value === 'number') {
+    return 'number';
+  } else if (typeof value === 'boolean') {
+    return 'boolean';
+  } else if (value instanceof Date) {
+    return 'date';
+  } else {
+    return 'string';
+  }
+};
+
+/**
  * Parse a comma-separated string of ticks and coerce them to the axis data type.
  * @param ticksString Comma-separated string of ticks
  * @param dataType Column data type for coercion

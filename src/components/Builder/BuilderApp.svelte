@@ -90,7 +90,22 @@
 
   $effect(() => {
     const url = new URL(document.location.href);
-    url.hash = encode(visState.config);
+    const snapshot = $state.snapshot(visState.config);
+
+    // Remove obsolete column definitions
+    snapshot.data.forEach(({ columns, name }) => {
+      const existing = Object.keys(columns); // Columns defined in the current config for this data source
+      const current = visState.data[name]?.columns; // Columns actually in the data for this data source
+      if (current) {
+        for (let column of existing) {
+          if (!current.includes(column)) {
+            delete columns[column];
+          }
+        }
+      }
+    });
+
+    url.hash = encode(snapshot);
     history.replaceState(undefined, document.title, url.toString());
   });
 
