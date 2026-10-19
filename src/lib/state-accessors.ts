@@ -55,38 +55,22 @@ type FormatNumberFn = (n: number | { valueOf(): number }) => string;
 type FormatDateFn = (d: Date) => string;
 type FormatStringFn = (d: string | boolean) => string;
 type FormatterFor<T extends keyof ColumnDataTypeMap> = T extends 'number'
-  ? (n: number | { valueOf(): number }) => string
+  ? FormatNumberFn
   : T extends 'date'
-  ? (d: Date) => string
-  : (d: string | boolean) => string;
+    ? FormatDateFn
+    : FormatStringFn;
 
-// Overload signatures — this is what callers see
-export function getAxisLabelFormatter(axisOptions: AxisOptionsType, axisDataType: 'number'): FormatNumberFn;
-export function getAxisLabelFormatter(axisOptions: AxisOptionsType, axisDataType: 'date'): FormatDateFn;
-export function getAxisLabelFormatter(
-  axisOptions: AxisOptionsType,
-  axisDataType: Exclude<keyof ColumnDataTypeMap, 'number' | 'date'>
-): FormatStringFn;
-
-// Implementation signature — not visible to callers, just needs to be broad enough
-export function getAxisLabelFormatter(
-  axisOptions: AxisOptionsType,
-  axisDataType: keyof ColumnDataTypeMap
-): FormatNumberFn | FormatDateFn | FormatStringFn {
-  if (axisDataType === 'number') {
-    return format(axisOptions.format || defaultAxisLabelFormatStrings.number);
-  }
-  if (axisDataType === 'date') {
-    return timeFormat(axisOptions.format || defaultAxisLabelFormatStrings.date);
-  }
-  return (d: string | boolean) => String(d);
-}
-
-export function getAxisLabelFormatterGeneric<T extends keyof ColumnDataTypeMap>(
+export function getAxisLabelFormatter<T extends keyof ColumnDataTypeMap>(
   axisOptions: AxisOptionsType,
   axisDataType: T
 ): FormatterFor<T> {
-  return getAxisLabelFormatter(axisOptions, axisDataType as any) as FormatterFor<T>;
+  if (axisDataType === 'number') {
+    return format(axisOptions.format || defaultAxisLabelFormatStrings.number) as FormatterFor<T>;
+  }
+  if (axisDataType === 'date') {
+    return timeFormat(axisOptions.format || defaultAxisLabelFormatStrings.date) as FormatterFor<T>;
+  }
+  return ((d: string | boolean) => String(d)) as FormatterFor<T>;
 }
 
 /**

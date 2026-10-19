@@ -19,7 +19,7 @@
     getGroupedData,
     getDefaultPalette,
     getDomain,
-    getAxisLabelFormatterGeneric
+    getAxisLabelFormatter
   } from '../lib/state-accessors';
 
   import { visState } from '../lib/state.svelte';
@@ -55,8 +55,8 @@
   let xAxisDataType = $derived(visState.config.axes.x.type);
   let yAxisDataType = $derived(visState.config.axes.y.type);
 
-  let formatLabelX = $derived(xAxisDataType && getAxisLabelFormatterGeneric(visState.config.axes.x, xAxisDataType));
-  let formatLabelY = $derived(yAxisDataType && getAxisLabelFormatterGeneric(visState.config.axes.y, yAxisDataType));
+  let formatLabelX = $derived(xAxisDataType && getAxisLabelFormatter(visState.config.axes.x, xAxisDataType));
+  let formatLabelY = $derived(yAxisDataType && getAxisLabelFormatter(visState.config.axes.y, yAxisDataType));
 
   let xTicks = $derived(parseManualTicks(visState.config.axes.x.ticks, xAxisDataType));
   let yTicks = $derived(parseManualTicks(visState.config.axes.y.ticks, yAxisDataType));
@@ -163,8 +163,8 @@
       x="x"
       y="y"
       z="series"
-      xDomain={(xAxisDomainTween ? xAxisDomainTween.current : xDomain) as any}
-      yDomain={(yAxisDomainTween ? yAxisDomainTween.current : yDomain) as any}
+      xDomain={xAxisDomainTween ? xAxisDomainTween.current : xDomain}
+      yDomain={yAxisDomainTween ? yAxisDomainTween.current : yDomain}
       zScale={scaleOrdinal()}
       zRange={seriesColors}
       {flatData}

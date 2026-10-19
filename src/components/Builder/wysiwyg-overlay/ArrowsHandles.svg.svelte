@@ -35,25 +35,27 @@
   }}
 />
 
-<g class="builder-arrow-handles">
-  {#each arrows as arrow, i}
-    {@const fromX = k.xScale(coerceToColumnDataType(arrow.from.x, xAxisDataType as any))}
-    {@const fromY = k.yScale(coerceToColumnDataType(arrow.from.y, yAxisDataType as any))}
-    {@const toX = k.xScale(coerceToColumnDataType(arrow.to.x, xAxisDataType as any))}
-    {@const toY = k.yScale(coerceToColumnDataType(arrow.to.y, yAxisDataType as any))}
-    <circle
-      cx={fromX}
-      cy={fromY}
-      r="8"
-      class="handle"
-      class:visible
-      data-type="arrow"
-      data-index={i}
-      data-handle="from"
-    />
-    <circle cx={toX} cy={toY} r="8" class="handle" class:visible data-type="arrow" data-index={i} data-handle="to" />
-  {/each}
-</g>
+{#if xAxisDataType && yAxisDataType}
+  <g class="builder-arrow-handles">
+    {#each arrows as arrow, i}
+      {@const fromX = k.xScale(coerceToColumnDataType(arrow.from.x, xAxisDataType))}
+      {@const fromY = k.yScale(coerceToColumnDataType(arrow.from.y, yAxisDataType))}
+      {@const toX = k.xScale(coerceToColumnDataType(arrow.to.x, xAxisDataType))}
+      {@const toY = k.yScale(coerceToColumnDataType(arrow.to.y, yAxisDataType))}
+      <circle
+        cx={fromX}
+        cy={fromY}
+        r="8"
+        class="handle"
+        class:visible
+        data-type="arrow"
+        data-index={i}
+        data-handle="from"
+      />
+      <circle cx={toX} cy={toY} r="8" class="handle" class:visible data-type="arrow" data-index={i} data-handle="to" />
+    {/each}
+  </g>
+{/if}
 
 <style>
   .handle {
