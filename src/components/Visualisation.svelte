@@ -2,11 +2,9 @@
   import { LayerCake, Svg, Html } from 'layercake';
   import { Tween } from 'svelte/motion';
   import { scaleOrdinal, scaleTime, scaleLinear } from 'd3-scale';
-  import { csvParse } from 'd3-dsv';
   import { prefersReducedMotion } from '@abcnews/env-utils';
   import { cubicInOut } from 'svelte/easing';
 
-  import FontProvider from './FontProvider.svelte'; // TODO Swap out for @abcnews/components-storylab version
   import AxisX from './layercake-components/AxisX.svg.svelte';
   import AxisY from './layercake-components/AxisY.svg.svelte';
   import Annotations from './layercake-components/Annotations.html.svelte';
@@ -20,7 +18,6 @@
     getGroupedData,
     getDefaultPalette,
     getDomain,
-    getAxisDataType,
     getAxisLabelFormatterGeneric
   } from '../lib/state-accessors';
 
@@ -31,19 +28,12 @@
   import { updateData } from '../lib/state-management';
   import { TypographyProvider } from '@abcnews/components-storylab';
 
-  interface Props {
-    showConstructionMarks?: boolean;
-    tweenDuration?: number;
-  }
-
-  let { showConstructionMarks = false, tweenDuration = 1000 }: Props = $props();
-
-  // Purposely non-zero, otherwise the transitions occur immediately
-  // and are difficult to parse that a change has occurred.
-  const TWEEN_DURATION_REDUCED = 100;
-
-  const tweenDurationFinal = $derived(prefersReducedMotion ? TWEEN_DURATION_REDUCED : tweenDuration);
-  const tweenConfig = $derived({ duration: tweenDurationFinal, easing: cubicInOut });
+  const tweenConfig = $derived({
+    // Reduced motion timing is purposely non-zero, otherwise the transitions occur immediately
+    // and are difficult to parse that a change has occurred.
+    duration: $prefersReducedMotion ? 100 : 1000,
+    easing: cubicInOut
+  });
 
   // Load these into state via an effect to avoid use of #await. If the config changes so a new data needs to be fetched
   // we don't want the UI to change to an awaiting state while it's loading.
