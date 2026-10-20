@@ -8,12 +8,12 @@
     ItemCollection,
     ScreenshotTool
   } from '@abcnews/components-builder';
+  import { Html, Svg } from 'layercake';
   import Visualisation from '../Visualisation.svelte';
   import { builderState, visState } from '../../lib/state.svelte';
   import { onMount } from 'svelte';
-
+  import ArrowsHandles from './wysiwyg-overlay/ArrowsHandles.svg.svelte';
   import { isValiError } from 'valibot';
-
   import {
     AnnotationAnchorType,
     type AnnotationType,
@@ -34,6 +34,8 @@
   import SeriesEditForm from './edit-forms/SeriesEditForm.svelte';
   import AxisEditButton from './form-inputs/AxisEditButton.svelte';
   import { loadMarkerConfig } from '../../lib/state-management';
+  import AnnotationsHandles from './wysiwyg-overlay/AnnotationsHandles.html.svelte';
+  import BackgroundHighlightsHandles from './wysiwyg-overlay/BackgroundHighlightsHandles.svg.svelte';
 
   const prefixes = {
     'Scrolly mark': SCROLLY_MARK_PREFIX,
@@ -62,6 +64,11 @@
     return () => {
       window.removeEventListener('hashchange', loadConfigFromUrl);
     };
+  });
+
+  // let midpoints = $derived(getAxisMidPoints(visState));
+  $effect(() => {
+    // console.log('midpoint :>> ', midpoints);
   });
 
   const defaultDataSet = { name: '', url: '', columns: {} };
@@ -114,7 +121,17 @@
 </script>
 
 {#snippet Viz()}
-  <Visualisation />
+  <Visualisation {editorLayer} />
+{/snippet}
+
+{#snippet editorLayer()}
+  <Html>
+    <AnnotationsHandles />
+  </Html>
+  <Svg>
+    <ArrowsHandles />
+    <BackgroundHighlightsHandles />
+  </Svg>
 {/snippet}
 
 {#snippet Sidebar()}
@@ -248,6 +265,3 @@
   <BuilderFrame {Viz} {Sidebar} />
   <UpdateChecker />
 </BuilderStyleRoot>
-
-<style>
-</style>

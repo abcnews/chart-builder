@@ -9,8 +9,9 @@
   import AxisY from './layercake-components/AxisY.svg.svelte';
   import Annotations from './layercake-components/Annotations.html.svelte';
   import Arrows from './layercake-components/Arrows.svg.svelte';
-  import BackgroundHighlight from './layercake-components/BackgroundHighlight.svelte';
+  import BackgroundHighlights from './layercake-components/BackgroundHighlights.svelte';
   import Lines from './layercake-components/Lines.svg.svelte';
+  import type { Snippet } from 'svelte';
 
   import { parseManualTicks } from '../lib/data-helpers';
   import {
@@ -18,7 +19,7 @@
     getGroupedData,
     getDefaultPalette,
     getDomain,
-    getAxisLabelFormatterGeneric
+    getAxisLabelFormatter
   } from '../lib/state-accessors';
 
   import { visState } from '../lib/state.svelte';
@@ -27,6 +28,12 @@
 
   import { updateData } from '../lib/state-management';
   import { TypographyProvider } from '@abcnews/components-storylab';
+
+  interface Props {
+    editorLayer?: Snippet;
+  }
+
+  let { editorLayer }: Props = $props();
 
   const tweenConfig = $derived({
     // Reduced motion timing is purposely non-zero, otherwise the transitions occur immediately
@@ -45,18 +52,11 @@
   // TODO: Warn if there are too many categories.
   let seriesColors = $derived(getDefaultPalette(visState.config.series));
 
-  let annotations = $derived.by(() => {
-    return visState.config.annotations.filter(d => {
-      return !d.deleted;
-    });
-  });
-  let arrows = $derived(visState.config.arrows.filter(d => !d.deleted));
-
   let xAxisDataType = $derived(visState.config.axes.x.type);
   let yAxisDataType = $derived(visState.config.axes.y.type);
 
-  let formatLabelX = $derived(xAxisDataType && getAxisLabelFormatterGeneric(visState.config.axes.x, xAxisDataType));
-  let formatLabelY = $derived(yAxisDataType && getAxisLabelFormatterGeneric(visState.config.axes.y, yAxisDataType));
+  let formatLabelX = $derived(xAxisDataType && getAxisLabelFormatter(visState.config.axes.x, xAxisDataType));
+  let formatLabelY = $derived(yAxisDataType && getAxisLabelFormatter(visState.config.axes.y, yAxisDataType));
 
   let xTicks = $derived(parseManualTicks(visState.config.axes.x.ticks, xAxisDataType));
   let yTicks = $derived(parseManualTicks(visState.config.axes.y.ticks, yAxisDataType));
@@ -171,7 +171,7 @@
       data={groupedData}
     >
       <Html overflow="hidden">
-        <BackgroundHighlight />
+        <BackgroundHighlights />
       </Html>
       <Svg>
         <AxisX
@@ -188,11 +188,12 @@
         <Lines />
       </Svg>
       <Html>
-        <Annotations {annotations} />
+        <Annotations />
       </Html>
       <Svg>
-        <Arrows {arrows} />
+        <Arrows />
       </Svg>
+      {@render editorLayer?.()}
     </LayerCake>
 
     {#if (visState.config.description && visState.config.description.length > 0) || visState.config.sources.length}
