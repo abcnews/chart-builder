@@ -5,7 +5,7 @@ import { VisualisationSchema } from './schemas';
 import { fetchOne } from '@abcnews/terminus-fetch';
 import { TIERS } from '@abcnews/env-utils';
 import type { DataSetType, VisualisationType } from './types';
-import { rowParser } from './data-helpers';
+import { inferColumnDataType, rowParser } from './data-helpers';
 import { csvParse } from 'd3-dsv';
 import { update } from './surgical-state-updates';
 
@@ -101,15 +101,7 @@ export const updateData = (data: DataSetType[]) => {
     for (let column of parsed.columns) {
       const data = parsed[0]?.[column];
       if (columns[column] === undefined) {
-        if (typeof data === 'number') {
-          columns[column] = 'number';
-        } else if (typeof data === 'boolean') {
-          columns[column] = 'boolean';
-        } else if (data instanceof Date) {
-          columns[column] = 'date';
-        } else {
-          columns[column] = 'string';
-        }
+        columns[column] = inferColumnDataType(data);
       }
     }
 
