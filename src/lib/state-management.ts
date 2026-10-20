@@ -2,39 +2,12 @@ import { safeParse } from 'valibot';
 import { decode } from '@abcnews/base-36-props';
 import { visState } from './state.svelte';
 import { VisualisationSchema } from './schemas';
-import { diff } from 'deep-object-diff';
 import { fetchOne } from '@abcnews/terminus-fetch';
 import { TIERS } from '@abcnews/env-utils';
 import type { DataSetType, VisualisationType } from './types';
 import { rowParser } from './data-helpers';
 import { csvParse } from 'd3-dsv';
-
-const replace = (source: {} & { __removalCount?: number }, target: {}, key: string) => {
-  if (source[key] === undefined) {
-    // Arrays need special handling.
-    // This is something to do with the way Svelte signals are implemented. If the key is deleted as if it's a regular
-    // object svelte attempts to access a non-existent key.
-    if (Array.isArray(target) && typeof +key === 'number' && +key === +key) {
-      source.__removalCount = source.__removalCount || 0;
-      target.splice(+key - source.__removalCount, 1);
-      source.__removalCount++;
-    } else {
-      delete target[key];
-    }
-  } else {
-    target[key] = source[key];
-  }
-};
-
-const apply = (diff: {}, source: {}, target: {}) => {
-  for (const key in diff) {
-    if (typeof diff[key] === 'object' && typeof target[key] !== 'undefined') {
-      apply(diff[key], source[key], target[key]);
-    } else {
-      replace(source, target, key);
-    }
-  }
-};
+import { update } from './surgical-state-updates';
 
 /**
  * The axis data types used to be defined by the first series defined for the chart and the dataset and column specified for
@@ -75,7 +48,7 @@ export const loadMarkerConfig = (data: string | Record<string, unknown>) => {
     result.output.axes.x.type = result.output.axes.x.type || inferAxisDataTypeFromFirstSeries(result.output, 'x');
     result.output.axes.y.type = result.output.axes.y.type || inferAxisDataTypeFromFirstSeries(result.output, 'y');
 
-    apply(diff(visState.config, result.output), result.output, visState.config);
+    update(visState.config, result.output);
   } else {
     console.error(result.issues);
   }
