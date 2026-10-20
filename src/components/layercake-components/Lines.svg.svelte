@@ -1,29 +1,27 @@
 <script lang="ts">
   import { line, curveCardinal, type CurveFactory } from 'd3-shape';
-  import {
-    type LayerCakeGroupedDataGroupValuesType,
-    type LayerCakeGroupedDataType,
-    type LayerCakeScalesTypes
-  } from '../../lib/types';
+  import { type LayerCakeGroupedDataType, type LayerCakeScalesTypes } from '../../lib/types';
   import { curveMap } from '../../lib/curves';
   import { getLayerCakeContext } from 'layercake';
+  import Line from '../primatives/Line.svg.svelte';
 
   interface Props {
     curve?: CurveFactory;
   }
+
   const k = getLayerCakeContext<LayerCakeScalesTypes, LayerCakeGroupedDataType>();
 
   let { curve }: Props = $props();
 
-  const renderedLines = $derived(
+  const filteredLines = $derived(
     k.data.flatMap(({ values, config }) => {
       // Only lines
       if (config.type !== 'line') return [];
 
-      // Remove data where y-axis value is null or undefined.
-      const vals = values.flatMap(d => {
+      // Remove data where y-axis value is null or undefined and resolve to rendered x/y values.
+      const vals: [number, number][] = values.flatMap(d => {
         if (d.y === undefined || d.y === null) return [];
-        return [d];
+        return [[k.xGet(d), k.yGet(d)]];
       });
 
       // No empty series.
@@ -32,9 +30,8 @@
       return [
         {
           id: config.id,
-          d: line<LayerCakeGroupedDataGroupValuesType>(k.xGet, k.yGet).curve(
-            curve || (config.curveType && curveMap[config.curveType]) || curveCardinal
-          )(vals),
+          data: vals,
+          curveType: config.curveType,
           stroke: config.colour || (vals[0] ? k.zGet(vals[0]) : '#000'),
           dasharray: config.dasharray
         }
@@ -44,25 +41,7 @@
 </script>
 
 <g class="line-group">
-  {#each renderedLines as line (line.id || line)}
-    <g class="line" style:--line-dasharray={line.dasharray ? line.dasharray : undefined}>
-      <path class="path-line outline" d={line.d}></path>
-      <path class="path-line" d={line.d} stroke={line.stroke}></path>
-    </g>
+  {#each filteredLines as { id, data, stroke, dasharray, curveType } (id || line)}
+    <Line {data} {stroke} {dasharray} curve={curve || (curveType && curveMap[curveType]) || curveCardinal} />
   {/each}
 </g>
-
-<style>
-  .path-line {
-    fill: none;
-    stroke-linejoin: round;
-    stroke-linecap: round;
-    stroke-width: 2px;
-    stroke-dasharray: var(--line-dasharray, none);
-
-    &.outline {
-      stroke-width: 3px;
-      stroke: #fff;
-    }
-  }
-</style>
