@@ -2,12 +2,11 @@
   import { visState } from '../../lib/state.svelte';
   import { getLayerCakeContext, Svg } from 'layercake';
   import type { LayerCakeGroupedDataType, LayerCakeScalesTypes } from '../../lib/types';
-  import { getAxisDataType } from '../../lib/state-accessors';
   import { coerceToColumnDataType } from '../../lib/data-helpers';
 
   const k = getLayerCakeContext<LayerCakeScalesTypes, LayerCakeGroupedDataType>();
-  let xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
-  let yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
+  let xAxisDataType = $derived(visState.config.axes.x.type);
+  let yAxisDataType = $derived(visState.config.axes.y.type);
   const offset = 2;
   const clipPath = $derived.by(() => {
     // Can't render anything if we don't know the axis data types

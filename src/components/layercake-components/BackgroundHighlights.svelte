@@ -3,13 +3,12 @@
   import { fade } from 'svelte/transition';
   import type { LayerCakeGroupedDataType, LayerCakeScalesTypes } from '../../lib/types';
   import { getLayerCakeContext } from 'layercake';
-  import { getAxisDataType } from '../../lib/state-accessors';
   import { coerceToColumnDataType } from '../../lib/data-helpers';
 
   const k = getLayerCakeContext<LayerCakeScalesTypes, LayerCakeGroupedDataType>();
   let highlights = $derived(visState.config.highlights.filter(d => !d.deleted));
-  let xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
-  let yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
+  let xAxisDataType = $derived(visState.config.axes.x.type);
+  let yAxisDataType = $derived(visState.config.axes.y.type);
 </script>
 
 {#if xAxisDataType && yAxisDataType}

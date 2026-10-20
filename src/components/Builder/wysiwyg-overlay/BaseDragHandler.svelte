@@ -1,6 +1,5 @@
 <script lang="ts">
   import { coerceToColumnDataType } from '../../../lib/data-helpers';
-  import { getAxisDataType } from '../../../lib/state-accessors';
   import { visState } from '../../../lib/state.svelte';
   import type { LayerCakeScalesTypes, LayerCakeGroupedDataType, ChartPositionType } from '../../../lib/types';
   import { getLayerCakeContext } from 'layercake';
@@ -29,8 +28,8 @@
 
   let { type, getInitialPos, onMove }: Props = $props();
 
-  const xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
-  const yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
+  let xAxisDataType = $derived(visState.config.axes.x.type);
+  let yAxisDataType = $derived(visState.config.axes.y.type);
 
   /**
    * Translates a pixel coordinate in the chart container into a domain value.
