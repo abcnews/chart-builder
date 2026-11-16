@@ -6,7 +6,6 @@
     type LayerCakeGroupedDataType,
     type LayerCakeScalesTypes
   } from '../../lib/types';
-  import { fade } from 'svelte/transition';
   import { builderState, visState } from '../../lib/state.svelte';
   import { coerceToColumnDataType } from '../../lib/data-helpers';
 
@@ -23,7 +22,6 @@
 {#if xAxisDataType && yAxisDataType}
   <span
     class="annotation"
-    transition:fade
     style:--annotation-color={annotation.colour && annotation.colour.length > 3 ? annotation.colour : undefined}
     class:show-construction-marks={builderState.showConstructionMarks}
     style:left={`${k.xScale(coerceToColumnDataType(annotation.x, xAxisDataType))}px`}
