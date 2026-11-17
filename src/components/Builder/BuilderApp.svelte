@@ -100,6 +100,7 @@
     const snapshot = $state.snapshot(visState.config);
 
     // Remove obsolete column definitions
+    // This only modifies the data stored on the URL, not the actual state.
     snapshot.data.forEach(({ columns, name }) => {
       const existing = Object.keys(columns); // Columns defined in the current config for this data source
       const current = visState.data[name]?.columns; // Columns actually in the data for this data source
@@ -143,7 +144,7 @@
     itemLabelGetter={d => d.name}
   >
     {#snippet EditForm()}
-      <DataSetEditForm bind:set={currentDataSet} />
+      <DataSetEditForm bind:dataset={currentDataSet} />
     {/snippet}
   </ItemCollection>
 
