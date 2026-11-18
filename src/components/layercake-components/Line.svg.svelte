@@ -3,10 +3,11 @@
 <script lang="ts">
   import { prefersReducedMotion } from '@abcnews/env-utils';
   import { curveCardinal, line, type CurveFactory } from 'd3-shape';
-  import { cubicInOut } from 'svelte/easing';
   import { Tween } from 'svelte/motion';
   import type { LayerCakeGroupedDataGroupValuesType } from '../../lib/types';
   import { type ScaleLinear } from 'd3-scale';
+  import { ANIMATION_DURATION, ANIMATION_EASING, fadeInOpts, fadeOutOpts } from '../../lib/constants';
+  import { fade } from 'svelte/transition';
 
   interface Props {
     stroke: string;
@@ -30,17 +31,16 @@
       });
     },
     {
-      duration: $prefersReducedMotion ? 100 : 1000,
-      easing: cubicInOut
+      duration: $prefersReducedMotion ? 100 : ANIMATION_DURATION,
+      easing: ANIMATION_EASING
     }
   );
 
-  const xy = $derived(tween.current);
   const lineGenerator = $derived(line().curve(curve));
-  let path = $derived(lineGenerator(xy));
+  const path = $derived(lineGenerator(tween.current));
 </script>
 
-<g class="line" style:--line-dasharray={dasharray ? dasharray : undefined}>
+<g in:fade={fadeInOpts} out:fade={fadeOutOpts} class="line" style:--line-dasharray={dasharray ? dasharray : undefined}>
   <path class="path-line outline" d={path}></path>
   <path class="path-line" d={path} {stroke}></path>
 </g>

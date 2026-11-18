@@ -3,6 +3,8 @@
   import type { timeFormat as d3TimeFormat } from 'd3-time-format';
   import { type LayerCakeGroupedDataType, type LayerCakeScalesTypes } from '../../lib/types';
   import { getLayerCakeContext } from 'layercake';
+  import { fade } from 'svelte/transition';
+  import { fadeInOpts } from '../../lib/constants';
 
   const k = getLayerCakeContext<LayerCakeScalesTypes, LayerCakeGroupedDataType>();
 
@@ -57,7 +59,7 @@
 <g class="axis y-axis">
   {#each tickVals as tick (tick)}
     {@const tickValPx = k.yScale(tick)}
-    <g class="tick tick-{tick}" transform="translate({k.xRange[0]}, {tickValPx})">
+    <g in:fade={{ ...fadeInOpts, delay: 0 }} class="tick tick-{tick}" transform="translate({k.xRange[0]}, {tickValPx})">
       {#if gridlines === true}
         <line class="gridline" class:zero={tick === 0} {x1} x2={k.width} y1={y} y2={y}></line>
       {/if}

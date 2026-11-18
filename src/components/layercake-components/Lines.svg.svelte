@@ -3,7 +3,7 @@
   import { type LayerCakeGroupedDataType, type LayerCakeScalesTypes } from '../../lib/types';
   import { curveMap } from '../../lib/curves';
   import { getLayerCakeContext } from 'layercake';
-  import Line from '../primatives/Line.svg.svelte';
+  import Line from './Line.svg.svelte';
   import { getDomain, getFlatData } from '../../lib/state-accessors';
   import { visState } from '../../lib/state.svelte';
   import { scaleLinear } from 'd3-scale';

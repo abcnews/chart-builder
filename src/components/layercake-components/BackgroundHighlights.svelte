@@ -5,8 +5,7 @@
   import { getLayerCakeContext } from 'layercake';
   import { getAxisDataType } from '../../lib/state-accessors';
   import { coerceToColumnDataType } from '../../lib/data-helpers';
-  import { cubicInOut } from 'svelte/easing';
-  import { prefersReducedMotion } from '@abcnews/env-utils';
+  import { fadeInOpts, fadeOutOpts } from '../../lib/constants';
 
   const k = getLayerCakeContext<LayerCakeScalesTypes, LayerCakeGroupedDataType>();
   let highlights = $derived(visState.config.highlights.filter(d => !d.deleted));
@@ -18,7 +17,8 @@
   {#each highlights as highlight (`${highlight.colour}`)}
     <div
       class="highlight"
-      transition:fade={{ duration: $prefersReducedMotion ? 0 : 1000, easing: cubicInOut }}
+      in:fade={fadeInOpts}
+      out:fade={fadeOutOpts}
       style:--highlight-color={highlight.colour && highlight.colour.length > 2 ? highlight.colour : undefined}
       style:left={`${k.xScale(coerceToColumnDataType(highlight.tl.x, xAxisDataType))}px`}
       style:top={`${k.yScale(coerceToColumnDataType(highlight.tl.y, yAxisDataType))}px`}

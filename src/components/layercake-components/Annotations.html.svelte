@@ -2,8 +2,7 @@
   import { fade } from 'svelte/transition';
   import { visState } from '../../lib/state.svelte';
   import Annotation from './Annotation.html.svelte';
-  import { prefersReducedMotion } from '@abcnews/env-utils';
-  import { cubicInOut } from 'svelte/easing';
+  import { fadeInOpts, fadeOutOpts } from '../../lib/constants';
 
   let annotations = $derived(visState.config.annotations.filter(d => !d.deleted));
   let xAxisDataType = $derived(visState.config.axes.x.type);
@@ -11,8 +10,8 @@
 </script>
 
 {#if xAxisDataType && yAxisDataType}
-  {#each annotations as annotation, i (annotation.label)}
-    <div transition:fade={{ duration: $prefersReducedMotion ? 0 : 1000, easing: cubicInOut }}>
+  {#each annotations as annotation (annotation.label)}
+    <div in:fade={fadeInOpts} out:fade={fadeOutOpts}>
       <Annotation {annotation} />
     </div>
   {/each}
