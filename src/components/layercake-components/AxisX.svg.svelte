@@ -3,11 +3,10 @@
   import type { timeFormat as d3TimeFormat } from 'd3-time-format';
   import { type LayerCakeGroupedDataType, type LayerCakeScalesTypes } from '../../lib/types';
   import { getLayerCakeContext } from 'layercake';
-  import { getAxisDataType } from '../../lib/state-accessors';
   import { visState } from '../../lib/state.svelte';
 
   const k = getLayerCakeContext<LayerCakeScalesTypes, LayerCakeGroupedDataType>();
-  let xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
+  let xAxisDataType = $derived(visState.config.axes.x.type);
 
   interface Props {
     tickMarks?: boolean;

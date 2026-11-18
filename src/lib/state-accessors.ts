@@ -14,42 +14,12 @@ import type {
   DeletableType,
   LayerCakeGroupedDataGroupValuesType,
   LayerCakeGroupedDataType,
-  SeriesType,
-  VisualisationType
+  SeriesType
 } from './types';
 import { defaultAxisLabelFormatStrings } from './constants';
 import { format } from 'd3-format';
 import { coerceToColumnDataType } from './data-helpers';
 import { getOrdinalCategoricalPalette } from '@abcnews/palette';
-
-/**
- * The axis data types are defined by the first series defined for the chart and the dataset and column specified for
- * that series.
- *
- * TODO: This has it backward. Refactor so the axes define a data type and ensure columns available when defining a
- * series conform to that type.
- */
-export const getAxisDataType = (config: VisualisationType, axis: 'x' | 'y') => {
-  // Find the first series
-  const series = config.series.filter(d => !d.deleted)[0];
-
-  // If there are no series, we don't know the axis data type
-  if (!series || !series[axis]) return undefined;
-
-  // Find the dataset associated with the first series
-  const dataset = config.data.find(d => d.name === series.dataset);
-
-  // If there's no dataset, we don't konw the axis data type
-  if (!dataset) return undefined;
-
-  const type = dataset.columns[series[axis]];
-
-  // Return undefined if the specified column has a type that's incompatible with an axis.
-  if (type !== 'date' && type !== 'number') return undefined;
-
-  // Return the column data type for the dataset column specified for the first series
-  return type;
-};
 
 type FormatNumberFn = (n: number | { valueOf(): number }) => string;
 type FormatDateFn = (d: Date) => string;

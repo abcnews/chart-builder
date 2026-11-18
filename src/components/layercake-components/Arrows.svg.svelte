@@ -2,15 +2,14 @@
   import Arrow from '../primatives/Arrow.svg.svelte';
   import type { LayerCakeScalesTypes, LayerCakeGroupedDataType } from '../../lib/types';
   import { getLayerCakeContext } from 'layercake';
-  import { getAxisDataType } from '../../lib/state-accessors';
   import { visState } from '../../lib/state.svelte';
   import { coerceToColumnDataType } from '../../lib/data-helpers';
   import { fade } from 'svelte/transition';
 
   const k = getLayerCakeContext<LayerCakeScalesTypes, LayerCakeGroupedDataType>();
   let arrows = $derived(visState.config.arrows.filter(d => !d.deleted));
-  let xAxisDataType = $derived(getAxisDataType(visState.config, 'x'));
-  let yAxisDataType = $derived(getAxisDataType(visState.config, 'y'));
+  let xAxisDataType = $derived(visState.config.axes.x.type);
+  let yAxisDataType = $derived(visState.config.axes.y.type);
 </script>
 
 {#if xAxisDataType && yAxisDataType}
