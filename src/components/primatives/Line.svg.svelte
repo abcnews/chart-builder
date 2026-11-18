@@ -1,21 +1,43 @@
 <svelte:options namespace="svg" />
 
 <script lang="ts">
+  import { prefersReducedMotion } from '@abcnews/env-utils';
   import { curveCardinal, line, type CurveFactory } from 'd3-shape';
+  import { cubicInOut } from 'svelte/easing';
   import { Tween } from 'svelte/motion';
+  import type { LayerCakeGroupedDataGroupValuesType } from '../../lib/types';
+  import { type ScaleLinear } from 'd3-scale';
 
   interface Props {
     stroke: string;
     dasharray?: string;
     curve?: CurveFactory;
-    data: [number, number][];
+    data: LayerCakeGroupedDataGroupValuesType[];
+    xScale: ScaleLinear<number | Date, number>;
+    yScale: ScaleLinear<number | Date, number>;
   }
 
-  let { stroke, dasharray, curve = curveCardinal, data }: Props = $props();
+  let { stroke, dasharray, curve = curveCardinal, data, xScale, yScale }: Props = $props();
 
-  const chartData = Tween.of(() => data);
+  const tween = Tween.of(
+    () => {
+      return data.map(d => {
+        if ((typeof d.x === 'number' || d.x instanceof Date) && (typeof d.y === 'number' || d.y instanceof Date)) {
+          const res: [number, number] = [xScale(d.x), yScale(d.y)];
+          return res;
+        }
+        throw new Error('Bad data passed to Line component.');
+      });
+    },
+    {
+      duration: $prefersReducedMotion ? 100 : 1000,
+      easing: cubicInOut
+    }
+  );
+
+  const xy = $derived(tween.current);
   const lineGenerator = $derived(line().curve(curve));
-  let path = $derived(lineGenerator(chartData.current));
+  let path = $derived(lineGenerator(xy));
 </script>
 
 <g class="line" style:--line-dasharray={dasharray ? dasharray : undefined}>

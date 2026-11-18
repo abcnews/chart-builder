@@ -80,3 +80,32 @@ export type ColumnDataTypeMap = {
   string: string;
   boolean: boolean;
 };
+
+// Config min/max bounds per column type
+export type BoundByColumnType = {
+  number: number;
+  date: number | string;
+  boolean: never; // booleans have no min/max; only null/undefined allowed
+  string: string;
+}
+
+// Domain returned per column type
+export type DomainByColumnType = {
+  number: [number, number];
+  date: [number, number];    // timestamps
+  boolean: string[]; // adjust to match your boolean branch
+  string: string[];
+}
+
+export type ColumnKey = ColumnTypesType | undefined;
+
+export type ValueFor<T extends ColumnKey> =
+  T extends ColumnTypesType ? ColumnDataTypeMap[T] : ColumnDataTypes;
+
+export type BoundFor<T extends ColumnKey> =
+  | (T extends ColumnTypesType ? BoundByColumnType[T] : number | string)
+  | null
+  | undefined;
+
+export type DomainFor<T extends ColumnKey> =
+  T extends ColumnTypesType ? DomainByColumnType[T] | undefined : undefined;

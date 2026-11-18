@@ -66,11 +66,6 @@
     };
   });
 
-  // let midpoints = $derived(getAxisMidPoints(visState));
-  $effect(() => {
-    // console.log('midpoint :>> ', midpoints);
-  });
-
   const defaultDataSet = { name: '', url: '', columns: {} };
   const defaultAnnotation = { label: '', x: '', y: 0, anchor: AnnotationAnchorType.TopLeft, width: 10 };
   const defaultArrow = { from: { x: '', y: 0 }, to: { x: '', y: 0 } };
