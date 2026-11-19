@@ -35,21 +35,32 @@
 
   type Domain = [number, number];
 
-  function interpolateDomainScreen(a: Domain | undefined, b: Domain | undefined) {
+  /**
+   * Linear interpolation of domain bounds results in non-linear changes for points when rendered to the screen. This
+   * function interpolates the bounds (min/max) non-linearly in a way that creates linear interpolation for points on
+   * the scale.
+   *
+   * One limitation of this function is that it can only handle positive numbers and spans.
+   * TODO: find a solution that can handle bounds that cross zero and/or are reversed.
+   *
+   * @param from The start of the interpolation
+   * @param to The end of the interpolation
+   */
+  function interpolateDomain(from: Domain | undefined, to: Domain | undefined) {
     // Nothing to interpolate between, return end domain
-    if (!a || !b) return () => b;
+    if (!from || !to) return () => to;
 
     // How big are our domains?
-    const spanA = a[1] - a[0];
-    const spanB = b[1] - b[0];
+    const spanA = from[1] - from[0];
+    const spanB = to[1] - to[0];
 
     // Can't handle zero or negative spans
-    if (spanA <= 0 || spanB <= 0) return () => b;
+    if (spanA <= 0 || spanB <= 0) return () => to;
 
     // Convert domain space into screen space
     return (t: number): Domain => {
       const w = (t * spanA) / (t * spanA + (1 - t) * spanB);
-      return [a[0] + (b[0] - a[0]) * w, a[1] + (b[1] - a[1]) * w];
+      return [from[0] + (to[0] - from[0]) * w, from[1] + (to[1] - from[1]) * w];
     };
   }
 
@@ -103,7 +114,7 @@
         untrack(() => xDomain),
         {
           ...tweenConfig,
-          interpolate: interpolateDomainScreen
+          interpolate: interpolateDomain
         }
       );
     return undefined;
