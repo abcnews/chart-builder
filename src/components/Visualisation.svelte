@@ -102,7 +102,7 @@
       return new Tween(
         untrack(() => xDomain),
         {
-          ...untrack(() => tweenConfig),
+          ...tweenConfig,
           interpolate: interpolateDomainScreen
         }
       );
