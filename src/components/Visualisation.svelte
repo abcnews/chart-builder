@@ -77,7 +77,7 @@
   );
 
   let xAxisDomainTween = $derived.by(() => {
-    // if (flatData.length === 0) return undefined;
+    if (flatData.length === 0) return undefined;
     if (xAxisDataType === 'number' || xAxisDataType === 'date')
       return new Tween(
         untrack(() => xDomain),
@@ -87,7 +87,7 @@
   });
 
   let yAxisDomainTween = $derived.by(() => {
-    // if (flatData.length === 0) return undefined;
+    if (flatData.length === 0) return undefined;
     if (yAxisDataType === 'number' || yAxisDataType === 'date')
       return new Tween(
         untrack(() => yDomain),
