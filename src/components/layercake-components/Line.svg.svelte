@@ -27,7 +27,7 @@
           const res: [number, number] = [xScale(d.x), yScale(d.y)];
           return res;
         }
-        throw new Error('Bad data passed to Line component.');
+        throw new Error(`Bad data ${JSON.stringify({ x: d.x, y: d.y })} passed to Line component`);
       });
     },
     {
