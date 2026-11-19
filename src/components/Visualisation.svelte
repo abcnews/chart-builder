@@ -33,9 +33,29 @@
 
   let { editorLayer }: Props = $props();
 
+  type Domain = [number, number];
+
+  function interpolateDomainScreen(a: Domain | undefined, b: Domain | undefined) {
+    // Nothing to interpolate between, return end domain
+    if (!a || !b) return () => b;
+
+    // How big are our domains?
+    const spanA = a[1] - a[0];
+    const spanB = b[1] - b[0];
+
+    // Can't handle zero or negative spans
+    if (spanA <= 0 || spanB <= 0) return () => b;
+
+    // Convert domain space into screen space
+    return (t: number): Domain => {
+      const w = (t * spanA) / (t * spanA + (1 - t) * spanB);
+      return [a[0] + (b[0] - a[0]) * w, a[1] + (b[1] - a[1]) * w];
+    };
+  }
+
   const tweenConfig = $derived({
     // Reduced motion timing is purposely non-zero, otherwise the transitions occur immediately
-    // and are difficult to parse that a change has occurred.
+    // and are difficult to see that a change has occurred.
     duration: $prefersReducedMotion ? 100 : ANIMATION_DURATION,
     easing: ANIMATION_EASING
   });
@@ -81,7 +101,10 @@
     if (xAxisDataType === 'number' || xAxisDataType === 'date')
       return new Tween(
         untrack(() => xDomain),
-        tweenConfig
+        {
+          ...untrack(() => tweenConfig),
+          interpolate: interpolateDomainScreen
+        }
       );
     return undefined;
   });
