@@ -64,6 +64,7 @@ export const AnnotationSchema = intersect([
 ]);
 
 export const ArrowSchema = object({
+  id: optional(string()),
   from: ChartPositionSchema,
   to: ChartPositionSchema,
   colour: ElementColourSchema

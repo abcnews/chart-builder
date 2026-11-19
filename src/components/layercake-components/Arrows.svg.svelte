@@ -6,6 +6,7 @@
   import { visState } from '../../lib/state.svelte';
   import { coerceToColumnDataType } from '../../lib/data-helpers';
   import { fade } from 'svelte/transition';
+  import { fadeInOpts, fadeOutOpts } from '../../lib/constants';
 
   const k = getLayerCakeContext<LayerCakeScalesTypes, LayerCakeGroupedDataType>();
   let arrows = $derived(visState.config.arrows.filter(d => !d.deleted));
@@ -14,8 +15,8 @@
 </script>
 
 {#if xAxisDataType && yAxisDataType}
-  {#each arrows as arrow (`${arrow.from.x}${arrow.from.y}${arrow.to.x}${arrow.to.y}`)}
-    <g transition:fade>
+  {#each arrows as arrow (arrow.id || `${arrow.from.x}${arrow.from.y}${arrow.to.x}${arrow.to.y}`)}
+    <g in:fade={fadeInOpts} out:fade={fadeOutOpts}>
       <Arrow
         lineWidth={1}
         colour={arrow.colour || 'black'}
