@@ -70,6 +70,10 @@
         See <a href="https://d3js.org/d3-shape/curve" target="_blank">D3 documentation</a> for a deep dive.
       </small>
     </div>
+    <div>
+      <label for="stroke-width">Stroke width</label>
+      <input id="stroke-width" type="number" bind:value={series.strokeWidth} placeholder="2" />
+    </div>
     {#snippet footer()}
       <FormActions bind:item={series} />
     {/snippet}

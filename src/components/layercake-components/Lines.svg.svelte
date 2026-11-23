@@ -36,6 +36,7 @@
           data: vals,
           curveType: config.curveType,
           stroke: config.colour || (vals[0] ? k.zGet(vals[0]) : '#000'),
+          strokeWidth: config.strokeWidth || 2,
           dasharray: config.dasharray
         }
       ];
@@ -67,12 +68,13 @@
 </script>
 
 <g class="line-group">
-  {#each filteredLines as { id, data, stroke, dasharray, curveType } (id || line)}
+  {#each filteredLines as { id, data, stroke, strokeWidth, dasharray, curveType } (id || line)}
     <Line
       {data}
       {xScale}
       {yScale}
       {stroke}
+      {strokeWidth}
       {dasharray}
       curve={curve || (curveType && curveMap[curveType]) || curveCardinal}
     />
