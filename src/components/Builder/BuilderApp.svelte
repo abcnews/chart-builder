@@ -237,6 +237,7 @@
   <fieldset>
     <legend>Fallbacks</legend>
     <ScreenshotTool
+      maxParallelRequests={15}
       getGeneratorRequest={({ graphicLocation, width, height }) =>
         new Request(
           new URL(
