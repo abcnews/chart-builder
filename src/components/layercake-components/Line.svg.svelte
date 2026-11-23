@@ -11,6 +11,7 @@
 
   interface Props {
     stroke: string;
+    strokeWidth?: number;
     dasharray?: string;
     curve?: CurveFactory;
     data: LayerCakeGroupedDataGroupValuesType[];
@@ -18,7 +19,7 @@
     yScale: ScaleLinear<number | Date, number>;
   }
 
-  let { stroke, dasharray, curve = curveCardinal, data, xScale, yScale }: Props = $props();
+  let { stroke, strokeWidth, dasharray, curve = curveCardinal, data, xScale, yScale }: Props = $props();
 
   const tween = Tween.of(
     () => {
@@ -40,7 +41,13 @@
   const path = $derived(lineGenerator(tween.current));
 </script>
 
-<g in:fade={fadeInOpts} out:fade={fadeOutOpts} class="line" style:--line-dasharray={dasharray ? dasharray : undefined}>
+<g
+  in:fade={fadeInOpts}
+  out:fade={fadeOutOpts}
+  class="line"
+  style:--line-dasharray={dasharray ? dasharray : undefined}
+  style:--stroke-width={strokeWidth ? `${strokeWidth}px` : '2px'}
+>
   <path class="path-line outline" d={path}></path>
   <path class="path-line" d={path} {stroke}></path>
 </g>
@@ -50,11 +57,11 @@
     fill: none;
     stroke-linejoin: round;
     stroke-linecap: round;
-    stroke-width: 2px;
+    stroke-width: var(--stroke-width, 2px);
     stroke-dasharray: var(--line-dasharray, none);
 
     &.outline {
-      stroke-width: 3px;
+      stroke-width: calc(var(--stroke-width, 2px) + 1px);
       stroke: #fff;
     }
   }
