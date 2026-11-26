@@ -8,6 +8,7 @@
   import { type ScaleLinear } from 'd3-scale';
   import { ANIMATION_DURATION, ANIMATION_EASING, fadeInOpts, fadeOutOpts } from '../../lib/constants';
   import { fade } from 'svelte/transition';
+  import { interpolateRgb } from 'd3-interpolate';
 
   interface Props {
     stroke: string;
@@ -39,6 +40,11 @@
 
   const lineGenerator = $derived(line().curve(curve));
   const path = $derived(lineGenerator(tween.current));
+  const strokeTween = Tween.of(() => stroke, {
+    duration: $prefersReducedMotion ? 100 : ANIMATION_DURATION,
+    easing: ANIMATION_EASING,
+    interpolate: interpolateRgb
+  });
 </script>
 
 <g
@@ -49,7 +55,7 @@
   style:--stroke-width={strokeWidth ? `${strokeWidth}px` : '2px'}
 >
   <path class="path-line outline" d={path}></path>
-  <path class="path-line" d={path} {stroke}></path>
+  <path class="path-line" d={path} stroke={strokeTween.current}></path>
 </g>
 
 <style>
@@ -59,6 +65,8 @@
     stroke-linecap: round;
     stroke-width: var(--stroke-width, 2px);
     stroke-dasharray: var(--line-dasharray, none);
+
+    transition: stroke-width 1s ease-in-out;
 
     &.outline {
       stroke-width: calc(var(--stroke-width, 2px) + 1px);
