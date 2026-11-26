@@ -13,7 +13,7 @@
 </script>
 
 {#if xAxisDataType && yAxisDataType}
-  {#each highlights as highlight (`${highlight.colour}`)}
+  {#each highlights as highlight (highlight.id || highlight)}
     <div
       class="highlight"
       in:fade={fadeInOpts}

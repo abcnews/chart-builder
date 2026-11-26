@@ -39,6 +39,10 @@
       <div>
         <ColourField bind:value={highlight.colour} />
       </div>
+      <div>
+        <label for="highlight-id">ID</label>
+        <input id="highlight-id" type="text" bind:value={highlight.id} />
+      </div>
     {/if}
 
     {#snippet footer()}
