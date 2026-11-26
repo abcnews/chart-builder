@@ -108,25 +108,20 @@
   );
 
   let xAxisDomainTween = $derived.by(() => {
-    if (flatData.length === 0) return undefined;
     if (xAxisDataType === 'number' || xAxisDataType === 'date')
-      return new Tween(
-        untrack(() => xDomain),
-        {
-          ...tweenConfig,
-          interpolate: interpolateDomain
-        }
-      );
+      return Tween.of(() => untrack(() => xDomain || ([0, 0] as [number, number])), {
+        ...tweenConfig,
+        interpolate: interpolateDomain
+      });
     return undefined;
   });
 
   let yAxisDomainTween = $derived.by(() => {
-    if (flatData.length === 0) return undefined;
     if (yAxisDataType === 'number' || yAxisDataType === 'date')
-      return new Tween(
-        untrack(() => yDomain),
-        tweenConfig
-      );
+      return Tween.of(() => untrack(() => yDomain || ([0, 0] as [number, number])), {
+        ...tweenConfig,
+        interpolate: interpolateDomain
+      });
     return undefined;
   });
 
