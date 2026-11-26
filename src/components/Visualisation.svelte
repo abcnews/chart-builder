@@ -3,8 +3,6 @@
   import { Tween } from 'svelte/motion';
   import { scaleOrdinal, scaleTime, scaleLinear } from 'd3-scale';
   import { prefersReducedMotion } from '@abcnews/env-utils';
-  import { cubicInOut } from 'svelte/easing';
-
   import AxisX from './layercake-components/AxisX.svg.svelte';
   import AxisY from './layercake-components/AxisY.svg.svelte';
   import Annotations from './layercake-components/Annotations.html.svelte';
@@ -23,7 +21,7 @@
   } from '../lib/state-accessors';
 
   import { visState } from '../lib/state.svelte';
-  import { plotPadding } from '../lib/constants';
+  import { ANIMATION_DURATION, ANIMATION_EASING, plotPadding } from '../lib/constants';
   import { untrack } from 'svelte';
 
   import { updateData } from '../lib/state-management';
@@ -35,11 +33,42 @@
 
   let { editorLayer }: Props = $props();
 
+  type Domain = [number, number];
+
+  /**
+   * Linear interpolation of domain bounds results in non-linear changes for points when rendered to the screen. This
+   * function interpolates the bounds (min/max) non-linearly in a way that creates linear interpolation for points on
+   * the scale.
+   *
+   * One limitation of this function is that it can only handle positive numbers and spans.
+   * TODO: find a solution that can handle bounds that cross zero and/or are reversed.
+   *
+   * @param from The start of the interpolation
+   * @param to The end of the interpolation
+   */
+  function interpolateDomain(from: Domain | undefined, to: Domain | undefined) {
+    // Nothing to interpolate between, return end domain
+    if (!from || !to) return () => to;
+
+    // How big are our domains?
+    const spanA = from[1] - from[0];
+    const spanB = to[1] - to[0];
+
+    // Can't handle zero or negative spans
+    if (spanA <= 0 || spanB <= 0) return () => to;
+
+    // Convert domain space into screen space
+    return (t: number): Domain => {
+      const w = (t * spanA) / (t * spanA + (1 - t) * spanB);
+      return [from[0] + (to[0] - from[0]) * w, from[1] + (to[1] - from[1]) * w];
+    };
+  }
+
   const tweenConfig = $derived({
     // Reduced motion timing is purposely non-zero, otherwise the transitions occur immediately
-    // and are difficult to parse that a change has occurred.
-    duration: $prefersReducedMotion ? 100 : 1000,
-    easing: cubicInOut
+    // and are difficult to see that a change has occurred.
+    duration: $prefersReducedMotion ? 100 : ANIMATION_DURATION,
+    easing: ANIMATION_EASING
   });
 
   // Load these into state via an effect to avoid use of #await. If the config changes so a new data needs to be fetched
@@ -83,7 +112,10 @@
     if (xAxisDataType === 'number' || xAxisDataType === 'date')
       return new Tween(
         untrack(() => xDomain),
-        tweenConfig
+        {
+          ...tweenConfig,
+          interpolate: interpolateDomain
+        }
       );
     return undefined;
   });

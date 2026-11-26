@@ -66,16 +66,11 @@
     };
   });
 
-  // let midpoints = $derived(getAxisMidPoints(visState));
-  $effect(() => {
-    // console.log('midpoint :>> ', midpoints);
-  });
-
   const defaultDataSet = { name: '', url: '', columns: {} };
   const defaultAnnotation = { label: '', x: '', y: 0, anchor: AnnotationAnchorType.TopLeft, width: 10 };
   const defaultArrow = { from: { x: '', y: 0 }, to: { x: '', y: 0 } };
   const defaultHighlight = { tl: { x: '2019-01-01', y: 10 }, br: { x: '2020-01-01', y: 100 } };
-  const defaultSeries = { id: '', type: 'line' as const, curveType: 'cardinal' as const };
+  const defaultSeries = { id: '', type: 'line' as const, curveType: 'cardinal' as const, strokeWidth: 2 };
   const defaultDataSource = { label: '', url: '' };
 
   let currentDataSet: (DataSetType & DeletableType) | undefined = $state();
@@ -100,6 +95,7 @@
     const snapshot = $state.snapshot(visState.config);
 
     // Remove obsolete column definitions
+    // This only modifies the data stored on the URL, not the actual state.
     snapshot.data.forEach(({ columns, name }) => {
       const existing = Object.keys(columns); // Columns defined in the current config for this data source
       const current = visState.data[name]?.columns; // Columns actually in the data for this data source
@@ -143,7 +139,7 @@
     itemLabelGetter={d => d.name}
   >
     {#snippet EditForm()}
-      <DataSetEditForm bind:set={currentDataSet} />
+      <DataSetEditForm bind:dataset={currentDataSet} />
     {/snippet}
   </ItemCollection>
 
@@ -241,6 +237,7 @@
   <fieldset>
     <legend>Fallbacks</legend>
     <ScreenshotTool
+      maxParallelRequests={15}
       getGeneratorRequest={({ graphicLocation, width, height }) =>
         new Request(
           new URL(

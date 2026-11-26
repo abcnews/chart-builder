@@ -61,15 +61,18 @@ const isErrorResponse = (obj: any) => {
 export const fetchDataUrl = async (urlOrId: string) => {
   // If url is parsable as a CMID, get the URL from Terminus
   if (urlOrId.match(/^[0-9]+$/)) {
-    const doc = await fetchOne({
-      id: urlOrId,
-      type: 'DownloadObject',
-      force:
-        window.location.hostname.includes('aus.aunty.abc') ||
-        (window.location.pathname.includes('/news-projects/') && !window.location.pathname.includes('/iframe'))
-          ? TIERS.PREVIEW
-          : undefined
-    });
+    const doc = await fetchOne(
+      {
+        id: urlOrId,
+        type: 'DownloadObject',
+        force:
+          window.location.hostname.includes('aus.aunty.abc') ||
+          (window.location.pathname.includes('/news-projects/') && !window.location.pathname.includes('/iframe'))
+            ? TIERS.PREVIEW
+            : undefined
+      },
+      import.meta.env.VITE_TERMINUS_FETCH_API_KEY
+    );
 
     if (isErrorResponse(doc)) {
       return undefined;

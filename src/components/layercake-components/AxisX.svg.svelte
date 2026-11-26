@@ -4,6 +4,8 @@
   import { type LayerCakeGroupedDataType, type LayerCakeScalesTypes } from '../../lib/types';
   import { getLayerCakeContext } from 'layercake';
   import { visState } from '../../lib/state.svelte';
+  import { fade } from 'svelte/transition';
+  import { fadeInOpts } from '../../lib/constants';
 
   const k = getLayerCakeContext<LayerCakeScalesTypes, LayerCakeGroupedDataType>();
   let xAxisDataType = $derived(visState.config.axes.x.type);
@@ -47,7 +49,6 @@
   }
 
   let tickLen = $derived(tickMarks === true ? (tickMarkLength ?? 6) : 0);
-
   let tickVals = $derived(Array.isArray(ticks) ? ticks : k.xScale.ticks(ticks));
 </script>
 
@@ -57,7 +58,11 @@
       <line class="baseline" y1={k.height} y2={k.height} x1="0" x2={k.width} />
     {/if}
     {#each tickVals as tick, i (tick)}
-      <g class="tick tick-{i}" transform="translate({k.xScale(tick)},{Math.max(...k.yRange)})">
+      <g
+        in:fade={{ ...fadeInOpts, delay: 0 }}
+        class="tick tick-{i}"
+        transform="translate({k.xScale(tick)},{Math.max(...k.yRange)})"
+      >
         {#if gridlines === true}
           <line class="gridline" x1={0} x2={0} y1={-k.height} y2="0" />
         {/if}

@@ -30,15 +30,3 @@
 >
   <Visualisation />
 </Scrollyteller>
-
-<style>
-  @media (max-width: 62rem) {
-    :global(.viz) {
-      transform: translateY(-20px) !important;
-      max-height: calc(42dvh + 50px) !important;
-    }
-  }
-  :global(body) {
-    overflow: initial !important;
-  }
-</style>

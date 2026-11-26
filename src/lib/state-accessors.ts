@@ -6,15 +6,20 @@
 import { timeFormat } from 'd3-time-format';
 import type {
   AxisOptionsType,
+  BoundFor,
   ColumnDataTypeMap,
   ColumnDataTypes,
+  ColumnKey,
   ColumnTypesType,
   DataRecordsType,
   DataSetType,
   DeletableType,
+  DomainFor,
   LayerCakeGroupedDataGroupValuesType,
   LayerCakeGroupedDataType,
-  SeriesType
+  SeriesType,
+  ValueFor,
+  VisualisationType
 } from './types';
 import { defaultAxisLabelFormatStrings } from './constants';
 import { format } from 'd3-format';
@@ -44,15 +49,15 @@ export function getAxisLabelFormatter<T extends keyof ColumnDataTypeMap>(
 }
 
 /**
- * LayerCake expects domain arguments to be either number[] or string[] (which translates into either a d3 scale (either linear or
+ * LayerCake expects domain arguments to be either number[] or string[] (which translates into a d3 scale (either linear or
  * ordinal). d3's linear scales transform the domain into numbers.
  *
- * @param axisOptions Axis options defined in the builder
+ * @param configDefined Axis options defined in the builder
  * @param data Data to calculate the domain from
  * @param dataType Expected datatype for elements in the data array (as per config defined in builder)
  * @param padding
  */
-export const getDomain = (
+const getDomainImpl = (
   configDefined: [min: number | string | null | undefined, max: number | string | null | undefined],
   data: (ColumnDataTypes | null | undefined)[],
   dataType: ColumnTypesType | undefined,
@@ -112,6 +117,19 @@ export const getDomain = (
 
   return [min, max];
 };
+
+/**
+ * Wrapper function for getDomainImpl to provide narrowed types on return values for consumers based on the type of
+ * dataType param.
+ */
+export const getDomain = <T extends ColumnKey>(
+  configDefined: [min: BoundFor<T>, max: BoundFor<T>],
+  data: (ValueFor<T> | null | undefined)[],
+  dataType: T,
+  padding: number = 0.05
+): DomainFor<T> =>
+  getDomainImpl(configDefined, data, dataType, padding) as DomainFor<T>;
+
 
 export const getDefaultPalette = (series: SeriesType[]) => {
   return getOrdinalCategoricalPalette(Math.min(5, Math.max(2, series.length)));

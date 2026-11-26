@@ -64,6 +64,7 @@ export const AnnotationSchema = intersect([
 ]);
 
 export const ArrowSchema = object({
+  id: optional(string()),
   from: ChartPositionSchema,
   to: ChartPositionSchema,
   colour: ElementColourSchema
@@ -83,7 +84,8 @@ export const SeriesLineSchema = object({
   y: optional(string()), // Field to be used for y value
   colour: ElementColourSchema,
   dasharray: optional(string()),
-  curveType: optional(picklist(curveTypes), 'cardinal')
+  curveType: optional(picklist(curveTypes), 'linear'),
+  strokeWidth: optional(number(), 2)
 });
 
 export const SeriesSchema = variant('type', [SeriesLineSchema]);

@@ -39,6 +39,10 @@
       <div>
         <ColourField bind:value={arrow.colour} defaultValue="#000000" />
       </div>
+      <div>
+        <label for="arrow-id">ID</label>
+        <input id="arrow-id" type="text" bind:value={arrow.id} />
+      </div>
     {/if}
 
     {#snippet footer()}

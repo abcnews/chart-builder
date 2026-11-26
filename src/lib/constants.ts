@@ -1,3 +1,4 @@
+import { cubicInOut } from 'svelte/easing';
 import type { PlotPadding } from './types';
 
 export const PROJECT_NAME = 'chart-builder';
@@ -21,3 +22,9 @@ export const defaultAxisLabelFormatStrings = {
   date: '%b. %Y',
   number: '~s'
 };
+
+export const ANIMATION_DURATION = 1000;
+export const ANIMATION_EASING = cubicInOut;
+
+export const fadeInOpts = { duration: 800, delay: 600 };
+export const fadeOutOpts = { duration: 800, delay: 0 };
