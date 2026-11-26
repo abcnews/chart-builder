@@ -71,6 +71,7 @@ export const ArrowSchema = object({
 });
 
 export const HighlightSchema = object({
+  id: optional(string()),
   tl: ChartPositionSchema,
   br: ChartPositionSchema,
   colour: ElementColourSchema
