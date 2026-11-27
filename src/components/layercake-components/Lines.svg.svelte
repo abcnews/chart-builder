@@ -5,13 +5,14 @@
   import { getLayerCakeContext } from 'layercake';
   import Line from './Line.svg.svelte';
   import { getDomain, getFlatData } from '../../lib/state-accessors';
-  import { visState } from '../../lib/state.svelte';
   import { scaleLinear } from 'd3-scale';
+  import { getVisState } from '../../lib/context';
 
   interface Props {
     curve?: CurveFactory;
   }
 
+  const visState = getVisState();
   const k = getLayerCakeContext<LayerCakeScalesTypes, LayerCakeGroupedDataType>();
 
   let { curve }: Props = $props();

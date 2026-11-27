@@ -1,14 +1,16 @@
 <script lang="ts">
-  import { visState } from '../../../lib/state.svelte';
   import type { DeletableType, SeriesType } from '../../../lib/types';
   import ColourField from '../form-inputs/ColourField.svelte';
   import FormActions from '../form-inputs/FormActions.svelte';
   import ItemCollectionEditModal from '../ItemCollectionEditModal.svelte';
   import { curveTypes } from '../../../lib/curves';
+  import { getVisState } from '../../../lib/context';
 
   interface Props {
     series: (SeriesType & DeletableType) | undefined;
   }
+
+  const visState = getVisState();
 
   let { series = $bindable() }: Props = $props();
   let dataset = $derived.by(() => {

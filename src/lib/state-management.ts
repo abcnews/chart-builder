@@ -1,10 +1,9 @@
 import { safeParse } from 'valibot';
 import { decode } from '@abcnews/base-36-props';
-import { visState } from './state.svelte';
 import { VisualisationSchema } from './schemas';
 import { fetchOne } from '@abcnews/terminus-fetch';
 import { TIERS } from '@abcnews/env-utils';
-import type { DataSetType, VisualisationType } from './types';
+import type { VisualisationStateType, VisualisationType } from './types';
 import { inferColumnDataType, rowParser } from './data-helpers';
 import { csvParse } from 'd3-dsv';
 import { update } from './surgical-state-updates';
@@ -35,7 +34,7 @@ const inferAxisDataTypeFromFirstSeries = (config: VisualisationType, axis: 'x' |
   return type;
 };
 
-export const loadMarkerConfig = (data: string | Record<string, unknown>) => {
+export const loadMarkerConfig = (data: string | Record<string, unknown>, config: VisualisationType) => {
   const obj = typeof data === 'string' ? decode(data) : data;
 
   // TODO: This is where to migrate old schemas if that's needed.
@@ -48,7 +47,7 @@ export const loadMarkerConfig = (data: string | Record<string, unknown>) => {
     result.output.axes.x.type = result.output.axes.x.type || inferAxisDataTypeFromFirstSeries(result.output, 'x');
     result.output.axes.y.type = result.output.axes.y.type || inferAxisDataTypeFromFirstSeries(result.output, 'y');
 
-    update(visState.config, result.output);
+    update(config, result.output);
   } else {
     console.error(result.issues);
   }
@@ -90,8 +89,8 @@ export const fetchDataUrl = async (urlOrId: string) => {
   } catch (e) {}
 };
 
-export const updateData = (data: DataSetType[]) => {
-  data.forEach(async ({ name, url, columns }) => {
+export const updateData = (visState: VisualisationStateType) => {
+  visState.config.data.forEach(async ({ name, url, columns }) => {
     if (!url) return;
 
     const raw = await fetchDataUrl(url);

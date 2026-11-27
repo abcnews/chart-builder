@@ -6,13 +6,15 @@
     type LayerCakeGroupedDataType,
     type LayerCakeScalesTypes
   } from '../../lib/types';
-  import { builderState, visState } from '../../lib/state.svelte';
+  import { getVisState } from '../../lib/context';
   import { coerceToColumnDataType } from '../../lib/data-helpers';
+  import { builderState } from '../../lib/state.svelte';
 
   interface Props {
     annotation: AnnotationType;
   }
 
+  const visState = getVisState();
   let { annotation }: Props = $props();
   const k = getLayerCakeContext<LayerCakeScalesTypes, LayerCakeGroupedDataType>();
   let xAxisDataType = $derived(visState.config.axes.x.type);

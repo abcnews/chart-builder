@@ -1,9 +1,10 @@
 <script lang="ts">
   import { coerceToColumnDataType } from '../../../lib/data-helpers';
-  import { visState } from '../../../lib/state.svelte';
+  import { getVisState } from '../../../lib/context';
   import type { LayerCakeScalesTypes, LayerCakeGroupedDataType, ChartPositionType } from '../../../lib/types';
   import { getLayerCakeContext } from 'layercake';
 
+  const visState = getVisState();
   const k = getLayerCakeContext<LayerCakeScalesTypes, LayerCakeGroupedDataType>();
 
   /**

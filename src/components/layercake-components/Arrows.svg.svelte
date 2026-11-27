@@ -2,11 +2,12 @@
   import Arrow from '../primatives/Arrow.svg.svelte';
   import type { LayerCakeScalesTypes, LayerCakeGroupedDataType } from '../../lib/types';
   import { getLayerCakeContext } from 'layercake';
-  import { visState } from '../../lib/state.svelte';
   import { coerceToColumnDataType } from '../../lib/data-helpers';
   import { fade } from 'svelte/transition';
   import { fadeInOpts, fadeOutOpts } from '../../lib/constants';
+  import { getVisState } from '../../lib/context';
 
+  const visState = getVisState();
   const k = getLayerCakeContext<LayerCakeScalesTypes, LayerCakeGroupedDataType>();
   let arrows = $derived(visState.config.arrows.filter(d => !d.deleted));
   let xAxisDataType = $derived(visState.config.axes.x.type);
