@@ -1,16 +1,18 @@
 <script lang="ts">
-  import { visState } from '../../../lib/state.svelte';
+  import { getVisState } from '../../../lib/context';
+
   import type { AnnotationType, DeletableType } from '../../../lib/types';
   import AnchorPointSelector from '../form-inputs/AnchorPointSelector.svelte';
   import ChartPositionInput from '../form-inputs/ChartPositionInput.svelte';
   import ColourField from '../form-inputs/ColourField.svelte';
-
   import FormActions from '../form-inputs/FormActions.svelte';
   import ItemCollectionEditModal from '../ItemCollectionEditModal.svelte';
 
   interface Props {
     annotation: (AnnotationType & DeletableType) | undefined;
   }
+
+  const visState = getVisState();
 
   let { annotation = $bindable() }: Props = $props();
 </script>

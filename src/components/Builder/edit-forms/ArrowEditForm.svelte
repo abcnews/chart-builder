@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { visState } from '../../../lib/state.svelte';
+  import { getVisState } from '../../../lib/context';
   import type { ArrowType, DeletableType } from '../../../lib/types';
   import ChartPositionInput from '../form-inputs/ChartPositionInput.svelte';
   import ColourField from '../form-inputs/ColourField.svelte';
@@ -9,6 +9,8 @@
   interface Props {
     arrow: (ArrowType & DeletableType) | undefined;
   }
+
+  const visState = getVisState();
 
   let { arrow = $bindable() }: Props = $props();
   const xAxisDataType = $derived(visState.config.axes.x.type);

@@ -1,10 +1,11 @@
 <script lang="ts">
-  import { visState } from '../../../lib/state.svelte';
   import { coerceToColumnDataType } from '../../../lib/data-helpers';
   import { getLayerCakeContext } from 'layercake';
   import type { LayerCakeGroupedDataType, LayerCakeScalesTypes } from '../../../lib/types';
   import BaseDragHandler from './BaseDragHandler.svelte';
+  import { getVisState } from '../../../lib/context';
 
+  const visState = getVisState();
   const k = getLayerCakeContext<LayerCakeScalesTypes, LayerCakeGroupedDataType>();
   let visible = $state(false);
   let arrows = $derived(visState.config.arrows.filter(d => !d.deleted));

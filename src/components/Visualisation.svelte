@@ -10,7 +10,6 @@
   import BackgroundHighlights from './layercake-components/BackgroundHighlights.svelte';
   import Lines from './layercake-components/Lines.svg.svelte';
   import type { Snippet } from 'svelte';
-
   import { parseManualTicks } from '../lib/data-helpers';
   import {
     getFlatData,
@@ -19,13 +18,13 @@
     getDomain,
     getAxisLabelFormatter
   } from '../lib/state-accessors';
-
-  import { visState } from '../lib/state.svelte';
   import { ANIMATION_DURATION, ANIMATION_EASING, plotPadding } from '../lib/constants';
   import { untrack } from 'svelte';
-
   import { updateData } from '../lib/state-management';
   import { TypographyProvider } from '@abcnews/components-storylab';
+  import { getVisState } from '../lib/context';
+
+  const visState = getVisState();
 
   interface Props {
     editorLayer?: Snippet;
@@ -73,7 +72,7 @@
 
   // Load these into state via an effect to avoid use of #await. If the config changes so a new data needs to be fetched
   // we don't want the UI to change to an awaiting state while it's loading.
-  $effect(() => updateData(visState.config.data));
+  $effect(() => updateData(visState));
 
   let flatData = $derived(getFlatData(visState.config.series, visState.config.data, visState.data));
   let groupedData = $derived(getGroupedData(visState.config.series, visState.config.data, visState.data));

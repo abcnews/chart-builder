@@ -1,5 +1,11 @@
 <script>
+  import { loadMarkerConfig } from '../lib/state-management';
+  import { getDefaultVisState, setVisState } from '../lib/context';
   import Visualisation from './Visualisation.svelte';
+
+  const visState = $state(getDefaultVisState());
+  setVisState(visState);
+  loadMarkerConfig(document.location.hash.substring(1), visState.config);
 </script>
 
 <div>

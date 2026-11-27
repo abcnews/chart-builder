@@ -1,11 +1,12 @@
 <script lang="ts">
-  import { visState } from '../../lib/state.svelte';
   import { fade } from 'svelte/transition';
   import type { LayerCakeGroupedDataType, LayerCakeScalesTypes } from '../../lib/types';
   import { getLayerCakeContext } from 'layercake';
   import { coerceToColumnDataType } from '../../lib/data-helpers';
   import { fadeInOpts, fadeOutOpts } from '../../lib/constants';
+  import { getVisState } from '../../lib/context';
 
+  const visState = getVisState();
   const k = getLayerCakeContext<LayerCakeScalesTypes, LayerCakeGroupedDataType>();
   let highlights = $derived(visState.config.highlights.filter(d => !d.deleted));
   let xAxisDataType = $derived(visState.config.axes.x.type);

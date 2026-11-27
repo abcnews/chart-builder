@@ -1,7 +1,9 @@
 <script lang="ts">
-  import { visState } from '../../../lib/state.svelte';
   import BaseDragHandler from './BaseDragHandler.svelte';
   import Annotation from '../../layercake-components/Annotation.html.svelte';
+  import { getVisState } from '../../../lib/context';
+
+  const visState = getVisState();
 
   let annotations = $derived(visState.config.annotations.filter(d => !d.deleted));
   let xAxisDataType = $derived(visState.config.axes.x.type);

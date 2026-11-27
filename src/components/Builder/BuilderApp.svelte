@@ -10,7 +10,7 @@
   } from '@abcnews/components-builder';
   import { Html, Svg } from 'layercake';
   import Visualisation from '../Visualisation.svelte';
-  import { builderState, visState } from '../../lib/state.svelte';
+  import { getDefaultVisState, setVisState } from '../../lib/context';
   import { onMount } from 'svelte';
   import ArrowsHandles from './wysiwyg-overlay/ArrowsHandles.svg.svelte';
   import { isValiError } from 'valibot';
@@ -36,6 +36,11 @@
   import { loadMarkerConfig } from '../../lib/state-management';
   import AnnotationsHandles from './wysiwyg-overlay/AnnotationsHandles.html.svelte';
   import BackgroundHighlightsHandles from './wysiwyg-overlay/BackgroundHighlightsHandles.svg.svelte';
+  import { builderState } from '../../lib/state.svelte';
+
+  const visState = $state(getDefaultVisState());
+
+  setVisState(visState);
 
   const prefixes = {
     'Scrolly mark': SCROLLY_MARK_PREFIX,
@@ -49,7 +54,7 @@
         .replace(SCROLLY_OPENER_PREFIX.substring(1), '')
         .replace(SCROLLY_MARK_PREFIX.substring(1), '');
       if (urlConfig) {
-        loadMarkerConfig(urlConfig);
+        loadMarkerConfig(urlConfig, visState.config);
       }
     } catch (e) {
       console.error(e);

@@ -1,9 +1,10 @@
 <script lang="ts">
-  import { visState } from '../../lib/state.svelte';
   import { getLayerCakeContext, Svg } from 'layercake';
   import type { LayerCakeGroupedDataType, LayerCakeScalesTypes } from '../../lib/types';
   import { coerceToColumnDataType } from '../../lib/data-helpers';
+  import { getVisState } from '../../lib/context';
 
+  const visState = getVisState();
   const k = getLayerCakeContext<LayerCakeScalesTypes, LayerCakeGroupedDataType>();
   let xAxisDataType = $derived(visState.config.axes.x.type);
   let yAxisDataType = $derived(visState.config.axes.y.type);

@@ -1,12 +1,14 @@
 <script lang="ts">
+  import { getVisState } from '../../../lib/context';
   import type { DataSetType, DeletableType } from '../../../lib/types';
   import FormActions from '../form-inputs/FormActions.svelte';
   import ItemCollectionEditModal from '../ItemCollectionEditModal.svelte';
-  import { visState } from '../../../lib/state.svelte';
 
   interface Props {
     dataset: (DataSetType & DeletableType) | undefined;
   }
+
+  const visState = getVisState();
 
   let { dataset = $bindable() }: Props = $props();
 
